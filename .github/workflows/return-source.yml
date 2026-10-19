@@ -1,0 +1,21 @@
+name: Return source evidence
+on:
+  push:
+    branches: [feat/return-review]
+    paths: [.github/workflows/return-source.yml]
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          mkdir evidence
+          curl --fail --retry 2 --max-time 90 'https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_001_2025_2026_E.pdf' -o evidence/return.pdf
+          curl --fail --retry 2 --max-time 90 'https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf' -o evidence/guide.pdf
+          sha256sum evidence/*.pdf > evidence/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: official-return-sources
+          path: evidence/
+          retention-days: 7
