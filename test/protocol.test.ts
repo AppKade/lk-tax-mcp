@@ -1,4 +1,6 @@
 import test from 'node:test';
+import { noForeign, income, zeroDeductions } from './fixtures.ts';
+import foreignCases from './fixtures/ird-foreign-2025-26.json' with { type: 'json' };
 import cases from './fixtures/ird-local-2025-26.json' with { type: 'json' };
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
@@ -69,7 +71,7 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   }, income: {
     employment: '2880000', business_net: '0', interest: '140000', rent: '0', final_wht_dividends_gross: '0', final_wht_dividends_deducted: '0', apit_credit: '74400',
     ait_wht_credit: '14000', instalments_paid: '0', other_income_or_claims: false,
-  }, deductions: { solar_available: '0', approved_charity_cash: '0', government_donations: '0', government_donations_brought_forward: '0', samurdhi_shop_contributions: '0' } });
+  }, foreign: noForeign, deductions: { solar_available: '0', approved_charity_cash: '0', government_donations: '0', government_donations_brought_forward: '0', samurdhi_shop_contributions: '0' } });
   const computed = (await call('lk_compute_return')).structuredContent;
   assert.equal(computed.figures.balance_payable, '11200.00');
   assert.equal(computed.filing_ready, false);
@@ -84,8 +86,23 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   const known = await request('resources/read', { uri: 'lktax://known-issues' });
   assert.ok(JSON.parse(known.result.contents[0].text).issues.some((i: { id: string }) => i.id === 'KI-CHARITY-CAP'));
   const supported = await request('resources/read', { uri: 'lktax://supported-scenarios' });
-  assert.ok(JSON.parse(supported.result.contents[0].text).unsupported.includes('Foreign income and tax credits'));
-  await call('lk_set_facts', { income: { employment: '1900000', business_net: '0', interest: '0', rent: '0' }, deductions: { solar_available: '0', approved_charity_cash: '60000', government_donations: '0' } });
+  assert.ok(JSON.parse(supported.result.contents[0].text).unsupported.includes('Non-qualifying foreign income and multi-country foreign tax credits'));
+  const g2 = foreignCases.find(c => c.id === 'G2')!;
+  await call('lk_set_facts', { income: g2.income, deductions: g2.deductions, foreign: g2.foreign });
+  const foreignComputed = (await call('lk_compute_return')).structuredContent;
+  assert.equal(foreignComputed.figures.balance_payable, '22000.00');
+  assert.equal(foreignComputed.figures.foreign_tax_credit, '1350000.00');
+  assert.ok(foreignComputed.scope.reasons.some((r: { code: string }) => r.code === 'SC-07'));
+  assert.equal((await call('lk_explain', { line: 'foreign_tax_credit' })).structuredContent.trace.value, '1350000.00');
+  await call('lk_set_facts', { income: { ...income, employment: '0', interest: '0', apit_credit: '0', ait_wht_credit: '0' }, deductions: zeroDeductions,
+    foreign: { ...g2.foreign, service_net_lkr: '3600000', foreign_tax_paid: '250000' } });
+  const dual = (await call('lk_compute_return')).structuredContent;
+  assert.equal(dual.figures.tax, '180000.00');
+  assert.equal(dual.alternatives[0].figures.tax, '270000.00');
+  assert.equal(dual.alternatives[0].figures.foreign_tax_credit, '250000.00');
+  assert.equal(dual.alternatives[0].figures.balance_payable, '20000.00');
+  assert.ok(dual.flags.includes('INTERP_15PCT'));
+  await call('lk_set_facts', { foreign: noForeign, income: { employment: '1900000', business_net: '0', interest: '0', rent: '0' }, deductions: { solar_available: '0', approved_charity_cash: '60000', government_donations: '0' } });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'CHARITY_CAP_REVIEW');
   await call('lk_set_facts', { scope: { losses: true } });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'OUT_OF_SCOPE');

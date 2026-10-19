@@ -4,7 +4,7 @@ Local Sri Lankan individual income tax assistance for MCP hosts. Tax arithmetic 
 
 **Development preview. Not IRD-approved. Not tax advice. Not ready for filing.**
 
-This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20requirements.md) and [backlog](Sri%20Lanka%20tax%20plugin%20backlog.csv) in stages. The current implementation is the foundation and local-reliefs milestones, not the complete P0 release.
+This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20requirements.md) and [backlog](Sri%20Lanka%20tax%20plugin%20backlog.csv) in stages. The current implementation is the foundation, local-reliefs and qualifying foreign-income milestones, not the complete P0 release.
 
 ## Available now
 
@@ -13,9 +13,10 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 - Deterministic SC-01 through SC-09 scope checks; computation rechecks current scope every time.
 - YA 2025/26 local employment, user-supplied local business **net profit**, interest and gross investment rent estimates with personal, rent and solar relief, eligible donations, progressive bands and manually confirmed APIT/AIT/WHT/instalment credits. Final-WHT resident-company dividends are informational and excluded from both assessable income and advance credits.
 - Decimal strings and bigint arithmetic, cited traces, text and structured tool results, identifier output checks.
-- Three primary-source golden cases verified: IRD Examples 1, 4 and 5, with exact balances **LKR 11,200.00**, **LKR 5,910,084.00** and **LKR 544,600.00**. Fixture notes record aggregation and inferred opening solar balances. Remaining release cases are pending.
+- All six IRD worked-example computations match their published balances exactly. Fixture notes record aggregation, eligibility assumptions, source-table ambiguities and inferred opening solar balances. Other release cases and practitioner sign-off remain pending.
+- Confirmed qualifying foreign salary and net foreign services in manually converted LKR, with an eligible single-source, single-source, single-country foreign income tax credit capped at tax attributable to that income.
 
-Foreign income/credits, other dividends, rent expense deductions, loan-funded solar claims, film/cinema deductions, legacy qualifying-payment balances, filing-obligation triage, instalment planning, ingestion, persistence and filing outputs are **not implemented**. Mark `income.other_income_or_claims` true if any unsupported income or claim exists; computation will refuse. Do not enter such income under a local category.
+Non-qualifying foreign income, multi-country foreign credits, other dividends, rent expense deductions, loan-funded solar claims, film/cinema deductions, legacy qualifying-payment balances, filing-obligation triage, instalment planning, ingestion, persistence and filing outputs are **not implemented**. Mark `income.other_income_or_claims` true if any unsupported income or claim exists; computation will refuse. Do not enter such income under a local category.
 
 ## Run locally
 
@@ -47,9 +48,9 @@ The server uses stdio only. Host compatibility beyond automated protocol tests m
 
 1. `lk_session` with `action: "start"` and `ya: "2025/26"`.
 2. Show `lk_get_disclaimer` verbatim, ask the user to agree, then call `lk_accept_disclaimer` with its version and `user_confirmed: true`.
-3. Use `lk_next_questions` and `lk_set_facts` to collect only missing facts. Every scope flag needs an explicit answer. Amounts are nonnegative LKR decimal strings, never JSON numbers. Ask the user to confirm zeros.
+3. Use `lk_next_questions` and `lk_set_facts` to collect only missing scope, income, foreign and deduction facts. Every scope flag needs an explicit answer. Amounts are nonnegative LKR decimal strings, never JSON numbers. Ask the user to confirm zeros.
 4. Call `lk_check_scope`. Stop for out-of-scope cases. Partial status does not guarantee implementation support.
-5. Confirm each `deductions` fact, including zeros, then call `lk_compute_return` for the supported local-income slice. Display `display_summary` verbatim; never redo arithmetic in the model. Use `lk_explain` for a returned line.
+5. Confirm each `deductions` fact, including zeros, then call `lk_compute_return` for the supported local and qualifying foreign-income preview. Display `display_summary` verbatim; never redo arithmetic in the model. Use `lk_explain` for a returned line.
 6. `lk_session` with `action: "wipe"` clears all facts and consent. Starting again also clears the prior session.
 
 No names, NIC, TIN, employer names, account numbers, documents or credentials are accepted. There are no arbitrary-text fact fields. Tool amounts and user messages still reach the host and possibly its AI provider. Data lives only in this server process; restarting loses it. Other host tools can access the same conversation. See [SECURITY.md](SECURITY.md).
@@ -68,6 +69,20 @@ All deduction amounts must be eligible and confirmed by the user. The tool does 
 Rent is gross local investment rent without an expense deduction claim. Enter the gross and actual deducted final WHT for supported resident-company dividends, and keep that WHT out of advance credits. A mismatch stops computation for review. The tool cannot detect a dividend amount incorrectly included in an aggregate credit, so those totals must be reconciled externally.
 
 Schema expansion is intentional: earlier sessions now need explicit rent/dividend and deduction facts; missing fields never default to zero. The disclaimer version is updated to reflect the expanded scope.
+
+## Qualifying foreign income and credits
+
+Enter foreign amounts in `foreign`, never again in local `income` totals. Every field is explicit, including zeros and false answers when there is no foreign income:
+
+- `employment_lkr` and `service_net_lkr`: annual qualifying foreign salary and user-computed net service profit already converted to LKR. FX lookup and per-receipt capture are not implemented.
+- Confirm receipt in foreign currency, remittance through a licensed bank, and LKR conversion. Foreign salary additionally needs confirmation of the foreign employer; service income needs confirmation of use outside Sri Lanka. Unconfirmed eligibility refuses calculation instead of assuming a concession or omitting the income.
+- `foreign_tax_paid` is eligible foreign **income tax actually paid on the same qualifying income from one confirmed source in one country**. Confirm eligibility, statutory payment timing and single-source status separately. Credit claims pooling salary and service sources are refused. Do not include foreign VAT or Sri Lankan APIT here. Keep foreign tax out of Sri Lankan advance-credit fields.
+
+Foreign credit cannot exceed either the calculated Sri Lankan tax on that foreign bucket or the statutory average-rate ceiling (pre-credit tax divided by taxable income, applied to assessable foreign income). The latter is floored to cents to avoid exceeding the exact limit. Uncredited foreign tax is reported without claiming a refund or carry-forward. Multi-country credit allocation and non-qualifying foreign income remain unsupported.
+
+The preview applies rent relief to local rent, then other deductions to local income first. It fills progressive bands with local taxable income and caps each foreign slice. This allocation and shared-band interpretation remain labelled assumptions, not a tax-minimisation guarantee. A low-local-income result shows `INTERP_15PCT`, derived SC-08 and a flat-cap comparison with independently recalculated foreign credits, balances and potential overpayment. The flat comparison is not presented as equally supported by Annexure 7's explicit standalone foreign bands. Mixed low-income allocations also carry `ALLOCATION_REVIEW`.
+
+`lk_check_scope` uses triage answers. Computation derives final foreign-credit and interpretation flags from actual amounts, so manually supplied false scope hints cannot suppress them. The summary includes the assumptions and comparison figures for verbatim display. All results remain unreviewed, `estimate: true` and `filing_ready: false`.
 
 ## Contributing
 

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { foreignSchema, validateForeign, cappedForeignTax } from './foreign.ts';
 import { amountSchema, selectRules } from './rules.ts';
 import { cents, money, min, nonnegative } from './money.ts';
 import { checkScope, scopeSchema } from './scope.ts';
@@ -7,7 +8,7 @@ export const incomeSchema = z.strictObject({
   rent: amountSchema.describe('Gross local investment rent, with no repair or other expense deduction claimed.'),
   final_wht_dividends_gross: amountSchema.describe('Resident-company dividends with final withholding already deducted; otherwise mark other_income_or_claims true.'),
   final_wht_dividends_deducted: amountSchema.describe('Actual final WHT deducted on these dividends. Informational only, never an advance tax credit.'),
-  apit_credit: amountSchema, ait_wht_credit: amountSchema, instalments_paid: amountSchema,
+  apit_credit: amountSchema.describe('Sri Lankan APIT actually paid, including Table 08; exclude foreign income tax.'), ait_wht_credit: amountSchema.describe('Sri Lankan non-final advance credits only; exclude foreign income tax and final dividend WHT.'), instalments_paid: amountSchema,
   other_income_or_claims: z.boolean(),
 });
 export const deductionsSchema = z.strictObject({
@@ -19,8 +20,10 @@ export const deductionsSchema = z.strictObject({
 });
 export type IncomeFacts = z.infer<typeof incomeSchema>;
 export type DeductionFacts = z.infer<typeof deductionsSchema>;
-export const returnSchema = z.strictObject({ ya: z.string(), scope: scopeSchema, income: incomeSchema, deductions: deductionsSchema });
+export const returnSchema = z.strictObject({ ya: z.string(), scope: scopeSchema, income: incomeSchema, deductions: deductionsSchema, foreign: foreignSchema });
 export const figureNames = [
+  'local_assessable_income', 'foreign_assessable_income', 'local_taxable_income', 'foreign_taxable_income', 'foreign_deductions',
+  'tax_progressive', 'tax_foreign', 'foreign_credit_average_limit', 'foreign_tax_credit', 'foreign_tax_uncredited',
   'assessable_income', 'rent_relief', 'personal_relief', 'solar_relief', 'solar_unused_balance',
   'government_donation_deduction', 'government_donations_carry_forward',
   'samurdhi_deduction', 'samurdhi_unclaimed', 'charity_deduction', 'charity_unclaimed',
@@ -43,17 +46,19 @@ export function progressiveTax(taxable: bigint, ya: string) {
   return roundRatio(numerator, 10000n);
 }
 export function computeReturn(input: z.infer<typeof returnSchema>) {
-  const { ya, scope, income, deductions: d } = returnSchema.parse(input);
+  const { ya, scope, income, deductions: d, foreign } = returnSchema.parse(input);
   const r = selectRules(ya);
-  const checked = checkScope(scope);
+  let checked = checkScope(scope);
   if (checked.status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
-  if (scope.qualifying_foreign_income || scope.multiple_foreign_tax_countries || scope.foreign_credit_exceeds_cap || scope.preparing_for_clients || income.other_income_or_claims)
+  if (scope.multiple_foreign_tax_countries || scope.preparing_for_clients || income.other_income_or_claims)
     throw new Error('FEATURE_NOT_IMPLEMENTED');
   const dividendGross = cents(income.final_wht_dividends_gross);
   const dividendWht = cents(income.final_wht_dividends_deducted);
   if (dividendWht !== roundRatio(dividendGross * BigInt(r.dividends.rate_bps), 10000n))
     throw new Error('DIVIDEND_WHT_REVIEW');
-  const assessable = cents(income.employment) + cents(income.business_net) + cents(income.interest) + cents(income.rent);
+  const foreignAmounts = validateForeign(foreign);
+  const localAssessable = cents(income.employment) + cents(income.business_net) + cents(income.interest) + cents(income.rent);
+  const assessable = localAssessable + foreignAmounts.total;
   const rentRelief = min(assessable, roundRatio(cents(income.rent) * BigInt(r.rent_relief.rate_bps), 10000n));
   const personalRelief = min(assessable - rentRelief, cents(r.personal_relief.amount));
   const solar = min(min(cents(d.solar_available), cents(r.solar_relief.annual_limit)), assessable - rentRelief - personalRelief);
@@ -73,9 +78,33 @@ export function computeReturn(input: z.infer<typeof returnSchema>) {
   const charity = taxableCap;
   const qualifyingPayments = government + samurdhi + charity;
   const taxable = remaining - charity;
-  const tax = progressiveTax(taxable, ya);
-  const credits = cents(income.apit_credit) + cents(income.ait_wht_credit) + cents(income.instalments_paid);
+  // Rent relief belongs to local rent. Other deductions use the preview's local-first policy.
+  const localTaxable = nonnegative(localAssessable - rentRelief - (totalReliefs - rentRelief + qualifyingPayments));
+  const foreignTaxable = taxable - localTaxable;
+  const progressive = progressiveTax(localTaxable, ya);
+  const foreignTax = cappedForeignTax(foreignTaxable, localTaxable, ya);
+  const tax = progressive + foreignTax;
+  // Section 81 average-rate ceiling, floored to cents so the exact ceiling is never exceeded.
+  const averageCreditLimit = taxable === 0n ? 0n : tax * foreignAmounts.total / taxable;
+  const foreignCredit = min(foreignAmounts.paid, min(foreignTax, averageCreditLimit));
+  const domesticCredits = cents(income.apit_credit) + cents(income.ait_wht_credit) + cents(income.instalments_paid);
+  const credits = domesticCredits + foreignCredit;
+  const firstBand = cents(r.progressive_bands.bands[0].width!);
+  const interpretationReview = foreignTaxable > 0n && localTaxable < firstBand;
+  checked = checkScope({ ...scope, qualifying_foreign_income: foreignAmounts.total > 0n,
+    local_taxable_below_first_band: localTaxable < firstBand, foreign_credit_exceeds_cap: foreignAmounts.paid > foreignCredit });
+  const flags = [
+    ...(interpretationReview ? ['INTERP_15PCT'] : []),
+    ...(foreignAmounts.paid > foreignCredit ? ['FOREIGN_CREDIT_CAPPED'] : []),
+    ...(foreignAmounts.total > 0n ? ['ASSUMED_FOREIGN_ALLOCATION'] : []),
+    ...(interpretationReview && localAssessable > 0n && totalReliefs + qualifyingPayments > rentRelief ? ['ALLOCATION_REVIEW'] : []),
+  ];
   const figures = {
+    local_assessable_income: money(localAssessable), foreign_assessable_income: money(foreignAmounts.total),
+    local_taxable_income: money(localTaxable), foreign_taxable_income: money(foreignTaxable),
+    foreign_deductions: money(foreignAmounts.total - foreignTaxable),
+    tax_progressive: money(progressive), tax_foreign: money(foreignTax), foreign_credit_average_limit: money(averageCreditLimit), foreign_tax_credit: money(foreignCredit),
+    foreign_tax_uncredited: money(foreignAmounts.paid - foreignCredit),
     assessable_income: money(assessable), rent_relief: money(rentRelief), personal_relief: money(personalRelief),
     solar_relief: money(solar), solar_unused_balance: money(cents(d.solar_available) - solar),
     government_donation_deduction: money(government), government_donations_carry_forward: money(governmentAvailable - government),
@@ -90,7 +119,7 @@ export function computeReturn(input: z.infer<typeof returnSchema>) {
   function explain(line: typeof figureNames[number], rule: typeof r.credits, formula: string, inputs: Record<string, string>, children: string[] = []) {
     trace.push({ line, rule_id: rule.id, formula, inputs, value: figures[line], sources: rule.sources, version: r.version, children });
   }
-  explain('assessable_income', r.income, 'employment + business_net + interest + rent; exclude final-WHT dividends', { employment: income.employment, business_net: income.business_net, interest: income.interest, rent: income.rent });
+  explain('assessable_income', r.income, 'local_assessable_income + foreign_assessable_income; exclude final-WHT dividends', { local_assessable_income: figures.local_assessable_income, foreign_assessable_income: figures.foreign_assessable_income }, ['local_assessable_income', 'foreign_assessable_income']);
   explain('rent_relief', r.rent_relief, 'gross local investment rent * rate_bps / 10000; preview rounding to cents', { rent: income.rent, rate_bps: r.rent_relief.rate_bps });
   explain('personal_relief', r.personal_relief, 'min(assessable_income - rent_relief, personal_relief_limit)', { assessable_income: figures.assessable_income, rent_relief: figures.rent_relief, personal_relief_limit: r.personal_relief.amount }, ['assessable_income', 'rent_relief']);
   explain('solar_relief', r.solar_relief, 'min(eligible unused expenditure, annual_limit, income remaining after rent and personal relief)', { solar_available: d.solar_available, annual_limit: r.solar_relief.annual_limit }, ['assessable_income', 'rent_relief', 'personal_relief']);
@@ -104,15 +133,44 @@ export function computeReturn(input: z.infer<typeof returnSchema>) {
   explain('charity_unclaimed', r.charity, 'cash donation - charity_deduction; no carry-forward asserted', { cash_donation: d.approved_charity_cash, used: figures.charity_deduction }, ['charity_deduction']);
   explain('qualifying_payments', r.government_donations, 'government_donation_deduction + samurdhi_deduction + charity_deduction', { government: figures.government_donation_deduction, samurdhi: figures.samurdhi_deduction, charity: figures.charity_deduction }, ['government_donation_deduction', 'samurdhi_deduction', 'charity_deduction']);
   explain('taxable_income', r.income, 'assessable_income - total_reliefs - qualifying_payments', { assessable_income: figures.assessable_income, total_reliefs: figures.total_reliefs, qualifying_payments: figures.qualifying_payments }, ['assessable_income', 'total_reliefs', 'qualifying_payments']);
-  explain('tax', r.progressive_bands, 'sum(band_slice * rate_bps / 10000); round once to cents half up', { taxable_income: figures.taxable_income }, ['taxable_income']);
-  explain('credits', r.credits, 'apit_credit + ait_wht_credit + instalments_paid; exclude final dividend WHT', { apit_credit: income.apit_credit, ait_wht_credit: income.ait_wht_credit, instalments_paid: income.instalments_paid });
+  explain('local_assessable_income', r.income, 'employment + business_net + interest + rent', { employment: income.employment, business_net: income.business_net, interest: income.interest, rent: income.rent });
+  explain('foreign_assessable_income', r.foreign_income, 'confirmed qualifying foreign employment_lkr + service_net_lkr; manually converted to LKR', { employment_lkr: foreign.employment_lkr, service_net_lkr: foreign.service_net_lkr });
+  explain('local_taxable_income', r.foreign_allocation, 'max(0, local_assessable_income - rent_relief - other_reliefs - qualifying_payments); local-first preview assumption', { local_assessable_income: figures.local_assessable_income, total_reliefs: figures.total_reliefs, qualifying_payments: figures.qualifying_payments }, ['local_assessable_income', 'total_reliefs', 'qualifying_payments']);
+  explain('foreign_taxable_income', r.foreign_allocation, 'taxable_income - local_taxable_income', { taxable_income: figures.taxable_income, local_taxable_income: figures.local_taxable_income }, ['taxable_income', 'local_taxable_income']);
+  explain('foreign_deductions', r.foreign_allocation, 'foreign_assessable_income - foreign_taxable_income', { foreign_assessable_income: figures.foreign_assessable_income, foreign_taxable_income: figures.foreign_taxable_income }, ['foreign_assessable_income', 'foreign_taxable_income']);
+  explain('tax_progressive', r.progressive_bands, 'sum(local band slices * band rates); round to cents half up', { local_taxable_income: figures.local_taxable_income }, ['local_taxable_income']);
+  explain('tax_foreign', r.foreign_stacking, 'local income occupies progressive bands first; foreign slices use min(band rate, foreign cap); round to cents half up', { foreign_taxable_income: figures.foreign_taxable_income, local_taxable_income: figures.local_taxable_income, cap_bps: r.foreign_income.cap_bps }, ['local_taxable_income', 'foreign_taxable_income']);
+  explain('foreign_credit_average_limit', r.foreign_credit, 'floor_to_cents(tax_before_foreign_credit * assessable_foreign_income / taxable_income); zero when taxable income is zero', { tax_before_foreign_credit: figures.tax, assessable_foreign_income: figures.foreign_assessable_income, taxable_income: figures.taxable_income }, ['tax', 'foreign_assessable_income', 'taxable_income']);
+  explain('foreign_tax_credit', r.foreign_credit, 'min(eligible foreign income tax actually paid for one source in one country, tax_foreign, foreign_credit_average_limit); non-refundable', { eligible_foreign_tax_paid: foreign.foreign_tax_paid, tax_foreign: figures.tax_foreign, average_limit: figures.foreign_credit_average_limit }, ['tax_foreign', 'foreign_credit_average_limit']);
+  explain('foreign_tax_uncredited', r.foreign_credit, 'eligible foreign tax paid - foreign_tax_credit; no refund or carry-forward claimed', { eligible_foreign_tax_paid: foreign.foreign_tax_paid, foreign_tax_credit: figures.foreign_tax_credit }, ['foreign_tax_credit']);
+  explain('tax', r.foreign_income, 'tax_progressive + tax_foreign; each bucket rounded to cents', { tax_progressive: figures.tax_progressive, tax_foreign: figures.tax_foreign }, ['tax_progressive', 'tax_foreign']);
+  explain('credits', r.credits, 'apit_credit + ait_wht_credit + instalments_paid + foreign_tax_credit; exclude final dividend WHT', { apit_credit: income.apit_credit, ait_wht_credit: income.ait_wht_credit, instalments_paid: income.instalments_paid, foreign_tax_credit: figures.foreign_tax_credit }, ['foreign_tax_credit']);
   explain('balance_payable', r.credits, 'max(0, tax - credits)', { tax: figures.tax, credits: figures.credits }, ['tax', 'credits']);
   explain('potential_overpayment', r.credits, 'max(0, credits - tax); not a validated refund claim', { tax: figures.tax, credits: figures.credits }, ['tax', 'credits']);
   explain('final_wht_dividends_gross', r.dividends, 'confirmed gross resident-company dividends; informational, excluded from assessable income', { gross: income.final_wht_dividends_gross });
   explain('final_wht_dividends_deducted', r.dividends, 'actual deducted final WHT must match gross * rate_bps / 10000; informational, never a credit', { gross: income.final_wht_dividends_gross, actual_deducted: income.final_wht_dividends_deducted, rate_bps: r.dividends.rate_bps }, ['final_wht_dividends_gross']);
+  const flatForeignTax = roundRatio(foreignTaxable * BigInt(r.foreign_income.cap_bps), 10000n);
+  const flatTotal = progressive + flatForeignTax;
+  const flatAverageLimit = taxable === 0n ? 0n : flatTotal * foreignAmounts.total / taxable;
+  const flatCredit = min(foreignAmounts.paid, min(flatForeignTax, flatAverageLimit));
+  const flatCredits = domesticCredits + flatCredit;
+  const alternatives = interpretationReview ? [{
+    interpretation: 'flat_foreign_cap', rule_id: r.foreign_stacking.id, version: r.version,
+    sources: r.foreign_stacking.sources,
+    formula: 'Same local-first income allocation; foreign taxable income * cap rate; recompute capped credit and balance. Comparative interpretation, not a confirmed rule.',
+    figures: { tax_progressive: money(progressive), tax_foreign: money(flatForeignTax), tax: money(flatTotal),
+      foreign_credit_average_limit: money(flatAverageLimit), foreign_tax_credit: money(flatCredit), foreign_tax_uncredited: money(foreignAmounts.paid - flatCredit),
+      credits: money(flatCredits), balance_payable: money(nonnegative(flatTotal - flatCredits)),
+      potential_overpayment: money(nonnegative(flatCredits - flatTotal)) },
+  }] : [];
+  const foreignSummary = foreignAmounts.total > 0n ? ' Qualifying foreign income uses capped progressive preview tax and assumed local-first deductions; the allocation is not practitioner-reviewed.' : '';
+  const alternativeSummary = interpretationReview
+    ? ` Interpretation review required. Flat-cap comparison: tax LKR ${money(flatTotal)}, foreign credit LKR ${money(flatCredit)}, balance payable LKR ${money(nonnegative(flatTotal - flatCredits))}, potential overpayment LKR ${money(nonnegative(flatCredits - flatTotal))}. Both use the assumed local-first deduction allocation; it is not an optimal-allocation guarantee.` : '';
   return {
     status: 'complete' as const, estimate: true, filing_ready: false,
-    needs_professional_review: true, scope: checked, figures, trace,
-    display_summary: `Preview estimate for YA ${ya}. Tax: LKR ${figures.tax}. Credits: LKR ${figures.credits}. Balance payable: LKR ${figures.balance_payable}. Potential overpayment: LKR ${figures.potential_overpayment}. Verify before filing. Not IRD-approved; not tax advice.`,
+    needs_professional_review: true, scope: checked, figures, trace, flags, alternatives,
+    allocation_policy: { policy: r.foreign_allocation.policy, status: r.foreign_allocation.status, rule_id: r.foreign_allocation.id, sources: r.foreign_allocation.sources },
+    foreign_eligibility: { received_in_foreign_currency: foreign.received_in_foreign_currency, remitted_via_licensed_bank: foreign.remitted_via_licensed_bank, foreign_employer_confirmed: foreign.foreign_employer_confirmed, services_used_outside_lk: foreign.services_used_outside_lk, fx_conversion_confirmed: foreign.fx_conversion_confirmed, credit_eligibility_confirmed: foreign.credit_eligibility_confirmed, single_source_confirmed: foreign.single_source_confirmed },
+    display_summary: `Preview estimate for YA ${ya}. Tax: LKR ${figures.tax}. Credits: LKR ${figures.credits}. Balance payable: LKR ${figures.balance_payable}. Potential overpayment: LKR ${figures.potential_overpayment}. Verify before filing. Not IRD-approved; not tax advice.${foreignSummary}${alternativeSummary}`,
   };
 }

@@ -8,6 +8,6 @@ The user's host receives inputs and outputs, including amounts. A cloud host may
 
 All facts and consent live in memory. Restarting, starting a new session or wiping discards them. Wipe removes application references, not guaranteed physical memory erasure. There is no save/export/import path in this slice, so nothing is written as a tax-data file.
 
-Every calculation revalidates current scope; missing exclusion answers cannot default to false. Unsupported scenarios refuse rather than silently omit income. Estimates are unreviewed and must not be used as filing outputs. Eligibility of donations, rent, solar claims and dividend finality is user-confirmed and is not independently verified; conflicting charity-cap results and dividend withholding mismatches stop calculation.
+Every calculation revalidates current scope; missing exclusion answers cannot default to false. Unsupported scenarios refuse rather than silently omit income. Estimates are unreviewed and must not be used as filing outputs. Eligibility of foreign income and credit claims, manual FX conversion, donations, rent, solar claims and dividend finality is user-confirmed and is not independently verified; conflicting charity-cap results and dividend withholding mismatches stop calculation.
 
 Report suspected vulnerabilities privately through GitHub's private vulnerability reporting if enabled, or contact the repository owner privately. Do not publish personal data, real certificates or credentials in issues.

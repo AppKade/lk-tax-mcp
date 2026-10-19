@@ -12,3 +12,5 @@ export const income = {
   employment: '2880000', business_net: '0', interest: '140000', apit_credit: '74400',
   ait_wht_credit: '14000', instalments_paid: '0', other_income_or_claims: false,
 };
+
+export const noForeign = { employment_lkr: '0', service_net_lkr: '0', foreign_tax_paid: '0', received_in_foreign_currency: false, remitted_via_licensed_bank: false, foreign_employer_confirmed: false, services_used_outside_lk: false, fx_conversion_confirmed: false, credit_eligibility_confirmed: false, single_source_confirmed: false };

@@ -8,7 +8,7 @@ import { rules } from './rules.ts';
 
 export function createServer() {
   const session = new TaxSession();
-  const server = new McpServer({ name: 'lk-tax-mcp', version: '2026.25.0-preview.2' });
+  const server = new McpServer({ name: 'lk-tax-mcp', version: '2026.25.0-preview.3' });
   const outputSchema = z.object({
     ya: z.literal('2025/26'), ruleset_version: z.string(), verified_on: z.string(),
     review_status: z.string(), caution: z.string(), sources: z.array(z.string()),
@@ -38,19 +38,19 @@ export function createServer() {
     inputSchema: privateSchema(z.strictObject({ version: z.string().max(30), user_confirmed: z.boolean() })), outputSchema, annotations: localMutation,
   }, ({ version, user_confirmed }) => result(() => session.accept(version, user_confirmed)));
   server.registerTool('lk_set_facts', {
-    description: 'Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. Collect deductions separately. Every amount must be user-confirmed and eligible. Do not enter final dividend WHT as ait_wht_credit. other_income_or_claims is true for foreign income, unsupported dividends, loan-funded solar claims, rent expense deductions or any other unsupported income or claim. Scope answers are mandatory, including explicit false answers.',
+    description: 'Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. Collect deductions separately. Every amount must be user-confirmed and eligible. Do not enter final dividend WHT as ait_wht_credit. Collect foreign aggregates and eligibility in the foreign object, never in local income. Foreign amounts must already be converted to LKR. Foreign tax paid must be eligible income tax on that same income from one confirmed source in one country; do not include Sri Lankan APIT or pool sources. other_income_or_claims is true for non-qualifying or otherwise unsupported foreign income, unsupported dividends, loan-funded solar claims, rent expense deductions or any other unsupported income or claim. Scope answers are mandatory, including explicit false answers. Scope foreign hints cannot override flags derived from computation amounts.',
     inputSchema: privateSchema(partialFactsSchema), outputSchema, annotations: localMutation,
   }, facts => result(() => session.setFacts(facts)));
   server.registerTool('lk_next_questions', {
-    description: 'Get missing scope facts first, then missing income facts. Ask only for listed facts. Never ask for names, TIN, NIC or credentials.',
+    description: 'Get missing scope, income, foreign and deduction facts in order. Ask only for listed facts. Never ask for names, TIN, NIC or credentials.',
     inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.nextQuestions()));
   server.registerTool('lk_check_scope', {
-    description: 'Evaluate all confirmed scope facts deterministically. Out-of-scope cases must stop. Partial status is not a promise that computation is implemented.',
+    description: 'Evaluate confirmed triage scope answers deterministically. Final foreign-credit and interpretation flags are derived from actual amounts by computation. Out-of-scope cases must stop. Partial status is not a promise that computation is implemented.',
     inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.checkScope()));
   server.registerTool('lk_compute_return', {
-    description: 'Compute a development estimate for local employment, local business net profit, interest, investment rent and supported local reliefs/donations; final-WHT resident-company dividends are informational only. Rechecks consent, facts and scope every time. Not a full return. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.',
+    description: 'Compute a development estimate for local employment, local business net profit, interest, investment rent and supported local reliefs/donations; final-WHT resident-company dividends are informational only. Also supports confirmed qualifying foreign salary and net foreign services with single-source, single-country capped foreign credits. Uses an assumed local-first deduction allocation and capped progressive stacking. Show every interpretation warning and alternative summary; never select a preferred interpretation or claim the allocation is optimal. Rechecks consent, facts and scope every time. Not a full return. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.',
     inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.compute()));
   server.registerTool('lk_explain', {
@@ -59,7 +59,7 @@ export function createServer() {
     outputSchema, annotations: readOnly,
   }, ({ line }) => result(() => session.explain(line)));
   server.registerResource('rules', 'lktax://rules/2025-26', {
-    description: 'Cited, unreviewed YA 2025/26 rules for the implemented local-income slice.', mimeType: 'application/json',
+    description: 'Cited, unreviewed YA 2025/26 rules for the implemented local and qualifying foreign-income preview.', mimeType: 'application/json',
   }, () => ({ contents: [{ uri: 'lktax://rules/2025-26', mimeType: 'application/json', text: JSON.stringify(envelope({ rules })) }] }));
   server.registerResource('known-issues', 'lktax://known-issues', {
     description: 'Dated unresolved rules, unavailable features and release blockers.', mimeType: 'application/json',

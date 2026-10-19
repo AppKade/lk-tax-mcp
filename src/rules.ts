@@ -16,6 +16,10 @@ export const rulesSchema = z.strictObject({
     width: amountSchema.nullable(), rate_bps: z.string().regex(/^\d{1,4}$/),
   })).min(1) }),
   credits: z.strictObject(evidence),
+  foreign_income: z.strictObject({ ...evidence, cap_bps: z.string().regex(/^\d{1,4}$/) }),
+  foreign_allocation: z.strictObject({ ...evidence, policy: z.literal('local_first') }),
+  foreign_stacking: z.strictObject({ ...evidence, policy: z.literal('local_fills_bands_first') }),
+  foreign_credit: z.strictObject(evidence),
   income: z.strictObject(evidence),
   rent_relief: z.strictObject({ ...evidence, rate_bps: z.literal('2500') }),
   solar_relief: z.strictObject({ ...evidence, annual_limit: amountSchema }),
@@ -38,5 +42,5 @@ export function selectRules(ya: string) {
   if (ya !== rules.ya) throw new Error('NOT_COVERED');
   return rules;
 }
-export const sources = [...new Set([rules.personal_relief, rules.progressive_bands, rules.credits, rules.income, rules.rent_relief, rules.solar_relief, rules.charity, rules.government_donations, rules.samurdhi, rules.dividends]
+export const sources = [...new Set([rules.personal_relief, rules.progressive_bands, rules.credits, rules.income, rules.rent_relief, rules.solar_relief, rules.charity, rules.government_donations, rules.samurdhi, rules.dividends, rules.foreign_income, rules.foreign_allocation, rules.foreign_stacking, rules.foreign_credit]
   .flatMap(r => r.sources.map(s => s.url)))];
