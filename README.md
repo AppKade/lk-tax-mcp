@@ -64,6 +64,10 @@ No names, NIC, TIN, employer names, account numbers, documents or credentials ar
 
 Rule evidence is available at `lktax://rules/2025-26`; exclusions and unresolved issues are at `lktax://supported-scenarios` and `lktax://known-issues`. A `confirmed` source status means the value was checked against a primary source; it does not mean practitioner approval. All rules remain `unreviewed` and all computations are estimates with `filing_ready: false`.
 
+## Agent Skill
+
+`skills/lk-tax/SKILL.md` is an Agent Skill for hosts that load skills. It mirrors the server's consent, interview, compute, review and worksheet workflow and carries no tax rates or amounts. A test checks that it names only published tools and resources, mentions every tool, stays under 500 lines and contains no rates. Installing it as a bundled plugin or extension is not done yet; copy the folder into a host's skills directory to try it. The server remains fully usable without it.
+
 ## Guided host workflows
 
 Hosts with MCP prompt support can select `file_my_return`, `do_i_need_to_file`, `plan_my_instalments` or `explain_my_tax`. Prompts share consent, privacy and scope instructions and accept no taxpayer arguments. The filing prompt prepares only a supported development estimate. Filing-obligation decisions remain unavailable, including automatic exemptions for zero payable.
