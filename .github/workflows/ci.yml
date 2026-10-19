@@ -20,6 +20,12 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run check
       - run: npm test
+      - run: npm run rules:check
+      - name: Preserve published rule history
+        if: github.event_name == 'pull_request'
+        env:
+          RULE_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: npm run rules:check -- "$RULE_BASE_SHA"
       - run: npm run contract:check
       - name: Enforce contract version bump
         if: github.event_name == 'pull_request'

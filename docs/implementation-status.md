@@ -4,7 +4,7 @@ Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and in
 
 | Backlog | Delivered in this slice | Remaining acceptance criteria |
 |---|---|---|
-| T1.1, T1.2 | Strict JSON rule validation, dated evidence, YA 2025/26 reliefs, donation parameters, dividend finality and progressive bands | TOML compatibility, full rule catalogue, reviewer sign-off and version-history lint |
+| T1.1, T1.2 | Strict JSON rule validation, dated evidence, YA 2025/26 reliefs, donation parameters, dividend finality and progressive bands | Full rule catalogue, TOML import compatibility and reviewer sign-off |
 | T1.3, T3.3 | Source-verified supported main/schedule cages, conserved totals and conservative return-format hints | Full disclosure/credit breakdowns, partial-figure cage coverage, portal confirmation, prior-YA comparison and practitioner sign-off |
 | T2.1 | Bigint cents and exact percentage accumulation; unsupported YA fails | Official filing rounding policy and upstream APIT fixtures |
 | T2.2 | Writable fact dictionary, dependency-aware intake readiness, conditional foreign questions, early blockers and edit re-evaluation | Partial financial-node evaluation and unsupported income categories |
@@ -117,3 +117,12 @@ Interview milestone verification covers 56 tests, including full legacy and mode
 - Cage-map version 2025.26.cages.1 and package preview.7. Annual/instalment tax rules and consent version are unchanged. This delivers partial T1.3/T3.3 coverage; it does not deliver T8.1 filing outputs or professional approval.
 
 Return-review validation covers 64 tests, including all prior computations, eight new review regressions, both MCP protocol journeys, the reviewed public contract snapshot and TypeScript checking on Node 22 and 24.
+
+
+## Rules governance milestone
+
+- Added CI citation lint and append-only version history for the annual rules, instalment parameters and cage map. Every active payload must match its latest validated archive and canonical SHA-256. Previously published entries and archived payloads are checked against the PR base; changing and rehashing an old value still fails.
+- Moved existing instalment parameters into strict JSON without changing any values, output metadata or calculations. Governance validates historical payloads with the same runtime schemas. Unregistered JSON files cannot silently bypass the catalogue.
+- Added failures for malformed/non-primary source URLs, empty locators, invalid dates, duplicate rule IDs, duplicate or descending revisions, changed values without a new version, missing archives and stale active versions. The public MCP contract content remains unchanged.
+- The three initial archive entries baseline the current preview versions only. Earlier history is not reconstructed or presented as practitioner-reviewed. Full TOML compatibility, a portable JSON Schema, prior-YA golden-suite freezing, CODEOWNERS approval enforcement and professional sign-off remain pending. This delivers part of T1.1/T12.2, not their full acceptance criteria.
+- Package preview.8; annual rules 2025.26.3, instalment rules 2026.27.1, cage map 2025.26.cages.1 and consent version are unchanged.

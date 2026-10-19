@@ -1,16 +1,17 @@
+import instalmentData from '../rules/instalments-2026-27.json' with { type: 'json' };
 import { z } from 'zod';
 import { cents, money, MONEY_PATTERN, nonnegative } from './money.ts';
 import { scopeSchema, checkScope } from './scope.ts';
 
-export const instalmentRules = {
-  ya: '2026/27', version: '2026.27.1', verified_on: '2026-10-19', review_status: 'unreviewed',
-  source: 'https://www.ird.gov.lk/en/publications/Circulars_Circulars/SEC_2026_E_06_ReRiv_E.pdf',
-  source_date: '2026-08-12', source_sha256: '4889d4b3647ef0d0d397e1669edd8db7c17611f27ea75087d7e73e2c5b98de23',
-  payment_dates: ['2026-08-15', '2026-11-15', '2027-02-15', '2027-05-15'],
-  credit_schedule_dates: ['2026-08-31', '2026-11-30', '2027-02-28', '2027-05-31'],
-  revision_notice_dates: [null, '2026-10-31', '2027-01-31', '2027-04-30'],
-  attachment_deadline: '2026-11-30',
-};
+export const instalmentRulesSchema = z.strictObject({
+  ya: z.literal('2026/27'), version: z.string().regex(/^2026\.27\.[1-9]\d*$/),
+  verified_on: z.iso.date(), review_status: z.literal('unreviewed'),
+  source: z.url(), source_date: z.iso.date(), source_sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  payment_dates: z.array(z.iso.date()).length(4), credit_schedule_dates: z.array(z.iso.date()).length(4),
+  revision_notice_dates: z.tuple([z.null(), z.iso.date(), z.iso.date(), z.iso.date()]),
+  attachment_deadline: z.iso.date(),
+});
+export const instalmentRules = instalmentRulesSchema.parse(instalmentData);
 const amount = z.string().regex(MONEY_PATTERN);
 const adjustedBasis = {
   calculation_basis: z.enum(['previous_return', 'previous_final_set']),

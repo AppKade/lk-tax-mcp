@@ -1,0 +1,26 @@
+{
+  "format_version": 1,
+  "entries": [
+    {
+      "family": "annual",
+      "version": "2025.26.3",
+      "sha256": "3c3239e179a6eab07d30a47bb53780c2d4a0442b6d5365bd2fb80fb7077b5cef",
+      "archive": "rules/history/annual/2025.26.3.json",
+      "reason": "Governance baseline of the existing unreviewed preview; no earlier release history reconstructed."
+    },
+    {
+      "family": "instalments",
+      "version": "2026.27.1",
+      "sha256": "ecc5435cb3ddbddbaa7e48e143a701759ea8be4a4b1e831ee37694efae4415bc",
+      "archive": "rules/history/instalments/2026.27.1.json",
+      "reason": "Governance baseline of the existing unreviewed preview; no earlier release history reconstructed."
+    },
+    {
+      "family": "cages",
+      "version": "2025.26.cages.1",
+      "sha256": "c33f8c136f247b01629bb3cfa7ea2195638f3f8983b01dbbedccf48b21b53114",
+      "archive": "rules/history/cages/2025.26.cages.1.json",
+      "reason": "Governance baseline of the existing unreviewed preview; no earlier release history reconstructed."
+    }
+  ]
+}

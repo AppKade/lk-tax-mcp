@@ -1,0 +1,197 @@
+{
+  "ya": "2025/26",
+  "version": "2025.26.3",
+  "effective_from": "2025-04-01",
+  "effective_to": "2026-03-31",
+  "review_status": "unreviewed",
+  "personal_relief": {
+    "id": "PR-2025",
+    "amount": "1800000.00",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 1(a), printed page 29"
+      }
+    ]
+  },
+  "progressive_bands": {
+    "id": "BANDS-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 7, printed page 37; examples 1 and 4"
+      }
+    ],
+    "bands": [
+      {
+        "width": "1000000.00",
+        "rate_bps": "600"
+      },
+      {
+        "width": "500000.00",
+        "rate_bps": "1800"
+      },
+      {
+        "width": "500000.00",
+        "rate_bps": "2400"
+      },
+      {
+        "width": "500000.00",
+        "rate_bps": "3000"
+      },
+      {
+        "width": null,
+        "rate_bps": "3600"
+      }
+    ]
+  },
+  "credits": {
+    "id": "CREDITS-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Schedule 9, cages 903, 904, 908, 911; example 1, printed page 39"
+      }
+    ]
+  },
+  "income": {
+    "id": "INCOME-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Main return cages 10-50, printed pages 4 and 7; examples 4 and 5"
+      }
+    ]
+  },
+  "rent_relief": {
+    "id": "RENT-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 1(b), printed page 29"
+      }
+    ],
+    "rate_bps": "2500"
+  },
+  "solar_relief": {
+    "id": "SOLAR-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 1(c), printed page 29; examples 4 and 5"
+      }
+    ],
+    "annual_limit": "600000.00"
+  },
+  "charity": {
+    "id": "CHARITY-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 3(a), printed pages 33-34; example 5, printed page 46. The guide states both assessable-income and taxable-income limits; differing results require review."
+      }
+    ],
+    "annual_limit": "75000.00",
+    "assessable_divisor": "4",
+    "taxable_divisor": "3"
+  },
+  "government_donations": {
+    "id": "GOV-DONATIONS-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 3(b) and (f), printed page 34; examples 4 and 5"
+      }
+    ]
+  },
+  "samurdhi": {
+    "id": "SAMURDHI-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 3(d), printed page 34; example 4, printed page 44"
+      }
+    ]
+  },
+  "dividends": {
+    "id": "DIVIDENDS-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 4(i), printed page 35; example 5 remarks, printed page 47"
+      }
+    ],
+    "rate_bps": "1500"
+  },
+  "foreign_income": {
+    "id": "FOREIGN-CAP-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Schedule 8, cage 809B, printed page 23; Annexure 7, printed page 37; examples 2, 3 and 6"
+      }
+    ],
+    "cap_bps": "1500"
+  },
+  "foreign_allocation": {
+    "id": "FOREIGN-ALLOCATION-2025",
+    "status": "assumed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Examples 3 and 6 allow allocation to either bucket; local-first is the requirements preview policy, not a reviewed optimal allocation"
+      }
+    ],
+    "policy": "local_first"
+  },
+  "foreign_stacking": {
+    "id": "FOREIGN-STACKING-2025",
+    "status": "assumed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 7 gives a lower first foreign band; shared-band stacking in mixed-income cases is a preview interpretation"
+      }
+    ],
+    "policy": "local_fills_bands_first"
+  },
+  "foreign_credit": {
+    "id": "FTC-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Schedule 9, cage 901, printed page 24; Example 2 remarks, printed page 41; Example 6 remarks, printed page 49"
+      },
+      {
+        "url": "https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_Act_-_2025_Changes.pdf",
+        "locator": "Sections 80 and 81(1)(a)-(b), 81(2)-(4): separate source calculations, average-rate ceiling, timing and no refund/carry-forward"
+      }
+    ]
+  }
+}
