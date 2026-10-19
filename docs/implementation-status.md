@@ -13,6 +13,7 @@ Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and in
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
 | T6.1, T6.2 | Official SDK stdio server, thirteen tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
+| T7.1 | Agent Skill `skills/lk-tax/SKILL.md` (about 70 lines): consent, interview, verbatim `display_summary`, review/worksheet and escalation blocks; tool/resource parity and no-rates test | RAMIS walkthrough references, trigger-description evals, installable packaging |
 | T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Complete filing map, installed Skill parity and interactive host evaluations |
 | T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | G7 and independent source verification of remaining non-IRD cases; practitioner review |
 | T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and agent behaviour evaluation |
@@ -138,3 +139,9 @@ Governance validation: all 72 tests, including both SDK stdio journeys, pass in 
 - Public contract: thirteen tools; package preview.9. Annual/instalment rules, cage map and consent version are unchanged. The `file_my_return` prompt now describes the checklist and worksheet steps.
 
 Validation: TypeScript checking, 79 tests (new worksheet suite plus both stdio journeys), rules governance, the refreshed contract snapshot and the base-commit contract version gate pass locally on Node 22.
+
+## Agent Skill milestone
+
+- Added T7.1: `skills/lk-tax/SKILL.md`, a modular Agent Skill covering role and limits, consent and privacy, the dependency-aware interview, compute and explain, review and worksheet, instalment planning and escalation. It instructs verbatim use of `display_summary`, never confirming on the user's behalf, and referral for unsupported or unresolved cases.
+- `test/skill.test.ts` checks frontmatter, the 500-line budget, that every `lk_` tool and `lktax://` resource it names is published in the contract snapshot, that every published tool is mentioned, and that it contains no percentages, currency amounts or large numbers.
+- No server, schema or prompt change, so the public contract and package version are unchanged. Trigger-description evals, agent behaviour evals, the RAMIS walkthrough reference and packaging into a plugin or extension remain pending.

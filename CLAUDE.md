@@ -32,6 +32,7 @@ CI (`.github/workflows/ci.yml`) runs check, test, rules:check and contract:check
 - `src/engine.ts` is the annual computation. `src/foreign.ts`, `src/instalments.ts`, `src/return-review.ts`, `src/scope.ts` and `src/interview.ts` cover foreign income, YA 2026/27 instalments, cage review, scope checks and the dependency-aware interview.
 - `src/money.ts` is decimal-string and bigint-cents arithmetic. `src/rules.ts` loads rule JSON. `src/privacy.ts` and `src/schema.ts` guard output and validation errors. `src/support.ts` lists known issues and supported scenarios.
 - `rules/` holds versioned rule data (`2025-26.json`, `instalments-2026-27.json`, `cages-2025-26.json`), the `history/` archive and `history.json`.
+- `skills/lk-tax/SKILL.md` is the Agent Skill. Keep it in step with the tools, prompts and instructions; `test/skill.test.ts` checks it. It must never contain tax rates or amounts.
 - `test/` holds the suites and fixtures, including `test/fixtures/mcp-contract.json`. `scripts/` holds the rules and contract checks. `docs/` holds the policy documents.
 
 ## Rules that must not be broken
