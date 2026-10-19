@@ -11,9 +11,10 @@ Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and in
 | T2.8 | YA 2026/27 Methods 1 and 2(i)-(iv), externally supplied A, reconciled credits, dated schedule, SET and revision guards | Independent computation/validation of A, foreign credits, employment exception decisions and professional sign-off |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
-| T6.1, T6.2 | Official SDK stdio server, nine tools, output schema and error envelopes | Full core catalogue, current-protocol discovery conformance and host matrix |
+| T6.1, T6.2 | Official SDK stdio server, nine tools, shared instructions, four prompts, six resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
+| T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Verified cage-map resource, installed Skill parity and interactive host evaluations |
 | T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | G7 and independent source verification of remaining non-IRD cases; practitioner review |
-| T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and schema hash governance |
+| T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and agent behaviour evaluation |
 
 No full backlog task above is marked complete when its original acceptance criteria remain unmet.
 
@@ -62,7 +63,7 @@ Source: https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_A
 
 ## Next implementation work
 
-1. Independently validate instalment gross-tax bases and payment rounding, then expand protocol tests to current-protocol discovery and verify supported host behaviour.
+1. Independently validate instalment gross-tax bases and payment rounding, then validate installed hosts and Inspector CLI behaviour against the protocol regression suite.
 2. Add remaining primary-source golden fixtures; resolve the low-income charity-cap ambiguity before broadening donation support.
 3. Obtain professional review of foreign qualification, deduction allocation, stacking, FTC eligibility and low-local-income interpretations; extend per-country/per-source credit allocation only with appropriate evidence.
 4. Verify filing-obligation law from primary sources before exposing a no-return-required decision.
@@ -82,3 +83,12 @@ Practitioner review, unresolved allocation questions and verifier samples need h
 - Disclaimer version is 2026-10-19.4; instalment rule version is 2026.27.1.
 
 Validation: all 44 tests, including real SDK stdio interactions, and TypeScript checking pass in GitHub CI on Node 22 and 24. Corporate instalment fixtures establish arithmetic only, not corporate tax eligibility or rate correctness.
+
+## Host workflow and contract milestone
+
+- Added four static, argument-free MCP prompts and shared instructions. Retrieval never accepts consent or creates a session; prompts reuse guardrails and do not carry numeric tax rates. A filing-obligation request explicitly receives an unavailable-feature explanation, not a remembered tax threshold decision.
+- Added a manual evidence checklist and rule-specific source catalogue. No ingestion, identifier collection, filing output or cage mapping is introduced.
+- Expanded stdio coverage to current discovery with per-request metadata as well as legacy initialisation, including prompt validation, source access and consent-gated calculation journeys.
+- Added an SDK-generated public contract snapshot and SHA-256 check covering tools, schemas, annotations, resources, prompts and shared instructions. PR CI rejects a changed contract without a package version change. Updates remain explicit and reviewable.
+- SDK identity derives from the package version to avoid drift. Package preview version advances to 2026.25.0-preview.5; annual rules, instalment rules and consent version remain unchanged.
+- This delivers host guidance and contract regression coverage, not installed-host certification or practitioner review. Agent Skill packaging, Inspector CLI, agent behaviour evals and the verified cage-map resource remain pending.

@@ -8,7 +8,9 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 
 ## Available now
 
-- TypeScript stdio MCP server using the official SDK.
+- TypeScript stdio MCP server using the official SDK, with legacy handshake and modern discovery regression tests.
+- Four guided MCP prompts, shared host instructions, a manual document checklist and rule-specific source catalogue.
+- Versioned public interface snapshot and SHA-256 check for tool schemas, descriptions, annotations, prompts and resources.
 - Versioned consent, memory-only sessions, explicit fact entry and missing-fact questions.
 - Deterministic SC-01 through SC-09 scope checks; computation rechecks current scope every time.
 - YA 2025/26 local employment, user-supplied local business **net profit**, interest and gross investment rent estimates with personal, rent and solar relief, eligible donations, progressive bands and manually confirmed APIT/AIT/WHT/instalment credits. Final-WHT resident-company dividends are informational and excluded from both assessable income and advance credits.
@@ -57,6 +59,14 @@ The server uses stdio only. Host compatibility beyond automated protocol tests m
 No names, NIC, TIN, employer names, account numbers, documents or credentials are accepted. There are no arbitrary-text fact fields. Tool amounts and user messages still reach the host and possibly its AI provider. Data lives only in this server process; restarting loses it. Other host tools can access the same conversation. See [SECURITY.md](SECURITY.md).
 
 Rule evidence is available at `lktax://rules/2025-26`; exclusions and unresolved issues are at `lktax://supported-scenarios` and `lktax://known-issues`. A `confirmed` source status means the value was checked against a primary source; it does not mean practitioner approval. All rules remain `unreviewed` and all computations are estimates with `filing_ready: false`.
+
+## Guided host workflows
+
+Hosts with MCP prompt support can select `file_my_return`, `do_i_need_to_file`, `plan_my_instalments` or `explain_my_tax`. Prompts share consent, privacy and scope instructions and accept no taxpayer arguments. The filing prompt prepares only a supported development estimate. Filing-obligation decisions remain unavailable, including automatic exemptions for zero payable.
+
+Read `lktax://checklist/documents` for the manual evidence checklist and `lktax://sources/2025-26` for rule-specific source evidence. Keep evidence locally and enter only confirmed aggregate facts. Document uploads, filing exports and RAMIS submission remain unavailable.
+
+See [MCP contract verification](docs/mcp-contract.md) for the public interface hash, version-bump policy and protocol coverage. Interactive host testing, Inspector CLI and a separately installable Agent Skill remain pending.
 
 ## Local reliefs and donations
 

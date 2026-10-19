@@ -4,37 +4,14 @@ import { noForeign, income, zeroDeductions } from './fixtures.ts';
 import foreignCases from './fixtures/ird-foreign-2025-26.json' with { type: 'json' };
 import cases from './fixtures/ird-local-2025-26.json' with { type: 'json' };
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
-import { createInterface } from 'node:readline';
+import { stdioHost } from './stdio-host.ts';
+import { hostInstructions } from '../src/guidance.ts';
+import pkg from '../package.json' with { type: 'json' };
 
 test('real stdio host: initialize, schemas, consent, estimate, scope invalidation and wipe', { timeout: 20000 }, async t => {
-  const child = spawn(process.execPath, ['src/cli.ts'], { stdio: ['pipe', 'pipe', 'pipe'] });
-  t.after(() => { child.stdin.end(); child.kill(); });
-  let nextId = 0;
-  const pending = new Map<number, { resolve: (value: any) => void; reject: (error: Error) => void }>();
-  const lines = createInterface({ input: child.stdout });
-  let stdoutError: Error | undefined;
-  let stderr = '';
-  child.stderr.on('data', c => { stderr += c.toString(); });
-  lines.on('line', line => {
-    try {
-      const value = JSON.parse(line);
-      const waiter = pending.get(value.id);
-      if (waiter) { pending.delete(value.id); waiter.resolve(value); }
-    } catch { stdoutError = new Error('Non-JSON stdout'); }
-  });
-  child.on('exit', () => {
-    for (const p of pending.values()) p.reject(new Error(`Server exited: ${stderr}`));
-    pending.clear();
-  });
-  async function request(method: string, params: Record<string, unknown> = {}) {
-    const id = ++nextId;
-    return await new Promise<any>((resolve, reject) => {
-      const timer = setTimeout(() => { pending.delete(id); reject(new Error(`Timed out: ${method}`)); }, 5000);
-      pending.set(id, { resolve: v => { clearTimeout(timer); resolve(v); }, reject: e => { clearTimeout(timer); reject(e); } });
-      child.stdin.write(JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n');
-    });
-  }
+  const host = stdioHost();
+  t.after(() => host.close());
+  const { request } = host;
   async function call(name: string, args = {}) {
     const response = await request('tools/call', { name, arguments: args });
     assert.equal(response.error, undefined, JSON.stringify(response));
@@ -46,7 +23,11 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   }
   const hello = await request('initialize', { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'test-host', version: '1' } });
   assert.equal(hello.error, undefined);
-  child.stdin.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) + '\n');
+  assert.equal(hello.result.protocolVersion, '2025-11-25');
+  assert.equal(hello.result.serverInfo.version, pkg.version);
+  assert.equal(hello.result.instructions, hostInstructions);
+  assert.ok(hello.result.capabilities.prompts);
+  host.notify('notifications/initialized');
   const listed = await request('tools/list');
   assert.equal(listed.result.tools.length, 9);
   for (const tool of listed.result.tools) {
@@ -124,5 +105,5 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   await call('lk_session', { action: 'wipe' });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'SESSION_REQUIRED');
   assert.equal((await call('lk_plan_instalments', instalmentInput)).structuredContent.error.code, 'SESSION_REQUIRED');
-  assert.equal(stdoutError, undefined);
+  host.assertClean();
 });
