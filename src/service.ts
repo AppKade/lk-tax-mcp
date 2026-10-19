@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { evaluateInterview, resolveForeign } from './interview.ts';
+import { evaluateInterview, resolveForeign, foreignRequirements, interviewPolicy } from './interview.ts';
 import { planInstalments, instalmentRules } from './instalments.ts';
 import { foreignSchema, knownForeignBlock } from './foreign.ts';
 import { assertPrivateOutput } from './privacy.ts';
@@ -84,7 +84,11 @@ export class TaxSession {
     const deductions = deductionsSchema.safeParse(this.facts.deductions);
     if (!deductions.success) throw new Error('MISSING_DEDUCTION_FACTS');
     const foreign = resolveForeign(this.facts.foreign ?? {});
-    return computeReturn({ ya: rules.ya, scope: scope.data, income: income.data, deductions: deductions.data, foreign });
+    const result = computeReturn({ ya: rules.ya, scope: scope.data, income: income.data, deductions: deductions.data, foreign });
+    const notApplicable = foreignRequirements(this.facts.foreign ?? {}).not_applicable;
+    return { ...result, intake_context: { policy_version: interviewPolicy.version, foreign_not_applicable_facts: notApplicable,
+      foreign_neutral_default_facts: notApplicable.filter(path => this.facts.foreign?.[path.slice('foreign.'.length) as keyof typeof foreign] === undefined),
+      defaults_saved: false, note: 'Not-applicable foreign flags do not establish eligibility. Neutral false values for uncollected flags exist only in this computation input, not as user-confirmed facts.' } };
   }
   planInstalments(input: unknown) {
     this.requireConsent();

@@ -33,7 +33,10 @@ test('readiness graph asks only the active missing writable facts and exposes no
   const ready = s.setFacts({ deductions: zeroDeductions });
   assert.equal(ready.status, 'complete');
   assert.equal(ready.evaluations.at(-1)!.value, true);
-  assert.equal(s.compute().figures.balance_payable, '11200.00');
+  const result = s.compute();
+  assert.equal(result.figures.balance_payable, '11200.00');
+  assert.equal(result.intake_context.foreign_neutral_default_facts.length, 7);
+  assert.equal(result.intake_context.defaults_saved, false);
   assert.equal(ready.not_applicable_facts.length, 7);
   assert.ok(ready.evaluations.find(n => n.id === 'foreign_ready')!.trace.children.every(p => !p.endsWith('confirmed')));
 });
@@ -79,6 +82,7 @@ test('edits reactivate skipped conditions; neutral computation booleans never be
   assert.equal(pooled.blocking_error, 'FOREIGN_CREDIT_SOURCE_REVIEW');
   const explicit = session();
   explicit.setFacts({ scope: cleanScope, income, deductions: zeroDeductions, foreign: noForeign });
+  assert.equal(explicit.compute().intake_context.foreign_neutral_default_facts.length, 0);
   const contradiction = explicit.setFacts({ foreign: { employment_lkr: '1' } });
   assert.equal(contradiction.blocking_error, 'FOREIGN_ELIGIBILITY_REVIEW'); // Actual false answers are retained; only genuine corrections may change them.
 });

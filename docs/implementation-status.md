@@ -103,3 +103,5 @@ Host milestone validation: TypeScript checking and all 48 tests pass, including 
 - Known scope exclusions, unsupported claims and foreign eligibility failures short-circuit intake and provide fixed blocking guidance. Missing scope answers remain unknown; no additional facts are requested after a known block. Financial validations still run in the unchanged annual calculation pipeline.
 - Added modern SDK coverage for pruned intake and reactivation, and regression checks for zero handling, early refusals, privacy, consent, state reset and dictionary/schema parity. All prior golden computations remain unchanged.
 - Package version is 2026.25.0-preview.6; annual and instalment rule values and consent version are unchanged. This is an intake milestone, not complete partial evaluation of every financial node or a filing-ready release.
+
+Interview milestone verification covers 56 tests, including full legacy and modern SDK journeys, all prior tax examples and conditional-question regressions. CI verifies the refreshed public contract and package version change on Node 22 and 24.

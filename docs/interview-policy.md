@@ -23,7 +23,7 @@ Always confirm `employment_lkr`, `service_net_lkr` and `foreign_tax_paid`, inclu
 | Positive foreign services | Services used outside Sri Lanka |
 | Positive foreign tax paid | Credit eligibility and single-source status |
 
-When all three amounts are zero, none of the seven foreign boolean questions decides the result. The response lists those paths as `not_applicable_facts`. The strict annual engine still receives a full input object: neutral false values for skipped booleans exist only inside this ephemeral computation input. They are not represented as user-confirmed facts and are never saved to the session.
+When all three amounts are zero, none of the seven foreign boolean questions decides the result. The response lists those paths as `not_applicable_facts`. The strict annual engine still receives a full input object: neutral false values for skipped booleans exist only inside this ephemeral computation input. They are not represented as user-confirmed facts and are never saved to the session. Computation returns `intake_context` identifying inapplicable paths and the exact uncollected booleans materialised as neutral values. Existing explicit answers are distinguished from those neutral defaults.
 
 Editing a zero amount to a positive amount reactivates unanswered eligibility questions. If the user previously answered a boolean explicitly, that answer is retained. A contradictory false eligibility answer then requires professional review or a genuine user-confirmed correction. The server never silently deletes or flips an answer to make a case pass.
 
