@@ -1,0 +1,1184 @@
+{
+  "format_version": 1,
+  "version": "2026.25.0-preview.5",
+  "sha256": "b5b7cf3a6ba24e0741bd704f032063241cd92a7c9a6f02309f181b1ced40aa59",
+  "contract": {
+    "server_name": "lk-tax-mcp",
+    "supportedVersions": [
+      "2026-07-28"
+    ],
+    "capabilities": {
+      "tools": {
+        "listChanged": true
+      },
+      "resources": {
+        "listChanged": true
+      },
+      "prompts": {
+        "listChanged": true
+      }
+    },
+    "instructions": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every zero and boolean, and use lk_set_facts only for user-confirmed facts. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nFiling-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.",
+    "tools": [
+      {
+        "name": "lk_accept_disclaimer",
+        "description": "Record explicit user agreement to the exact current disclaimer in memory. Never infer consent. Required before fact entry and calculation.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "version": {
+              "type": "string",
+              "maxLength": 30
+            },
+            "user_confirmed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "version",
+            "user_confirmed"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_check_scope",
+        "description": "Evaluate confirmed triage scope answers deterministically. Final foreign-credit and interpretation flags are derived from actual amounts by computation. Out-of-scope cases must stop. Partial status is not a promise that computation is implemented.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_compute_return",
+        "description": "Compute a development estimate for local employment, local business net profit, interest, investment rent and supported local reliefs/donations; final-WHT resident-company dividends are informational only. Also supports confirmed qualifying foreign salary and net foreign services with single-source, single-country capped foreign credits. Uses an assumed local-first deduction allocation and capped progressive stacking. Show every interpretation warning and alternative summary; never select a preferred interpretation or claim the allocation is optimal. Rechecks consent, facts and scope every time. Not a full return. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_explain",
+        "description": "Explain a computed line using deterministic inputs, formula, rule version and source. Recomputes from current facts to avoid stale results. Never invent arithmetic.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "line": {
+              "type": "string",
+              "enum": [
+                "local_assessable_income",
+                "foreign_assessable_income",
+                "local_taxable_income",
+                "foreign_taxable_income",
+                "foreign_deductions",
+                "tax_progressive",
+                "tax_foreign",
+                "foreign_credit_average_limit",
+                "foreign_tax_credit",
+                "foreign_tax_uncredited",
+                "assessable_income",
+                "rent_relief",
+                "personal_relief",
+                "solar_relief",
+                "solar_unused_balance",
+                "government_donation_deduction",
+                "government_donations_carry_forward",
+                "samurdhi_deduction",
+                "samurdhi_unclaimed",
+                "charity_deduction",
+                "charity_unclaimed",
+                "total_reliefs",
+                "qualifying_payments",
+                "taxable_income",
+                "tax",
+                "credits",
+                "balance_payable",
+                "potential_overpayment",
+                "final_wht_dividends_gross",
+                "final_wht_dividends_deducted"
+              ]
+            }
+          },
+          "required": [
+            "line"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_get_disclaimer",
+        "description": "Show this versioned disclaimer verbatim before asking for any tax facts. English development preview only. Then ask the user to agree.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_next_questions",
+        "description": "Get missing scope, income, foreign and deduction facts in order. Ask only for listed facts. Never ask for names, TIN, NIC or credentials.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_plan_instalments",
+        "description": "Plan one YA 2026/27 quarterly instalment under the 12 August 2026 re-revised IRD circular. Requires active session and current explicit consent. Confirm current-year scope separately in this input. A must be gross tax prepared externally under the selected method, not an annual net balance or a copied current-year estimate. Method 1 uses YA 2025/26 gross tax; 2(i) uses zero; 2(ii)/(iii) use adjusted previous-year figures, with final SET allowed only for quarter one before return finalisation and exactly one return revision thereafter; 2(iv) uses an independently prepared current-year estimate in the first year only. Never infer eligibility. C includes actual earlier instalments and eligible full-year APIT/AIT/WHT, split into deducted and expected remaining, without overlap or final WHT. No foreign-credit basis, Method 3, corporate cases, payments or identifiers. Confirm timely notice when switching from Method 1 to 2(iii). Display display_summary and administrative requirements verbatim. Zero payable is not a filing exemption. Recompute each quarter with actual paid credits; schedule dates do not assume future payments.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "const": "2026/27"
+            },
+            "quarter": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            },
+            "scope": {
+              "type": "object",
+              "properties": {
+                "resident_full_year": {
+                  "type": "boolean"
+                },
+                "residency_special_case": {
+                  "type": "boolean"
+                },
+                "investment_asset_gains": {
+                  "type": "boolean"
+                },
+                "partnership_or_trust": {
+                  "type": "boolean"
+                },
+                "restricted_business": {
+                  "type": "boolean"
+                },
+                "terminal_benefits_or_arrears": {
+                  "type": "boolean"
+                },
+                "business_profit_needs_computation": {
+                  "type": "boolean"
+                },
+                "losses": {
+                  "type": "boolean"
+                },
+                "multiple_foreign_tax_countries": {
+                  "type": "boolean"
+                },
+                "foreign_credit_exceeds_cap": {
+                  "type": "boolean"
+                },
+                "qualifying_foreign_income": {
+                  "type": "boolean"
+                },
+                "local_taxable_below_first_band": {
+                  "type": "boolean"
+                },
+                "amendment_assessment_or_appeal": {
+                  "type": "boolean"
+                },
+                "preparing_for_clients": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "resident_full_year",
+                "residency_special_case",
+                "investment_asset_gains",
+                "partnership_or_trust",
+                "restricted_business",
+                "terminal_benefits_or_arrears",
+                "business_profit_needs_computation",
+                "losses",
+                "multiple_foreign_tax_countries",
+                "foreign_credit_exceeds_cap",
+                "qualifying_foreign_income",
+                "local_taxable_below_first_band",
+                "amendment_assessment_or_appeal",
+                "preparing_for_clients"
+              ],
+              "additionalProperties": false
+            },
+            "basis": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string",
+                      "const": "1"
+                    },
+                    "prior_taxable_income_exists": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "method",
+                    "prior_taxable_income_exists"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string",
+                      "const": "2_i"
+                    },
+                    "no_prior_taxable_income": {
+                      "type": "boolean"
+                    },
+                    "no_current_assessable_income_expected": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "method",
+                    "no_prior_taxable_income",
+                    "no_current_assessable_income_expected"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string",
+                      "const": "2_ii"
+                    },
+                    "no_prior_taxable_income": {
+                      "type": "boolean"
+                    },
+                    "current_assessable_income_expected": {
+                      "type": "boolean"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "enum": [
+                        "reduced_losses",
+                        "expired_exemption"
+                      ]
+                    },
+                    "calculation_basis": {
+                      "type": "string",
+                      "enum": [
+                        "previous_return",
+                        "previous_final_set"
+                      ]
+                    },
+                    "previous_return_finalised": {
+                      "type": "boolean"
+                    },
+                    "first_quarter_used_set": {
+                      "type": "boolean"
+                    },
+                    "set_return_revision_count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "method",
+                    "no_prior_taxable_income",
+                    "current_assessable_income_expected",
+                    "reason",
+                    "calculation_basis",
+                    "previous_return_finalised",
+                    "first_quarter_used_set",
+                    "set_return_revision_count"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string",
+                      "const": "2_iii"
+                    },
+                    "prior_assessable_income_exists": {
+                      "type": "boolean"
+                    },
+                    "lower_assessable_income_expected": {
+                      "type": "boolean"
+                    },
+                    "lower_taxable_income_expected": {
+                      "type": "boolean"
+                    },
+                    "calculation_basis": {
+                      "type": "string",
+                      "enum": [
+                        "previous_return",
+                        "previous_final_set"
+                      ]
+                    },
+                    "previous_return_finalised": {
+                      "type": "boolean"
+                    },
+                    "first_quarter_used_set": {
+                      "type": "boolean"
+                    },
+                    "set_return_revision_count": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "method",
+                    "prior_assessable_income_exists",
+                    "lower_assessable_income_expected",
+                    "lower_taxable_income_expected",
+                    "calculation_basis",
+                    "previous_return_finalised",
+                    "first_quarter_used_set",
+                    "set_return_revision_count"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "method": {
+                      "type": "string",
+                      "const": "2_iv"
+                    },
+                    "first_year_new_taxpayer": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "method",
+                    "first_year_new_taxpayer"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "gross_tax_basis": {
+              "type": "string",
+              "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+            },
+            "basis_prepared_under_method_confirmed": {
+              "type": "boolean"
+            },
+            "foreign_credit_in_basis": {
+              "type": "boolean"
+            },
+            "prior_instalments_paid": {
+              "type": "string",
+              "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+            },
+            "apit_already_deducted": {
+              "type": "string",
+              "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+            },
+            "apit_expected_remaining": {
+              "type": "string",
+              "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+            },
+            "ait_wht_already_deducted": {
+              "type": "string",
+              "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+            },
+            "ait_wht_expected_remaining": {
+              "type": "string",
+              "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+            },
+            "credits_reconciled_without_overlap": {
+              "type": "boolean"
+            },
+            "switched_from_standard": {
+              "type": "boolean"
+            },
+            "revision_notice_submitted_on_time": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "ya",
+            "quarter",
+            "scope",
+            "basis",
+            "gross_tax_basis",
+            "basis_prepared_under_method_confirmed",
+            "foreign_credit_in_basis",
+            "prior_instalments_paid",
+            "apit_already_deducted",
+            "apit_expected_remaining",
+            "ait_wht_already_deducted",
+            "ait_wht_expected_remaining",
+            "credits_reconciled_without_overlap",
+            "switched_from_standard",
+            "revision_notice_submitted_on_time"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_session",
+        "description": "Start a fresh memory-only YA 2025/26 session or wipe it. Starting discards all prior facts and consent. No identifiers, files or credentials. No data persists after shutdown.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "action": {
+              "type": "string",
+              "enum": [
+                "start",
+                "wipe"
+              ]
+            },
+            "ya": {
+              "default": "2025/26",
+              "type": "string",
+              "maxLength": 7
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_set_facts",
+        "description": "Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. Collect deductions separately. Every amount must be user-confirmed and eligible. Do not enter final dividend WHT as ait_wht_credit. Collect foreign aggregates and eligibility in the foreign object, never in local income. Foreign amounts must already be converted to LKR. Foreign tax paid must be eligible income tax on that same income from one confirmed source in one country; do not include Sri Lankan APIT or pool sources. other_income_or_claims is true for non-qualifying or otherwise unsupported foreign income, unsupported dividends, loan-funded solar claims, rent expense deductions or any other unsupported income or claim. Scope answers are mandatory, including explicit false answers. Scope foreign hints cannot override flags derived from computation amounts.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "scope": {
+              "type": "object",
+              "properties": {
+                "resident_full_year": {
+                  "type": "boolean"
+                },
+                "residency_special_case": {
+                  "type": "boolean"
+                },
+                "investment_asset_gains": {
+                  "type": "boolean"
+                },
+                "partnership_or_trust": {
+                  "type": "boolean"
+                },
+                "restricted_business": {
+                  "type": "boolean"
+                },
+                "terminal_benefits_or_arrears": {
+                  "type": "boolean"
+                },
+                "business_profit_needs_computation": {
+                  "type": "boolean"
+                },
+                "losses": {
+                  "type": "boolean"
+                },
+                "multiple_foreign_tax_countries": {
+                  "type": "boolean"
+                },
+                "foreign_credit_exceeds_cap": {
+                  "type": "boolean"
+                },
+                "qualifying_foreign_income": {
+                  "type": "boolean"
+                },
+                "local_taxable_below_first_band": {
+                  "type": "boolean"
+                },
+                "amendment_assessment_or_appeal": {
+                  "type": "boolean"
+                },
+                "preparing_for_clients": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            },
+            "income": {
+              "type": "object",
+              "properties": {
+                "employment": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "business_net": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "interest": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "rent": {
+                  "description": "Gross local investment rent, with no repair or other expense deduction claimed.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "final_wht_dividends_gross": {
+                  "description": "Resident-company dividends with final withholding already deducted; otherwise mark other_income_or_claims true.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "final_wht_dividends_deducted": {
+                  "description": "Actual final WHT deducted on these dividends. Informational only, never an advance tax credit.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "apit_credit": {
+                  "description": "Sri Lankan APIT actually paid, including Table 08; exclude foreign income tax.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "ait_wht_credit": {
+                  "description": "Sri Lankan non-final advance credits only; exclude foreign income tax and final dividend WHT.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "instalments_paid": {
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "other_income_or_claims": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            },
+            "deductions": {
+              "type": "object",
+              "properties": {
+                "solar_available": {
+                  "description": "Confirmed eligible expenditure remaining after all prior relief claims for panels on own premises connected to the national grid. Loan-funded claims are not supported.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "approved_charity_cash": {
+                  "description": "Cash donations to approved charitable institutions only; exclude in-kind donations.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "government_donations": {
+                  "description": "Eligible current-year donations to Government or qualifying specified institutions, including in-kind donations.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "government_donations_brought_forward": {
+                  "description": "Only an eligible and independently verified Government-donation carry-forward under Annexure 3(f); legacy qualifying-payment balances are unsupported.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "samurdhi_shop_contributions": {
+                  "description": "Confirmed eligible contributions to a shop for a female Samurdhi beneficiary, recommended and confirmed by the department.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                }
+              },
+              "additionalProperties": false
+            },
+            "foreign": {
+              "type": "object",
+              "properties": {
+                "employment_lkr": {
+                  "description": "Annual foreign-employer salary already converted to LKR; do not include it again in local employment.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "service_net_lkr": {
+                  "description": "Annual net foreign service business income already computed and converted to LKR; exclude it from local business_net.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "foreign_tax_paid": {
+                  "description": "Eligible foreign income tax actually paid on this same qualifying income in ONE country. Exclude foreign VAT and Sri Lankan APIT.",
+                  "type": "string",
+                  "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
+                },
+                "received_in_foreign_currency": {
+                  "type": "boolean"
+                },
+                "remitted_via_licensed_bank": {
+                  "type": "boolean"
+                },
+                "foreign_employer_confirmed": {
+                  "type": "boolean"
+                },
+                "services_used_outside_lk": {
+                  "type": "boolean"
+                },
+                "fx_conversion_confirmed": {
+                  "type": "boolean"
+                },
+                "credit_eligibility_confirmed": {
+                  "type": "boolean",
+                  "description": "Eligible income tax on the same YA income, paid within the statutory time limit or a permitted extension, with evidence."
+                },
+                "single_source_confirmed": {
+                  "type": "boolean",
+                  "description": "The claimed foreign tax and ALL foreign income in this credit calculation belong to one source and one country; no pooling across jobs/businesses."
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      }
+    ],
+    "resources": [
+      {
+        "uri": "lktax://sources/2025-26",
+        "name": "annual-sources",
+        "description": "Annual rule citations and evidence status, including explicitly assumed interpretation policies.",
+        "mimeType": "application/json"
+      },
+      {
+        "uri": "lktax://checklist/documents",
+        "name": "document-checklist",
+        "description": "Manual evidence checklist. Do not upload documents or identifiers; ingestion and filing remain unavailable.",
+        "mimeType": "application/json"
+      },
+      {
+        "uri": "lktax://rules/instalments/2026-27",
+        "name": "instalment-rules",
+        "description": "YA 2026/27 instalment source, verified dates and unreviewed rule version. Does not supply annual return rates.",
+        "mimeType": "application/json"
+      },
+      {
+        "uri": "lktax://known-issues",
+        "name": "known-issues",
+        "description": "Dated unresolved rules, unavailable features and release blockers.",
+        "mimeType": "application/json"
+      },
+      {
+        "uri": "lktax://rules/2025-26",
+        "name": "rules",
+        "description": "Cited, unreviewed YA 2025/26 rules for the implemented local and qualifying foreign-income preview.",
+        "mimeType": "application/json"
+      },
+      {
+        "uri": "lktax://supported-scenarios",
+        "name": "supported-scenarios",
+        "description": "Current supported scenarios and explicit exclusions. Partial scope status does not imply calculation support.",
+        "mimeType": "application/json"
+      }
+    ],
+    "prompts": [
+      {
+        "name": "do_i_need_to_file",
+        "title": "Understand filing guidance limits",
+        "description": "Explain that a deterministic filing-obligation decision is not implemented and refer for confirmation.",
+        "arguments": [],
+        "result": {
+          "messages": [
+            {
+              "role": "user",
+              "content": {
+                "type": "text",
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every zero and boolean, and use lk_set_facts only for user-confirmed facts. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nFiling-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me understand the filing guidance available here. Read lktax://supported-scenarios and lktax://known-issues. Explain that the server cannot determine whether I must register, activate a tax type or file. Do not infer an exemption from employment type, income, withholding or zero tax payable, and do not collect facts to apply remembered thresholds. Refer me to current official IRD guidance or a qualified adviser. A supported tax estimate, if I separately request it, still requires the full consent and scope workflow."
+              }
+            }
+          ],
+          "resultType": "complete",
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "lk-tax-mcp",
+              "version": "2026.25.0-preview.5"
+            }
+          }
+        }
+      },
+      {
+        "name": "explain_my_tax",
+        "title": "Explain a computed tax line",
+        "description": "Explain a line from the current deterministic estimate without inventing arithmetic.",
+        "arguments": [],
+        "result": {
+          "messages": [
+            {
+              "role": "user",
+              "content": {
+                "type": "text",
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every zero and boolean, and use lk_set_facts only for user-confirmed facts. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nFiling-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me understand my current tax estimate. Confirm the session and consent state without silently starting a new session. If the estimate is incomplete, use lk_next_questions and obtain only the missing confirmed facts before computing. Ask which returned annual line I want explained, call lk_explain with that published line name, and explain its formula, inputs, sources and rule version. lk_explain recomputes current annual facts. Instalment explanations use the trace returned by lk_plan_instalments instead. Preserve all assumptions and warnings; never reconstruct a result from memory."
+              }
+            }
+          ],
+          "resultType": "complete",
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "lk-tax-mcp",
+              "version": "2026.25.0-preview.5"
+            }
+          }
+        }
+      },
+      {
+        "name": "file_my_return",
+        "title": "Prepare an annual tax estimate",
+        "description": "Guide the supported annual interview and estimate. Filing and exports are unavailable.",
+        "arguments": [],
+        "result": {
+          "messages": [
+            {
+              "role": "user",
+              "content": {
+                "type": "text",
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every zero and boolean, and use lk_set_facts only for user-confirmed facts. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nFiling-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me prepare a supported annual tax estimate. Explain the preview limits first. After the consent workflow, follow lk_next_questions and lk_set_facts, check scope, and call lk_compute_return only when the required facts are complete. Use lk_explain for returned lines. Read lktax://checklist/documents as a manual evidence checklist; do not request uploads or identifiers. Do not claim that this prepares or submits a complete return."
+              }
+            }
+          ],
+          "resultType": "complete",
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "lk-tax-mcp",
+              "version": "2026.25.0-preview.5"
+            }
+          }
+        }
+      },
+      {
+        "name": "plan_my_instalments",
+        "title": "Plan a quarterly instalment estimate",
+        "description": "Guide confirmed method selection and credits for the separately supported instalment year.",
+        "arguments": [],
+        "result": {
+          "messages": [
+            {
+              "role": "user",
+              "content": {
+                "type": "text",
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every zero and boolean, and use lk_set_facts only for user-confirmed facts. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nFiling-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me plan a supported quarterly instalment. After the consent workflow, read lktax://rules/instalments/2026-27 and the lk_plan_instalments schema. Confirm current-year scope separately, the quarter, method eligibility, the independently prepared gross-tax basis and the non-overlapping credit components. Do not calculate the gross-tax basis yourself or reuse an annual net balance as gross tax. Never invent notice submission or revision history. Call lk_plan_instalments and show its display_summary and administrative requirements verbatim. Schedule dates do not establish payments; zero payable does not establish an exemption."
+              }
+            }
+          ],
+          "resultType": "complete",
+          "_meta": {
+            "io.modelcontextprotocol/serverInfo": {
+              "name": "lk-tax-mcp",
+              "version": "2026.25.0-preview.5"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

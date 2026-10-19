@@ -1,0 +1,63 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { stdioHost } from './stdio-host.ts';
+import { hostInstructions, workflowPrompts, promptText } from '../src/guidance.ts';
+import { cleanScope, income, zeroDeductions, noForeign } from './fixtures.ts';
+import pkg from '../package.json' with { type: 'json' };
+
+test('2026 discovery without initialize advertises static guidance and completes the consent-gated journey', { timeout: 20000 }, async t => {
+  const host = stdioHost(true); t.after(() => host.close());
+  const discovery = await host.request('server/discover');
+  assert.equal(discovery.error, undefined);
+  assert.equal(discovery.result.resultType, 'complete');
+  assert.ok(discovery.result.supportedVersions.includes('2026-07-28'));
+  assert.equal(discovery.result._meta['io.modelcontextprotocol/serverInfo'].version, pkg.version);
+  assert.equal(discovery.result.instructions, hostInstructions);
+  for (const capability of ['tools', 'resources', 'prompts']) assert.ok(discovery.result.capabilities[capability]);
+  const tools = (await host.request('tools/list')).result.tools;
+  assert.equal(tools.length, 9);
+  const prompts = (await host.request('prompts/list')).result.prompts;
+  assert.deepEqual(prompts.map((p: any) => p.name).sort(), workflowPrompts.map(p => p.name).sort());
+  for (const prompt of workflowPrompts) {
+    const fetched = await host.request('prompts/get', { name: prompt.name, arguments: {} });
+    assert.equal(fetched.error, undefined);
+    assert.equal(fetched.result.messages[0].content.text, promptText(prompt));
+    const advertised = prompts.find((p: any) => p.name === prompt.name);
+    assert.ok(!advertised.arguments?.length); // No arbitrary text or taxpayer arguments.
+  }
+  const invalid = await host.request('prompts/get', { name: 'file_my_return', arguments: { tin: '123456789V', name: 'Secret Name' } });
+  assert.ok(invalid.error);
+  assert.ok(!JSON.stringify(invalid).includes('123456789V'));
+  assert.ok(!JSON.stringify(invalid).includes('Secret Name'));
+  const resources = (await host.request('resources/list')).result.resources;
+  assert.equal(resources.length, 6);
+  for (const uri of ['lktax://checklist/documents', 'lktax://sources/2025-26']) {
+    const response = await host.request('resources/read', { uri });
+    assert.equal(response.error, undefined);
+    const data = JSON.parse(response.result.contents[0].text);
+    assert.equal(data.ya, '2025/26');
+    assert.equal(data.review_status, 'unreviewed');
+    if (data.checklist) assert.equal(data.checklist.ingestion_available, false);
+    if (data.evidence) assert.ok(data.evidence.some((r: any) => r.status === 'assumed'));
+  }
+  async function call(name: string, args = {}) {
+    const response = await host.request('tools/call', { name, arguments: args });
+    assert.equal(response.error, undefined);
+    const result = response.result;
+    assert.deepEqual(JSON.parse(result.content[0].text), result.structuredContent);
+    return result;
+  }
+  // Discovery, resources and prompt retrieval never create a session or accept consent.
+  assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'SESSION_REQUIRED');
+  await call('lk_session', { action: 'start' });
+  assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'CONSENT_REQUIRED');
+  const disclaimer = (await call('lk_get_disclaimer')).structuredContent;
+  await call('lk_accept_disclaimer', { version: disclaimer.version, user_confirmed: true });
+  await call('lk_set_facts', { scope: cleanScope, income, deductions: zeroDeductions, foreign: noForeign });
+  const calculated = (await call('lk_compute_return')).structuredContent;
+  assert.equal(calculated.figures.balance_payable, '11200.00');
+  assert.equal(calculated.filing_ready, false);
+  await call('lk_session', { action: 'wipe' });
+  assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'SESSION_REQUIRED');
+  host.assertClean();
+});

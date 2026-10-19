@@ -1,6 +1,6 @@
 {
   "name": "@appkade/lk-tax-mcp",
-  "version": "2026.25.0-preview.4",
+  "version": "2026.25.0-preview.5",
   "private": true,
   "description": "Local Sri Lankan individual income tax assistance over MCP",
   "type": "module",
@@ -11,7 +11,10 @@
     "start": "node src/cli.ts",
     "test": "node --test test/*.test.ts",
     "test:core": "node --test test/core.test.ts",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "contract:check": "node scripts/check-contract.ts",
+    "contract:update": "node scripts/check-contract.ts --update",
+    "contract:version": "node scripts/check-contract-version.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",

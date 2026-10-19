@@ -12,9 +12,24 @@ jobs:
         node: [22, 24]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - run: npm ci --ignore-scripts
       - run: npm run check
       - run: npm test
+      - run: npm run contract:check
+      - name: Enforce contract version bump
+        if: github.event_name == 'pull_request'
+        env:
+          CONTRACT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: npm run contract:version -- "$CONTRACT_BASE_SHA"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: mcp-contract-candidate-node-${{ matrix.node }}
+          path: artifacts/mcp-contract.actual.json
+          if-no-files-found: ignore
+          retention-days: 7

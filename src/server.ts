@@ -6,10 +6,13 @@ import { knownIssues, supportedScenarios } from './support.ts';
 import { figureNames } from './engine.ts';
 import { rules } from './rules.ts';
 import { instalmentSchema, instalmentRules } from './instalments.ts';
+import { hostInstructions, workflowPrompts, promptText, documentChecklist } from './guidance.ts';
+import { assertPrivateOutput } from './privacy.ts';
+import pkg from '../package.json' with { type: 'json' };
 
 export function createServer() {
   const session = new TaxSession();
-  const server = new McpServer({ name: 'lk-tax-mcp', version: '2026.25.0-preview.4' });
+  const server = new McpServer({ name: 'lk-tax-mcp', version: pkg.version }, { instructions: hostInstructions });
   const outputSchema = z.object({
     ya: z.enum(['2025/26', '2026/27']), ruleset_version: z.string(), verified_on: z.string(),
     review_status: z.string(), caution: z.string(), sources: z.array(z.string()),
@@ -75,5 +78,24 @@ export function createServer() {
   server.registerResource('supported-scenarios', 'lktax://supported-scenarios', {
     description: 'Current supported scenarios and explicit exclusions. Partial scope status does not imply calculation support.', mimeType: 'application/json',
   }, () => ({ contents: [{ uri: 'lktax://supported-scenarios', mimeType: 'application/json', text: JSON.stringify(envelope(supportedScenarios)) }] }));
+  for (const prompt of workflowPrompts) {
+    server.registerPrompt(prompt.name, {
+      title: prompt.title, description: prompt.description, argsSchema: privateSchema(z.strictObject({})),
+    }, () => {
+      const text = promptText(prompt);
+      assertPrivateOutput(text);
+      return { messages: [{ role: 'user' as const, content: { type: 'text' as const, text } }] };
+    });
+  }
+  server.registerResource('document-checklist', 'lktax://checklist/documents', {
+    description: 'Manual evidence checklist. Do not upload documents or identifiers; ingestion and filing remain unavailable.', mimeType: 'application/json',
+  }, () => ({ contents: [{ uri: 'lktax://checklist/documents', mimeType: 'application/json', text: JSON.stringify(envelope({ checklist: documentChecklist })) }] }));
+  server.registerResource('annual-sources', 'lktax://sources/2025-26', {
+    description: 'Annual rule citations and evidence status, including explicitly assumed interpretation policies.', mimeType: 'application/json',
+  }, () => {
+    const evidence = Object.values(rules).filter((value): value is { id: string; status: 'confirmed' | 'secondary' | 'assumed'; verified_on: string; sources: { url: string; locator: string }[] } =>
+      typeof value === 'object' && value !== null && 'id' in value && 'sources' in value);
+    return { contents: [{ uri: 'lktax://sources/2025-26', mimeType: 'application/json', text: JSON.stringify(envelope({ evidence })) }] };
+  });
   return server;
 }
