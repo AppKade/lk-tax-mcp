@@ -2,12 +2,12 @@ import { z } from 'zod';
 import { assertPrivateOutput } from './privacy.ts';
 import { rules, sources, selectRules } from './rules.ts';
 import { scopeSchema, checkScope } from './scope.ts';
-import { incomeSchema, computeReturn } from './engine.ts';
-export const DISCLAIMER_VERSION = '2026-10-19.1';
+import { incomeSchema, deductionsSchema, computeReturn } from './engine.ts';
+export const DISCLAIMER_VERSION = '2026-10-19.2';
 export const CAUTION = 'Development preview. Verify before filing. Not IRD-approved; not tax advice.';
-export const DISCLAIMER = `${CAUTION} This preview only estimates local employment, user-supplied local business net profit and interest for resident individuals. It does not file returns or access RAMIS. Amounts, facts and tool results reach your AI host and may reach its provider. Do not type names, NIC, TIN, employer names, account numbers, certificates or credentials into chat or tool inputs. No documents or identifiers are accepted. Session data stays in process memory and is lost on restart or wipe. No draft is saved. The server has no network or file tools. Other tools installed in your host may access your conversation. Obtain professional review before relying on any figure. Accept this exact version only after the user agrees.`;
+export const DISCLAIMER = `${CAUTION} This preview only estimates local employment, user-supplied local business net profit, interest, gross investment rent, final-WHT resident-company dividends and supported local reliefs and donations for resident individuals. Eligibility and evidence must be confirmed by you. Ambiguous donation caps and unsupported scenarios are refused. It does not file returns or access RAMIS. Amounts, facts and tool results reach your AI host and may reach its provider. Do not type names, NIC, TIN, employer names, account numbers, certificates or credentials into chat or tool inputs. No documents or identifiers are accepted. Session data stays in process memory and is lost on restart or wipe. No draft is saved. The server has no network or file tools. Other tools installed in your host may access your conversation. Obtain professional review before relying on any figure. Accept this exact version only after the user agrees.`;
 export const partialFactsSchema = z.strictObject({
-  scope: scopeSchema.partial().optional(), income: incomeSchema.partial().optional(),
+  scope: scopeSchema.partial().optional(), income: incomeSchema.partial().optional(), deductions: deductionsSchema.partial().optional(),
 });
 type Facts = z.infer<typeof partialFactsSchema>;
 export class TaxSession {
@@ -47,6 +47,7 @@ export class TaxSession {
     this.facts = {
       scope: { ...this.facts.scope, ...patch.scope },
       income: { ...this.facts.income, ...patch.income },
+      deductions: { ...this.facts.deductions, ...patch.deductions },
     };
     return this.nextQuestions();
   }
@@ -57,7 +58,9 @@ export class TaxSession {
     // Stop gathering income if scope already excludes the user.
     if (this.checkScope().status === 'out_of_scope') return { status: 'out_of_scope', missing_facts: [] };
     const incomeMissing = Object.keys(incomeSchema.shape).filter(k => this.facts.income?.[k as keyof typeof incomeSchema.shape] === undefined);
-    return { status: incomeMissing.length ? 'incomplete' : 'complete', missing_facts: incomeMissing.map(k => `income.${k}`) };
+    if (incomeMissing.length) return { status: 'incomplete', missing_facts: incomeMissing.map(k => `income.${k}`) };
+    const deductionMissing = Object.keys(deductionsSchema.shape).filter(k => this.facts.deductions?.[k as keyof typeof deductionsSchema.shape] === undefined);
+    return { status: deductionMissing.length ? 'incomplete' : 'complete', missing_facts: deductionMissing.map(k => `deductions.${k}`) };
   }
   checkScope() {
     this.requireConsent();
@@ -72,7 +75,9 @@ export class TaxSession {
     if (checkScope(scope.data).status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
     const income = incomeSchema.safeParse(this.facts.income);
     if (!income.success) throw new Error('MISSING_INCOME_FACTS');
-    return computeReturn({ ya: rules.ya, scope: scope.data, income: income.data });
+    const deductions = deductionsSchema.safeParse(this.facts.deductions);
+    if (!deductions.success) throw new Error('MISSING_DEDUCTION_FACTS');
+    return computeReturn({ ya: rules.ya, scope: scope.data, income: income.data, deductions: deductions.data });
   }
   explain(line: string) {
     const result = this.compute();
@@ -89,13 +94,16 @@ const errors: Record<string, string> = {
   INVALID_FACTS: 'Use only published fact names, booleans and nonnegative decimal LKR strings with at most two decimal places. Do not send identifiers.',
   MISSING_SCOPE_FACTS: 'Use lk_next_questions and complete every scope fact before computation.',
   MISSING_INCOME_FACTS: 'Use lk_next_questions and complete the missing income facts. Confirm zero values with the user.',
+  MISSING_DEDUCTION_FACTS: 'Use lk_next_questions and confirm every deduction amount, including zeros. Never assume eligibility.',
+  CHARITY_CAP_REVIEW: 'The assessable-income and taxable-income charity limits in Annexure 3(a) give different deductions. Obtain professional clarification; do not choose a cap or erase a genuine claim to bypass this refusal.',
+  DIVIDEND_WHT_REVIEW: 'The actual final withholding on resident-company dividends does not match the supported rate. Reconcile the certificate with a qualified adviser; do not claim final WHT as an advance tax credit.',
   OUT_OF_SCOPE: 'Computation refused. Read lk_check_scope reasons and consult a qualified tax adviser.',
   FEATURE_NOT_IMPLEMENTED: 'This scenario is not implemented in this development slice. Do not estimate it yourself. Consult a qualified tax adviser.',
   UNKNOWN_LINE: 'Choose a line returned in the computation trace.',
 };
 export function envelope(payload: Record<string, unknown>) {
   const output = { ...payload, ya: rules.ya, ruleset_version: rules.version, verified_on: rules.personal_relief.verified_on,
-    review_status: rules.review_status, caution: CAUTION, sources };
+    review_status: rules.review_status, caution: CAUTION, sources, known_issues_uri: 'lktax://known-issues' };
   assertPrivateOutput(output);
   return output;
 }

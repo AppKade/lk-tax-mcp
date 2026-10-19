@@ -16,6 +16,13 @@ export const rulesSchema = z.strictObject({
     width: amountSchema.nullable(), rate_bps: z.string().regex(/^\d{1,4}$/),
   })).min(1) }),
   credits: z.strictObject(evidence),
+  income: z.strictObject(evidence),
+  rent_relief: z.strictObject({ ...evidence, rate_bps: z.literal('2500') }),
+  solar_relief: z.strictObject({ ...evidence, annual_limit: amountSchema }),
+  charity: z.strictObject({ ...evidence, annual_limit: amountSchema, assessable_divisor: z.literal('4'), taxable_divisor: z.literal('3') }),
+  government_donations: z.strictObject(evidence),
+  samurdhi: z.strictObject(evidence),
+  dividends: z.strictObject({ ...evidence, rate_bps: z.literal('1500') }),
 }).superRefine((r, ctx) => {
   if (r.effective_from >= r.effective_to) ctx.addIssue({ code: 'custom', message: 'Invalid effective dates' });
   const bands = r.progressive_bands.bands;
@@ -31,5 +38,5 @@ export function selectRules(ya: string) {
   if (ya !== rules.ya) throw new Error('NOT_COVERED');
   return rules;
 }
-export const sources = [...new Set([rules.personal_relief, rules.progressive_bands, rules.credits]
+export const sources = [...new Set([rules.personal_relief, rules.progressive_bands, rules.credits, rules.income, rules.rent_relief, rules.solar_relief, rules.charity, rules.government_donations, rules.samurdhi, rules.dividends]
   .flatMap(r => r.sources.map(s => s.url)))];
