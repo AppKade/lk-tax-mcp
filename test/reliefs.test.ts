@@ -3,12 +3,12 @@ import assert from 'node:assert/strict';
 import { computeReturn } from '../src/engine.ts';
 import { cents } from '../src/money.ts';
 import { TaxSession, DISCLAIMER_VERSION, envelope } from '../src/service.ts';
-import { cleanScope, income, zeroDeductions } from './fixtures.ts';
+import { cleanScope, income, zeroDeductions, noForeign } from './fixtures.ts';
 import cases from './fixtures/ird-local-2025-26.json' with { type: 'json' };
 
 for (const fixture of cases) {
   test(`${fixture.id}: ${fixture.source.locator}, exact source match`, () => {
-    const result = computeReturn({ ya: '2025/26', scope: cleanScope, income: fixture.income, deductions: fixture.deductions });
+    const result = computeReturn({ ya: '2025/26', scope: cleanScope, income: fixture.income, deductions: fixture.deductions, foreign: noForeign });
     for (const [line, value] of Object.entries(fixture.expected)) {
       assert.equal(result.figures[line as keyof typeof result.figures], value, `${fixture.id}.${line}`);
     }
@@ -22,7 +22,7 @@ for (const fixture of cases) {
 }
 const baseIncome = { ...income, employment: '5000000', interest: '0', apit_credit: '0', ait_wht_credit: '0' };
 function compute(i = baseIncome, d = zeroDeductions) {
-  return computeReturn({ ya: '2025/26', scope: cleanScope, income: i, deductions: d });
+  return computeReturn({ ya: '2025/26', scope: cleanScope, income: i, deductions: d, foreign: noForeign });
 }
 test('solar limit minus/exact/plus one, unused balance and income cap', () => {
   for (const [available, used, unused] of [['599999', '599999.00', '0.00'], ['600000', '600000.00', '0.00'], ['600001', '600000.00', '1.00']]) {
@@ -71,10 +71,10 @@ test('final dividend withholding is neither assessable income nor a credit', () 
 });
 test('deductions are explicit, patchable and explanations use the latest facts', () => {
   const s = new TaxSession(); s.start('2025/26'); s.accept(DISCLAIMER_VERSION, true);
-  s.setFacts({ scope: cleanScope, income: baseIncome });
+  s.setFacts({ scope: cleanScope, income: baseIncome, foreign: noForeign });
   assert.throws(() => s.compute(), /MISSING_DEDUCTION_FACTS/);
   assert.ok(s.nextQuestions().missing_facts.includes('deductions.solar_available'));
-  s.setFacts({ deductions: zeroDeductions });
+  s.setFacts({ deductions: zeroDeductions, foreign: noForeign });
   s.setFacts({ deductions: { solar_available: '200000' } });
   assert.equal(s.explain('solar_relief').trace.value, '200000.00');
   assert.ok(!s.nextQuestions().missing_facts.length);
@@ -83,7 +83,7 @@ test('deductions are explicit, patchable and explanations use the latest facts',
 });
 test('deductions and credits reconcile without negative taxable amounts', () => {
   for (const fixture of cases) {
-    const f = computeReturn({ ya: '2025/26', scope: cleanScope, income: fixture.income, deductions: fixture.deductions }).figures;
+    const f = computeReturn({ ya: '2025/26', scope: cleanScope, income: fixture.income, deductions: fixture.deductions, foreign: noForeign }).figures;
     assert.equal(cents(f.assessable_income), cents(f.total_reliefs) + cents(f.qualifying_payments) + cents(f.taxable_income));
     assert.equal(cents(f.tax) + cents(f.potential_overpayment), cents(f.credits) + cents(f.balance_payable));
     assert.equal(cents(f.government_donation_deduction) + cents(f.government_donations_carry_forward), cents(fixture.deductions.government_donations) + cents(fixture.deductions.government_donations_brought_forward));

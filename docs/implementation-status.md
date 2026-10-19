@@ -1,33 +1,33 @@
 # Implementation status
 
-Updated: 2026-10-19. Foundation and local-reliefs milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
+Updated: 2026-10-19. Foundation, local-reliefs and qualifying foreign-income milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
 
 | Backlog | Delivered in this slice | Remaining acceptance criteria |
 |---|---|---|
 | T1.1, T1.2 | Strict JSON rule validation, dated evidence, YA 2025/26 reliefs, donation parameters, dividend finality and progressive bands | TOML compatibility, full rule catalogue, reviewer sign-off and version-history lint |
 | T2.1 | Bigint cents and exact percentage accumulation; unsupported YA fails | Official filing rounding policy and upstream APIT fixtures |
 | T2.2 | Explicit writable facts; missing scope facts precede income; confirmed values not re-asked | Full dependency graph, placeholder semantics and all categories |
-| T2.3, T2.6, T2.7 | Local salary/net profit/interest/rent totals, supported local deductions, informational final-WHT dividends, confirmed credits, balance/overpayment and cited traces | Remaining categories, credits and comprehensive cage mapping |
+| T2.3, T2.6, T2.7 | Local and qualifying foreign totals, supported deductions, final-WHT dividends, single-source, single-country capped foreign credits, balances, interpretation alternatives and cited traces | Remaining categories, credits and comprehensive cage mapping |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
 | T6.1, T6.2 | Official SDK stdio server, eight tools, output schema and error envelopes | Full core catalogue, current-protocol discovery conformance and host matrix |
-| T10.1 | G1, G4 and G5 verified against IRD examples, with source locators and interpretation notes | G2, G3, G6 through G10 and full source verification of G11/G12 |
+| T10.1 | All six IRD example computations match with source locators and interpretation notes; G8/G9 arithmetic regression checks | G7, G10 and independent source verification of remaining non-IRD cases; practitioner review |
 | T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and schema hash governance |
 
 No full backlog task above is marked complete when its original acceptance criteria remain unmet.
 
 ## Evidence correction
 
-Primary IRD guide, Annexure 7, printed page 37 explicitly lists a lower first band and a capped balance for qualifying foreign-source income. The research note saying the low-income treatment lacks an IRD primary source is therefore incomplete. This does not establish how local and foreign buckets share that band in mixed-income cases. The initial local-income-only slice does not implement either foreign allocation interpretation.
+Primary IRD guide, Annexure 7, printed page 37 explicitly lists a lower first band and a capped balance for qualifying foreign-source income. The research note saying the low-income treatment lacks an IRD primary source is therefore incomplete. This does not establish how local and foreign buckets share that band in mixed-income cases. The current preview implements the requirements local-first stacked interpretation and a flat-cap comparison. Mixed-income allocation and shared-band stacking remain unreviewed assumptions.
 
 Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf
 
 ## Deliberate first-slice limits
 
 - Only YA 2025/26; no provisional copying into YA 2026/27.
-- Local employment, local user-computed business net profit, interest and gross investment rent; supported local deductions and final-WHT resident-company dividends. Unimplemented scenarios still block calculation.
+- Local employment, local user-computed business net profit, interest and gross investment rent; supported local deductions and final-WHT resident-company dividends; qualifying foreign salary/services and eligible single-source, single-country foreign income tax credit. Unimplemented scenarios still block calculation.
 - Credits are user-confirmed aggregates, not reconciled evidence. Potential overpayment is not a validated refund claim.
-- Tax fractions accumulate exactly; the preview rounds once to cents, half up. Do not present this as verified RAMIS whole-rupee rounding.
+- Tax fractions accumulate exactly; each tax bucket is rounded to cents, half up, then summed. Do not present this as verified RAMIS whole-rupee rounding.
 - In-memory state only. Consent is re-required after restart, wipe or new session; no cleartext session storage exists.
 - No Schedule 7, worksheet, payment output, document parsing, FX, encrypted draft, bundled Skill, npm release or signed extension yet.
 - SDK and transitive dependencies are pinned in package-lock.json with integrity hashes, captured from successful GitHub CI. CI uses npm ci. Type checking and the foundation tests passed on Node 22 and 24; the expanded milestone adds source fixtures, deduction boundaries and a full stdio G5 workflow.
@@ -43,11 +43,27 @@ Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025
 - Added known-issues and scenario resources. `CHARITY_CAP_REVIEW` blocks disagreement between literal cap readings; the formula is documented in its trace and a written clarification remains required.
 - New rules are version 2025.26.2 and remain unreviewed. The original requirements and backlog are unchanged.
 
+## Qualifying foreign-income milestone
+
+- Added explicit manual LKR foreign employment and net service facts, eligibility/remittance/conversion confirmations and eligible foreign income tax paid on that same income in one country. No FX rates or receipt dates are invented.
+- Foreign eligibility failures, tax without foreign income, unconfirmed credit eligibility and multi-country allocation refuse computation. Unsupported foreign income must never be relabelled as local.
+- The requirements local-first deduction policy is explicit and `assumed`; shared-band stacking is also `assumed`. Low-local-income results show a flat-cap comparison and review flags, not a claim of optimal allocation.
+- SC-07 excess-credit and SC-08 interpretation flags in computation are derived from actual amounts. Triage scope hints cannot suppress them.
+- Foreign tax credit is limited to both the foreign bucket's computed tax and the section 81 average-rate ceiling, with a single-source guard, and recalculated for each interpretation; excess cannot become a refund or an asserted carry-forward.
+- Added G2, G3 and G6 fixtures. G2 records the source-table ambiguity and the credit necessary to reconcile its published balance. Eligibility facts absent from the published narrative are fixture assumptions, not facts to assume for users.
+- Rule version 2025.26.3 and disclaimer version 2026-10-19.3. All rules remain unreviewed. Original requirements and backlog are unchanged. Type checking and all 36 tests passed on Node 22 and 24, including the expanded stdio journey.
+
+## Statutory correction to the credit summary
+
+The research summary described only an attributable-foreign-tax cap. IRD's consolidated Act, sections 80-81, also specifies separate source calculations and an average-rate ceiling. This milestone therefore accepts a foreign credit only for one confirmed source in one country, blocks pooled employment/business claims, and enforces the lesser of paid tax, foreign-bucket tax and the average-rate ceiling. Eligibility confirmation includes statutory payment timing. Full source allocation remains future work.
+
+Source: https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_Act_-_2025_Changes.pdf (sections 80 and 81). The full PDF retrieval timed out; the cited clauses were available from the official source's indexed text. Full-text and amendment review remain required for practitioner sign-off.
+
 ## Next implementation work
 
 1. Expand protocol tests to current-protocol discovery and verify supported host behaviour.
 2. Add remaining primary-source golden fixtures; resolve the low-income charity-cap ambiguity before broadening donation support.
-3. Implement and review foreign buckets, both mixed-income interpretations and FTC limits.
+3. Obtain professional review of foreign qualification, deduction allocation, stacking, FTC eligibility and low-local-income interpretations; extend per-country/per-source credit allocation only with appropriate evidence.
 4. Verify filing-obligation law from primary sources before exposing a no-return-required decision.
 5. Obtain IRD Schedule 7 verifier/template and validate cage map and rounding.
 6. Add export verification checklist, then worksheet/payment summaries after all P0 golden cases pass.

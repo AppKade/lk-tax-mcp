@@ -1,0 +1,163 @@
+[
+  {
+    "id": "G2",
+    "source": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "locator": "Example 2, printed pages 39-41"
+    },
+    "notes": [
+      "The source states 20 percent foreign WHT on 9000000: 1800000 paid.",
+      "The printed table credit layout is ambiguous. The capped 1350000 credit is necessary to reconcile the published balance and follows the example remarks.",
+      "The narrative does not explicitly confirm remittance, currency or place of use. This test assumes qualification to reproduce the published concession; real users must confirm each fact."
+    ],
+    "income": {
+      "employment": "0",
+      "business_net": "5000000",
+      "interest": "0",
+      "rent": "0",
+      "final_wht_dividends_gross": "0",
+      "final_wht_dividends_deducted": "0",
+      "apit_credit": "0",
+      "ait_wht_credit": "250000",
+      "instalments_paid": "400000",
+      "other_income_or_claims": false
+    },
+    "deductions": {
+      "solar_available": "0",
+      "approved_charity_cash": "0",
+      "government_donations": "0",
+      "government_donations_brought_forward": "0",
+      "samurdhi_shop_contributions": "0"
+    },
+    "foreign": {
+      "employment_lkr": "0",
+      "service_net_lkr": "9000000",
+      "foreign_tax_paid": "1800000",
+      "received_in_foreign_currency": true,
+      "remitted_via_licensed_bank": true,
+      "foreign_employer_confirmed": false,
+      "services_used_outside_lk": true,
+      "fx_conversion_confirmed": true,
+      "credit_eligibility_confirmed": true,
+      "single_source_confirmed": true
+    },
+    "expected": {
+      "assessable_income": "14000000.00",
+      "local_taxable_income": "3200000.00",
+      "foreign_taxable_income": "9000000.00",
+      "tax_progressive": "672000.00",
+      "tax_foreign": "1350000.00",
+      "tax": "2022000.00",
+      "foreign_tax_credit": "1350000.00",
+      "foreign_tax_uncredited": "450000.00",
+      "balance_payable": "22000.00"
+    }
+  },
+  {
+    "id": "G3",
+    "source": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "locator": "Example 3, printed pages 41-43"
+    },
+    "notes": [
+      "Local net business aggregate includes 10760000, 28840000 and 890000 lecturing fees.",
+      "Foreign net aggregate includes 33360000 and 49920000; source says after expenses and capital allowances.",
+      "Government donation includes eligible in-kind food.",
+      "Foreign amounts are used as published LKR values. Place-of-use eligibility is assumed for the example and must be confirmed for a real session."
+    ],
+    "income": {
+      "employment": "0",
+      "business_net": "40490000",
+      "interest": "0",
+      "rent": "0",
+      "final_wht_dividends_gross": "0",
+      "final_wht_dividends_deducted": "0",
+      "apit_credit": "0",
+      "ait_wht_credit": "44500",
+      "instalments_paid": "8160000",
+      "other_income_or_claims": false
+    },
+    "deductions": {
+      "solar_available": "0",
+      "approved_charity_cash": "0",
+      "government_donations": "2500000",
+      "government_donations_brought_forward": "0",
+      "samurdhi_shop_contributions": "0"
+    },
+    "foreign": {
+      "employment_lkr": "0",
+      "service_net_lkr": "83280000",
+      "foreign_tax_paid": "0",
+      "received_in_foreign_currency": true,
+      "remitted_via_licensed_bank": true,
+      "foreign_employer_confirmed": false,
+      "services_used_outside_lk": true,
+      "fx_conversion_confirmed": true,
+      "credit_eligibility_confirmed": false,
+      "single_source_confirmed": false
+    },
+    "expected": {
+      "assessable_income": "123770000.00",
+      "local_taxable_income": "36190000.00",
+      "foreign_taxable_income": "83280000.00",
+      "tax_progressive": "12548400.00",
+      "tax_foreign": "12492000.00",
+      "tax": "25040400.00",
+      "balance_payable": "16835900.00"
+    }
+  },
+  {
+    "id": "G6",
+    "source": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "locator": "Example 6, printed pages 47-49"
+    },
+    "notes": [
+      "Foreign employment uses the published LKR salary; no synthetic exchange rate or receipt date is invented.",
+      "APIT Table 08 paid is a Sri Lankan advance credit, not foreign tax paid.",
+      "Deductions follow the guide example local-first allocation."
+    ],
+    "income": {
+      "employment": "0",
+      "business_net": "0",
+      "interest": "3600000",
+      "rent": "1080000",
+      "final_wht_dividends_gross": "0",
+      "final_wht_dividends_deducted": "0",
+      "apit_credit": "2142000",
+      "ait_wht_credit": "360000",
+      "instalments_paid": "365000",
+      "other_income_or_claims": false
+    },
+    "deductions": {
+      "solar_available": "0",
+      "approved_charity_cash": "200000",
+      "government_donations": "0",
+      "government_donations_brought_forward": "0",
+      "samurdhi_shop_contributions": "0"
+    },
+    "foreign": {
+      "employment_lkr": "16380000",
+      "service_net_lkr": "0",
+      "foreign_tax_paid": "0",
+      "received_in_foreign_currency": true,
+      "remitted_via_licensed_bank": true,
+      "foreign_employer_confirmed": true,
+      "services_used_outside_lk": false,
+      "fx_conversion_confirmed": true,
+      "credit_eligibility_confirmed": false,
+      "single_source_confirmed": false
+    },
+    "expected": {
+      "assessable_income": "21060000.00",
+      "taxable_income": "18915000.00",
+      "local_taxable_income": "2535000.00",
+      "foreign_taxable_income": "16380000.00",
+      "tax_progressive": "432600.00",
+      "tax_foreign": "2457000.00",
+      "tax": "2889600.00",
+      "foreign_tax_credit": "0.00",
+      "balance_payable": "22600.00"
+    }
+  }
+]

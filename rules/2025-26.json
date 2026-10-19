@@ -1,6 +1,6 @@
 {
   "ya": "2025/26",
-  "version": "2025.26.2",
+  "version": "2025.26.3",
   "effective_from": "2025-04-01",
   "effective_to": "2026-03-31",
   "review_status": "unreviewed",
@@ -142,5 +142,56 @@
       }
     ],
     "rate_bps": "1500"
+  },
+  "foreign_income": {
+    "id": "FOREIGN-CAP-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Schedule 8, cage 809B, printed page 23; Annexure 7, printed page 37; examples 2, 3 and 6"
+      }
+    ],
+    "cap_bps": "1500"
+  },
+  "foreign_allocation": {
+    "id": "FOREIGN-ALLOCATION-2025",
+    "status": "assumed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Examples 3 and 6 allow allocation to either bucket; local-first is the requirements preview policy, not a reviewed optimal allocation"
+      }
+    ],
+    "policy": "local_first"
+  },
+  "foreign_stacking": {
+    "id": "FOREIGN-STACKING-2025",
+    "status": "assumed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Annexure 7 gives a lower first foreign band; shared-band stacking in mixed-income cases is a preview interpretation"
+      }
+    ],
+    "policy": "local_fills_bands_first"
+  },
+  "foreign_credit": {
+    "id": "FTC-2025",
+    "status": "confirmed",
+    "verified_on": "2026-10-19",
+    "sources": [
+      {
+        "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+        "locator": "Schedule 9, cage 901, printed page 24; Example 2 remarks, printed page 41; Example 6 remarks, printed page 49"
+      },
+      {
+        "url": "https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_Act_-_2025_Changes.pdf",
+        "locator": "Sections 80 and 81(1)(a)-(b), 81(2)-(4): separate source calculations, average-rate ceiling, timing and no refund/carry-forward"
+      }
+    ]
   }
 }

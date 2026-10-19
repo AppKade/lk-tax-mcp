@@ -9,8 +9,8 @@ import { scopeSchema, checkScope, type ScopeFacts } from '../src/scope.ts';
 import { TaxSession, DISCLAIMER_VERSION, errorResult, envelope } from '../src/service.ts';
 import { assertPrivateOutput } from '../src/privacy.ts';
 
-import { cleanScope, income, zeroDeductions } from './fixtures.ts';
-const calculate = (i = income, scope = cleanScope) => computeReturn({ ya: '2025/26', scope, income: i, deductions: zeroDeductions });
+import { cleanScope, income, zeroDeductions, noForeign } from './fixtures.ts';
+const calculate = (i = income, scope = cleanScope) => computeReturn({ ya: '2025/26', scope, income: i, deductions: zeroDeductions, foreign: noForeign });
 
 test('strict money boundary, exact cents and large values', () => {
   for (const invalid of ['-1', '1e6', 'NaN', 'Infinity', '1,000', ' 1', '01', '1.234', '', '1000000000000000'])
@@ -79,7 +79,7 @@ test('scope SC-01 through SC-09 and missing-answer refusal', () => {
   }
   assert.equal(checkScope(cleanScope).status, 'in_scope');
   assert.equal(scopeSchema.safeParse({ resident_full_year: true }).success, false);
-  assert.throws(() => calculate(income, { ...cleanScope, qualifying_foreign_income: true }), /FEATURE_NOT_IMPLEMENTED/);
+  assert.equal(calculate(income, { ...cleanScope, qualifying_foreign_income: true }).scope.status, 'in_scope'); // Derived amounts supersede triage hints.
   assert.throws(() => calculate({ ...income, other_income_or_claims: true }), /FEATURE_NOT_IMPLEMENTED/);
 });
 test('consent, selective interview, atomic updates, current-fact scope and wipe', () => {
@@ -93,7 +93,7 @@ test('consent, selective interview, atomic updates, current-fact scope and wipe'
   s.setFacts({ scope: { resident_full_year: true } });
   assert.ok(!s.nextQuestions().missing_facts.includes('scope.resident_full_year'));
   assert.throws(() => s.compute(), /MISSING_SCOPE_FACTS/);
-  s.setFacts({ scope: cleanScope, income, deductions: zeroDeductions });
+  s.setFacts({ scope: cleanScope, income, deductions: zeroDeductions, foreign: noForeign });
   assert.equal(s.compute().figures.balance_payable, '11200.00');
   assert.throws(() => s.setFacts({ income: { employment: '-1' } }), /INVALID_FACTS/);
   assert.equal(s.compute().figures.balance_payable, '11200.00');
