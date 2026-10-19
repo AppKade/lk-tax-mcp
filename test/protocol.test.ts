@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { instalmentInput } from './instalment-fixture.ts';
 import { noForeign, income, zeroDeductions } from './fixtures.ts';
 import foreignCases from './fixtures/ird-foreign-2025-26.json' with { type: 'json' };
 import cases from './fixtures/ird-local-2025-26.json' with { type: 'json' };
@@ -39,7 +40,7 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
     assert.equal(response.error, undefined, JSON.stringify(response));
     const result = response.result;
     assert.deepEqual(JSON.parse(result.content[0].text), result.structuredContent);
-    assert.equal(result.structuredContent.ya, '2025/26');
+    assert.equal(result.structuredContent.ya, name === 'lk_plan_instalments' ? '2026/27' : '2025/26');
     assert.ok(result.structuredContent.caution && result.structuredContent.sources.length);
     return result;
   }
@@ -47,7 +48,7 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   assert.equal(hello.error, undefined);
   child.stdin.write(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) + '\n');
   const listed = await request('tools/list');
-  assert.equal(listed.result.tools.length, 8);
+  assert.equal(listed.result.tools.length, 9);
   for (const tool of listed.result.tools) {
     assert.ok(tool.inputSchema && tool.outputSchema);
     assert.equal(tool.annotations.openWorldHint, false);
@@ -57,10 +58,24 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   assert.ok(!JSON.stringify(invalid).includes('123456789V'));
   assert.ok(!JSON.stringify(invalid).includes('Secret Name'));
   assert.equal((await call('lk_compute_return')).isError, true);
+  assert.equal((await call('lk_plan_instalments', instalmentInput)).structuredContent.error.code, 'SESSION_REQUIRED');
   await call('lk_session', { action: 'start' });
+  assert.equal((await call('lk_plan_instalments', instalmentInput)).structuredContent.error.code, 'CONSENT_REQUIRED');
   assert.equal((await call('lk_set_facts', { income: { employment: '1' } })).structuredContent.error.code, 'CONSENT_REQUIRED');
   const disclaimer = (await call('lk_get_disclaimer')).structuredContent;
   await call('lk_accept_disclaimer', { version: disclaimer.version, user_confirmed: true });
+  const planned = (await call('lk_plan_instalments', instalmentInput)).structuredContent;
+  assert.equal(planned.ruleset_version, '2026.27.1');
+  assert.equal(planned.figures.instalment_payable, '67500.00');
+  assert.equal(planned.payment_due_date, '2026-08-15');
+  assert.equal(planned.trace.length, Object.keys(planned.figures).length);
+  assert.equal(planned.filing_ready, false);
+  const instalmentResource = await request('resources/read', { uri: 'lktax://rules/instalments/2026-27' });
+  assert.equal(JSON.parse(instalmentResource.result.contents[0].text).ya, '2026/27');
+  assert.equal((await call('lk_plan_instalments', { ...instalmentInput, credits_reconciled_without_overlap: false })).structuredContent.error.code, 'INSTALMENT_CREDIT_REVIEW');
+  const invalidPlan = await request('tools/call', { name: 'lk_plan_instalments', arguments: { ...instalmentInput, tin: '123456789V' } });
+  assert.ok(invalidPlan.error || invalidPlan.result?.isError);
+  assert.ok(!JSON.stringify(invalidPlan).includes('123456789V'));
   // Deliberately not imported from core.test.ts: protocol test must not run that suite twice.
   await call('lk_set_facts', { scope: {
     resident_full_year: true, residency_special_case: false, investment_asset_gains: false,
@@ -108,5 +123,6 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'OUT_OF_SCOPE');
   await call('lk_session', { action: 'wipe' });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'SESSION_REQUIRED');
+  assert.equal((await call('lk_plan_instalments', instalmentInput)).structuredContent.error.code, 'SESSION_REQUIRED');
   assert.equal(stdoutError, undefined);
 });

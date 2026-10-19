@@ -1,4 +1,6 @@
 export const knownIssues = [
+  { id: 'KI-INSTALMENTS', status: 'partial', updated_on: '2026-10-19',
+    detail: 'YA 2026/27 planner follows the 12 August re-revised circular. Gross tax A is prepared externally and method eligibility is user-confirmed. Foreign-credit bases, corporate calculations and Method 3 require professional review. Cent ceiling is an unreviewed preview assumption. Actual payment status and administrative submissions are not verified; zero payable alone is not an employment or filing exemption.' },
   { id: 'KI-CHARITY-CAP', status: 'open', updated_on: '2026-10-19',
     detail: 'Annexure 3(a) uses assessable-income and taxable-income charity limits. The engine refuses when their literal readings produce different deductions. Professional clarification is pending.' },
   { id: 'KI-ROUNDING', status: 'open', updated_on: '2026-10-19',
@@ -9,13 +11,13 @@ export const knownIssues = [
     detail: 'Only confirmed qualifying foreign salary/services and eligible single-source, single-country foreign income tax are supported. LKR conversion is supplied by the user. Credit claims require one confirmed source and are also limited by the statutory average-rate ceiling. Local-first deduction allocation and shared-band stacking are preview assumptions; low-local-income results show a flat-cap comparison. Non-qualifying income and multi-country credit allocation remain unsupported.' },
 ];
 export const supportedScenarios = {
-  supported: ['Confirmed qualifying foreign-employer salary and net foreign service income, already converted to LKR, with eligible single-source, single-country capped foreign income tax credit',
+  supported: ['YA 2026/27 quarterly instalment arithmetic under Methods 1 and 2(i)-(iv), using an externally prepared and confirmed gross-tax basis and current-year scope', 'Confirmed qualifying foreign-employer salary and net foreign service income, already converted to LKR, with eligible single-source, single-country capped foreign income tax credit',
     'Full-year resident individual with local employment, local user-supplied net business profit, interest or gross investment rent',
     'Confirmed eligible unused solar expenditure, approved cash charity donations where cap readings agree, Government donations and eligible Samurdhi shop contributions',
     'Resident-company dividends where final WHT was already deducted at the supported rate; informational only'],
   unsupported: ['Non-qualifying foreign income and multi-country foreign tax credits', 'Rent expense deductions', 'Loan-funded solar claims',
     'Other final-withholding income, exempt income or special-rate income', 'Legacy qualifying-payment balances',
     'Film and cinema deductions', 'Business profit computation and losses', 'Non-residency, special residency, investment asset gains, partnerships, trusts, terminal benefits and arrears',
-    'Amendments, assessments, appeals and practitioner client preparation', 'Other years of assessment',
-    'Filing obligation decisions, ingestion, FX, instalment planning, persistence, filing outputs and submission'],
+    'Amendments, assessments, appeals and practitioner client preparation', 'Annual return calculations for years other than 2025/26; instalment planning for years other than 2026/27',
+    'Filing obligation decisions, ingestion, FX, persistence, filing outputs and submission'],
 };

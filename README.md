@@ -4,7 +4,7 @@ Local Sri Lankan individual income tax assistance for MCP hosts. Tax arithmetic 
 
 **Development preview. Not IRD-approved. Not tax advice. Not ready for filing.**
 
-This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20requirements.md) and [backlog](Sri%20Lanka%20tax%20plugin%20backlog.csv) in stages. The current implementation is the foundation, local-reliefs and qualifying foreign-income milestones, not the complete P0 release.
+This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20requirements.md) and [backlog](Sri%20Lanka%20tax%20plugin%20backlog.csv) in stages. The current implementation is the foundation, local-reliefs, qualifying foreign-income and instalment milestones, not the complete P0 release.
 
 ## Available now
 
@@ -12,11 +12,12 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 - Versioned consent, memory-only sessions, explicit fact entry and missing-fact questions.
 - Deterministic SC-01 through SC-09 scope checks; computation rechecks current scope every time.
 - YA 2025/26 local employment, user-supplied local business **net profit**, interest and gross investment rent estimates with personal, rent and solar relief, eligible donations, progressive bands and manually confirmed APIT/AIT/WHT/instalment credits. Final-WHT resident-company dividends are informational and excluded from both assessable income and advance credits.
+- YA 2026/27 quarterly instalment estimates under Methods 1 and 2(i)-(iv), using a confirmed gross-tax basis prepared externally, with payment dates and administrative deadlines from the 12 August 2026 re-revised circular.
 - Decimal strings and bigint arithmetic, cited traces, text and structured tool results, identifier output checks.
 - All six IRD worked-example computations match their published balances exactly. Fixture notes record aggregation, eligibility assumptions, source-table ambiguities and inferred opening solar balances. Other release cases and practitioner sign-off remain pending.
 - Confirmed qualifying foreign salary and net foreign services in manually converted LKR, with an eligible single-source, single-country foreign income tax credit capped at tax attributable to that income.
 
-Non-qualifying foreign income, multi-country foreign credits, other dividends, rent expense deductions, loan-funded solar claims, film/cinema deductions, legacy qualifying-payment balances, filing-obligation triage, instalment planning, ingestion, persistence and filing outputs are **not implemented**. Mark `income.other_income_or_claims` true if any unsupported income or claim exists; computation will refuse. Do not enter such income under a local category.
+Non-qualifying foreign income, multi-country foreign credits, other dividends, rent expense deductions, loan-funded solar claims, film/cinema deductions, legacy qualifying-payment balances, filing-obligation triage, ingestion, persistence and filing outputs are **not implemented**. Mark `income.other_income_or_claims` true if any unsupported income or claim exists; computation will refuse. Do not enter such income under a local category.
 
 ## Run locally
 
@@ -83,6 +84,28 @@ Foreign credit cannot exceed either the calculated Sri Lankan tax on that foreig
 The preview applies rent relief to local rent, then other deductions to local income first. It fills progressive bands with local taxable income and caps each foreign slice. This allocation and shared-band interpretation remain labelled assumptions, not a tax-minimisation guarantee. A low-local-income result shows `INTERP_15PCT`, derived SC-08 and a flat-cap comparison with independently recalculated foreign credits, balances and potential overpayment. The flat comparison is not presented as equally supported by Annexure 7's explicit standalone foreign bands. Mixed low-income allocations also carry `ALLOCATION_REVIEW`.
 
 `lk_check_scope` uses triage answers. Computation derives final foreign-credit and interpretation flags from actual amounts, so manually supplied false scope hints cannot suppress them. The summary includes the assumptions and comparison figures for verbatim display. All results remain unreviewed, `estimate: true` and `filing_ready: false`.
+
+## YA 2026/27 instalment planner
+
+After starting the session and accepting the current disclaimer, call `lk_plan_instalments` with `ya: "2026/27"` and separate current-year scope answers. This stateless tool does not read or update annual return facts. The session's annual return profile remains YA 2025/26. Planner success and error results carry YA 2026/27 and rule version `2026.27.1`. Evidence is at `lktax://rules/instalments/2026-27`.
+
+`gross_tax_basis` must be prepared independently under the selected method, before credits. Never enter the net balance payable or assume the previous year's tax rates apply to a new taxpayer. The tool checks explicit eligibility confirmations but does not validate underlying accounts, losses, exemptions or annual rate calculations. Unsupported scope still refuses calculation.
+
+| Method | Required basis and conditions |
+|---|---|
+| 1 | Prior YA 2025/26 gross tax, with prior taxable income |
+| 2(i) | Zero, with no preceding taxable income and no current assessable income expected |
+| 2(ii) | Adjusted preceding-year figures for reduced losses or an expired exemption, with no prior taxable income and current assessable income expected |
+| 2(iii) | Recalculated preceding-year gross tax reflecting the expected reduction; confirm both lower assessable and taxable income |
+| 2(iv) | Current-year estimate applying current rules, only in the first year for a newly registered taxpayer |
+
+Methods 2(ii)/(iii) permit a final prior SET only in quarter one if the prior return is not finalised. From quarter two the prior return basis is required. Confirm whether quarter one used SET and that exactly one SET-to-return revision occurred. The tool reports Attachment 1 (Revised) where applicable. A later switch from Method 1 to 2(iii) requires confirmation of timely notice; the notice dates are 31 October, 31 January and 30 April.
+
+`C` combines actual earlier YA 2026/27 instalments and eligible full-year withholding. Enter APIT and AIT/WHT separately as **already deducted** and **expected remaining**. Reconcile these totals without overlap, foreign credits, final dividend WHT or projected future instalments. Recompute each quarter with actual payments. The dated schedule contains no assumed future payment amounts.
+
+Payment dates remain 15 August 2026, 15 November 2026, 15 February 2027 and 15 May 2027. Required Attachments 1/2 are due 30 November 2026 under the latest circular. Credit schedules generally remain due at the relevant month end. Employment exceptions require separate confirmation; zero payable alone does not establish an exemption from credit schedules or filing.
+
+The preview ceilings fractional cents and labels that policy `assumed`; official payment rounding remains unverified. Every amount has a cited trace. The six circular examples are exact arithmetic fixtures, with Mr X and Mrs P also tested through the complete planner. Corporate examples test arithmetic only and do not expand supported scope. Foreign-credit instalment bases and Method 3 requests are unsupported. No payment codes, penalties, interest, submissions or notifications are generated. See [source verification and limitations](docs/instalment-source.md).
 
 ## Contributing
 
