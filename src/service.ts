@@ -7,6 +7,7 @@ import { assertPrivateOutput } from './privacy.ts';
 import { rules, sources, selectRules } from './rules.ts';
 import { scopeSchema, checkScope, checkKnownScope } from './scope.ts';
 import { incomeSchema, deductionsSchema, computeReturn } from './engine.ts';
+import { buildChecklist, renderWorksheet } from './worksheet.ts';
 export const DISCLAIMER_VERSION = '2026-10-19.4';
 export const CAUTION = 'Development preview. Verify before filing. Not IRD-approved; not tax advice.';
 export const DISCLAIMER = `${CAUTION} This preview only estimates local employment, user-supplied local business net profit, interest, gross investment rent, final-WHT resident-company dividends and supported local reliefs and donations plus qualifying foreign-employer salary and net foreign service income for resident individuals. Foreign aggregates must already be converted to LKR and eligibility must be confirmed. Only eligible foreign income tax for one confirmed source in one country on that same income is supported, with both attributable-tax and statutory average-rate ceilings. Mixed-income allocation and stacking are preview assumptions; comparison figures are shown where needed. Eligibility and evidence must be confirmed by you. Ambiguous donation caps and unsupported scenarios are refused. A separate YA 2026/27 instalment planner uses an externally prepared gross-tax basis, confirmed method eligibility and reconciled credits. Its rounding is a preview assumption; foreign tax credits in the instalment basis are unsupported. It does not file returns or access RAMIS. Amounts, facts and tool results reach your AI host and may reach its provider. Do not type names, NIC, TIN, employer names, account numbers, certificates or credentials into chat or tool inputs. No documents or identifiers are accepted. Session data stays in process memory and is lost on restart or wipe. No draft is saved. The server has no network or file tools. Other tools installed in your host may access your conversation. Obtain professional review before relying on any figure. Accept this exact version only after the user agrees.`;
@@ -18,16 +19,19 @@ export class TaxSession {
   private active = false;
   private acceptedVersion: string | undefined;
   private facts: Facts = {};
+  private acknowledged: { digest: string; items: string[] } | undefined;
   start(ya: string) {
     selectRules(ya);
     this.active = true;
     this.acceptedVersion = undefined;
+    this.acknowledged = undefined;
     this.facts = {};
     return { started: true, persistence: 'memory_only', consent_required: true };
   }
   wipe() {
     this.active = false;
     this.acceptedVersion = undefined;
+    this.acknowledged = undefined;
     this.facts = {};
     return { wiped: true };
   }
@@ -41,6 +45,7 @@ export class TaxSession {
     this.requireActive();
     if (!userConfirmed || version !== DISCLAIMER_VERSION) throw new Error('CONSENT_VERSION_MISMATCH');
     this.acceptedVersion = version;
+    this.acknowledged = undefined;
     return { accepted: true, version: DISCLAIMER_VERSION, persistence: 'memory_only' };
   }
   setFacts(input: unknown) {
@@ -48,6 +53,7 @@ export class TaxSession {
     const parsed = partialFactsSchema.safeParse(input);
     if (!parsed.success) throw new Error('INVALID_FACTS');
     const patch = parsed.data;
+    this.acknowledged = undefined;
     this.facts = {
       scope: { ...this.facts.scope, ...patch.scope },
       income: { ...this.facts.income, ...patch.income },
@@ -96,6 +102,24 @@ export class TaxSession {
       defaults_saved: false, note: 'Not-applicable foreign flags do not establish eligibility. Neutral false values for uncollected flags exist only in this computation input, not as user-confirmed facts.' } };
   }
   review() { return reviewReturn(this.currentReturnInput()); }
+  checklist() {
+    const checklist = buildChecklist(this.review());
+    return { ...checklist, status: 'checklist_only', acknowledged: this.acknowledged?.digest === checklist.digest, filing_export_available: false };
+  }
+  acknowledgeChecklist(digest: string, items: string[], userConfirmed: boolean) {
+    const checklist = buildChecklist(this.review());
+    if (digest !== checklist.digest) throw new Error('CHECKLIST_STALE');
+    if (!userConfirmed || !checklist.items.every(item => items.includes(item.id))) throw new Error('CHECKLIST_INCOMPLETE');
+    this.acknowledged = { digest, items: checklist.items.map(item => item.id) };
+    return { acknowledged: true, digest, items: this.acknowledged.items, persistence: 'memory_only' };
+  }
+  worksheet() {
+    const review = this.review();
+    const checklist = buildChecklist(review);
+    if (this.acknowledged?.digest !== checklist.digest) throw new Error('CHECKLIST_REQUIRED');
+    return { export_type: 'worksheet_text', format: 'markdown', file_written: false, filing_export_available: false, estimate: true, filing_ready: false,
+      needs_professional_review: true, checklist_digest: checklist.digest, worksheet: renderWorksheet(review, this.acknowledged.items) };
+  }
   planInstalments(input: unknown) {
     this.requireConsent();
     return planInstalments(input);
@@ -132,6 +156,9 @@ const errors: Record<string, string> = {
   DIVIDEND_WHT_REVIEW: 'The actual final withholding on resident-company dividends does not match the supported rate. Reconcile the certificate with a qualified adviser; do not claim final WHT as an advance tax credit.',
   OUT_OF_SCOPE: 'Computation refused by the submitted scope facts. Check the scope exclusions for this calculation and consult a qualified tax adviser.',
   FEATURE_NOT_IMPLEMENTED: 'This scenario is not implemented in this development slice. Do not estimate it yourself. Consult a qualified tax adviser.',
+  CHECKLIST_REQUIRED: 'Call lk_get_checklist, show each statement to the user verbatim and call lk_acknowledge_checklist only with statements the user explicitly confirms. Any change to facts requires a new acknowledgement.',
+  CHECKLIST_STALE: 'The facts, figures or flags changed since this checklist was issued. Call lk_get_checklist again and obtain fresh confirmation.',
+  CHECKLIST_INCOMPLETE: 'Every checklist item must be explicitly confirmed by the user. Do not confirm on their behalf or omit an item.',
   UNKNOWN_LINE: 'Choose a line returned in the computation trace.',
 };
 export function envelope(payload: Record<string, unknown>, context: 'annual' | 'instalments' | 'review' = 'annual') {

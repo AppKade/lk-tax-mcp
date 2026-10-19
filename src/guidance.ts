@@ -12,8 +12,8 @@ export const hostInstructions = [
 export const workflowPrompts = [
   {
     name: 'file_my_return', title: 'Prepare an annual tax estimate',
-    description: 'Guide the supported annual interview and estimate. Filing and exports are unavailable.',
-    workflow: 'Help me prepare a supported annual tax estimate. Explain the preview limits first. After the consent workflow, follow lk_next_questions and lk_set_facts, check scope, and call lk_compute_return only when the required facts are complete. Use lk_explain for returned lines and lk_review_return for supported cage references and unresolved review gaps. Read lktax://checklist/documents as a manual evidence checklist; do not request uploads or identifiers. Do not claim that this prepares or submits a complete return.',
+    description: 'Guide the supported annual interview and estimate. RAMIS filing, submission and file exports are unavailable.',
+    workflow: 'Help me prepare a supported annual tax estimate. Explain the preview limits first. After the consent workflow, follow lk_next_questions and lk_set_facts, check scope, and call lk_compute_return only when the required facts are complete. Use lk_explain for returned lines and lk_review_return for supported cage references and unresolved review gaps. To prepare a manual-entry worksheet, call lk_get_checklist, show each statement verbatim, call lk_acknowledge_checklist only with statements I explicitly confirm, then call lk_generate_worksheet and present its text verbatim. Never fill unset cages or confirm on my behalf; changing any fact requires a new acknowledgement. Read lktax://checklist/documents as a manual evidence checklist; do not request uploads or identifiers. Do not claim that this prepares or submits a complete return.',
   },
   {
     name: 'do_i_need_to_file', title: 'Understand filing guidance limits',

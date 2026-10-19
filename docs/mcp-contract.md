@@ -9,7 +9,7 @@ The server publishes shared instructions, four argument-free prompts and eight r
 | `plan_my_instalments` | Separately confirmed instalment year, method, gross-tax basis, credits and administrative requirements |
 | `explain_my_tax` | Current annual line via `lk_explain`, or the returned instalment trace; preserves warnings |
 
-`lktax://checklist/documents` is a manual preparation aid. Evidence stays with the user; ingestion is unavailable. `lktax://sources/2025-26` exposes rule-specific citations, locators, dates and evidence status, including assumed interpretation policies. `lktax://facts/2025-26` adds the writable dictionary and intake dependency policy. The existing annual and instalment rule resources, supported scenarios and known issues remain available. `lktax://cagemap/2025-26` supplies verified source references and deliberately unresolved bindings. The separate `lk_review_return` tool remains a development review with no filing export.
+`lktax://checklist/documents` is a manual preparation aid. Evidence stays with the user; ingestion is unavailable. `lktax://sources/2025-26` exposes rule-specific citations, locators, dates and evidence status, including assumed interpretation policies. `lktax://facts/2025-26` adds the writable dictionary and intake dependency policy. The existing annual and instalment rule resources, supported scenarios and known issues remain available. `lktax://cagemap/2025-26` supplies verified source references and deliberately unresolved bindings. The separate `lk_review_return` tool remains a development review with no filing export. `lk_get_checklist`, `lk_acknowledge_checklist` and `lk_generate_worksheet` add a consent-gated manual-entry worksheet returned as text.
 
 ## Protocol checks
 
