@@ -29,6 +29,7 @@ Node.js 22.18 or newer is required. This private development package is not publ
 npm ci --ignore-scripts
 npm run check
 npm test
+npm run contract:check
 npm start
 ```
 

@@ -92,3 +92,5 @@ Validation: all 44 tests, including real SDK stdio interactions, and TypeScript 
 - Added an SDK-generated public contract snapshot and SHA-256 check covering tools, schemas, annotations, resources, prompts and shared instructions. PR CI rejects a changed contract without a package version change. Updates remain explicit and reviewable.
 - SDK identity derives from the package version to avoid drift. Package preview version advances to 2026.25.0-preview.5; annual rules, instalment rules and consent version remain unchanged.
 - This delivers host guidance and contract regression coverage, not installed-host certification or practitioner review. Agent Skill packaging, Inspector CLI, agent behaviour evals and the verified cage-map resource remain pending.
+
+Host milestone validation: TypeScript checking and all 48 tests pass, including both stdio protocol journeys. The generated contract candidate is identical on Node 22 and 24; its reviewed snapshot is now committed and checked in CI.
