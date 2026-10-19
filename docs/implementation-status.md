@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-10-19. Foundation, local-reliefs and qualifying foreign-income milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
+Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
 
 | Backlog | Delivered in this slice | Remaining acceptance criteria |
 |---|---|---|
@@ -8,10 +8,11 @@ Updated: 2026-10-19. Foundation, local-reliefs and qualifying foreign-income mil
 | T2.1 | Bigint cents and exact percentage accumulation; unsupported YA fails | Official filing rounding policy and upstream APIT fixtures |
 | T2.2 | Explicit writable facts; missing scope facts precede income; confirmed values not re-asked | Full dependency graph, placeholder semantics and all categories |
 | T2.3, T2.6, T2.7 | Local and qualifying foreign totals, supported deductions, final-WHT dividends, single-source, single-country capped foreign credits, balances, interpretation alternatives and cited traces | Remaining categories, credits and comprehensive cage mapping |
+| T2.8 | YA 2026/27 Methods 1 and 2(i)-(iv), externally supplied A, reconciled credits, dated schedule, SET and revision guards | Independent computation/validation of A, foreign credits, employment exception decisions and professional sign-off |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
-| T6.1, T6.2 | Official SDK stdio server, eight tools, output schema and error envelopes | Full core catalogue, current-protocol discovery conformance and host matrix |
-| T10.1 | All six IRD example computations match with source locators and interpretation notes; G8/G9 arithmetic regression checks | G7, G10 and independent source verification of remaining non-IRD cases; practitioner review |
+| T6.1, T6.2 | Official SDK stdio server, nine tools, output schema and error envelopes | Full core catalogue, current-protocol discovery conformance and host matrix |
+| T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | G7 and independent source verification of remaining non-IRD cases; practitioner review |
 | T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and schema hash governance |
 
 No full backlog task above is marked complete when its original acceptance criteria remain unmet.
@@ -24,7 +25,7 @@ Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025
 
 ## Deliberate first-slice limits
 
-- Only YA 2025/26; no provisional copying into YA 2026/27.
+- Annual returns only for YA 2025/26; separate instalment planning only for YA 2026/27. No copied annual rules.
 - Local employment, local user-computed business net profit, interest and gross investment rent; supported local deductions and final-WHT resident-company dividends; qualifying foreign salary/services and eligible single-source, single-country foreign income tax credit. Unimplemented scenarios still block calculation.
 - Credits are user-confirmed aggregates, not reconciled evidence. Potential overpayment is not a validated refund claim.
 - Tax fractions accumulate exactly; each tax bucket is rounded to cents, half up, then summed. Do not present this as verified RAMIS whole-rupee rounding.
@@ -61,7 +62,7 @@ Source: https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_A
 
 ## Next implementation work
 
-1. Expand protocol tests to current-protocol discovery and verify supported host behaviour.
+1. Independently validate instalment gross-tax bases and payment rounding, then expand protocol tests to current-protocol discovery and verify supported host behaviour.
 2. Add remaining primary-source golden fixtures; resolve the low-income charity-cap ambiguity before broadening donation support.
 3. Obtain professional review of foreign qualification, deduction allocation, stacking, FTC eligibility and low-local-income interpretations; extend per-country/per-source credit allocation only with appropriate evidence.
 4. Verify filing-obligation law from primary sources before exposing a no-return-required decision.
@@ -70,3 +71,14 @@ Source: https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_A
 7. Package npm and signed desktop extension only after release gates pass.
 
 Practitioner review, unresolved allocation questions and verifier samples need human evidence. They do not block this foundation work, but they block claiming a filing-ready release. No message has been sent to IRD or an external contributor.
+
+## Instalment milestone
+
+- Verified the complete primary IRD SEC/2026/E/06 re-revised circular dated 12 August 2026, including highlighted SET revisions and the 30 November attachment deadline. The requirements linked the superseded 6 August revision; the original research is preserved. Source digest and page locators are recorded separately.
+- Added a stateless, consent-gated YA 2026/27 planner. Method eligibility is explicitly confirmed; A is independently prepared, not computed by the annual YA 2025/26 engine. Actual earlier instalments and deducted/expected withholding are separated and reconciled before computing `(A-C)/B`.
+- Added method, SET-to-return revision and timely-notice guards, dated payment/credit-schedule/attachment requirements, cited traces and correct planner-year success/error metadata. Future payment amounts are never presumed.
+- G10 covers all six published arithmetic cases; corporate cases use the arithmetic helper only, while resident-individual scope remains enforced. Mr X and Mrs P run through the full planner. No automatic employment exemption is inferred from a zero payable amount.
+- Cent ceiling remains an explicitly assumed preview policy. Foreign-credit instalment bases, Method 3, underlying loss/exemption calculations, professional sign-off and payment processing remain unsupported. This is partial T2.8 delivery, not a filing-ready P0 release.
+- Disclaimer version is 2026-10-19.4; instalment rule version is 2026.27.1.
+
+Validation: all 44 tests, including real SDK stdio interactions, and TypeScript checking pass in GitHub CI on Node 22 and 24. Corporate instalment fixtures establish arithmetic only, not corporate tax eligibility or rate correctness.

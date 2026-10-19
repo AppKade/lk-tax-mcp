@@ -5,20 +5,21 @@ import { TaxSession, envelope, errorResult, partialFactsSchema } from './service
 import { knownIssues, supportedScenarios } from './support.ts';
 import { figureNames } from './engine.ts';
 import { rules } from './rules.ts';
+import { instalmentSchema, instalmentRules } from './instalments.ts';
 
 export function createServer() {
   const session = new TaxSession();
-  const server = new McpServer({ name: 'lk-tax-mcp', version: '2026.25.0-preview.3' });
+  const server = new McpServer({ name: 'lk-tax-mcp', version: '2026.25.0-preview.4' });
   const outputSchema = z.object({
-    ya: z.literal('2025/26'), ruleset_version: z.string(), verified_on: z.string(),
+    ya: z.enum(['2025/26', '2026/27']), ruleset_version: z.string(), verified_on: z.string(),
     review_status: z.string(), caution: z.string(), sources: z.array(z.string()),
   }).passthrough();
-  function result(action: () => Record<string, unknown>) {
+  function result(action: () => Record<string, unknown>, context: 'annual' | 'instalments' = 'annual') {
     try {
-      const structuredContent = envelope(action());
+      const structuredContent = envelope(action(), context);
       return { content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }], structuredContent };
     } catch (error) {
-      const structuredContent = errorResult(error);
+      const structuredContent = errorResult(error, context);
       return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }], structuredContent };
     }
   }
@@ -53,6 +54,10 @@ export function createServer() {
     description: 'Compute a development estimate for local employment, local business net profit, interest, investment rent and supported local reliefs/donations; final-WHT resident-company dividends are informational only. Also supports confirmed qualifying foreign salary and net foreign services with single-source, single-country capped foreign credits. Uses an assumed local-first deduction allocation and capped progressive stacking. Show every interpretation warning and alternative summary; never select a preferred interpretation or claim the allocation is optimal. Rechecks consent, facts and scope every time. Not a full return. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.',
     inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.compute()));
+  server.registerTool('lk_plan_instalments', {
+    description: 'Plan one YA 2026/27 quarterly instalment under the 12 August 2026 re-revised IRD circular. Requires active session and current explicit consent. Confirm current-year scope separately in this input. A must be gross tax prepared externally under the selected method, not an annual net balance or a copied current-year estimate. Method 1 uses YA 2025/26 gross tax; 2(i) uses zero; 2(ii)/(iii) use adjusted previous-year figures, with final SET allowed only for quarter one before return finalisation and exactly one return revision thereafter; 2(iv) uses an independently prepared current-year estimate in the first year only. Never infer eligibility. C includes actual earlier instalments and eligible full-year APIT/AIT/WHT, split into deducted and expected remaining, without overlap or final WHT. No foreign-credit basis, Method 3, corporate cases, payments or identifiers. Confirm timely notice when switching from Method 1 to 2(iii). Display display_summary and administrative requirements verbatim. Zero payable is not a filing exemption. Recompute each quarter with actual paid credits; schedule dates do not assume future payments.',
+    inputSchema: privateSchema(instalmentSchema), outputSchema, annotations: readOnly,
+  }, input => result(() => session.planInstalments(input), 'instalments'));
   server.registerTool('lk_explain', {
     description: 'Explain a computed line using deterministic inputs, formula, rule version and source. Recomputes from current facts to avoid stale results. Never invent arithmetic.',
     inputSchema: privateSchema(z.strictObject({ line: z.enum(figureNames) })),
@@ -61,6 +66,9 @@ export function createServer() {
   server.registerResource('rules', 'lktax://rules/2025-26', {
     description: 'Cited, unreviewed YA 2025/26 rules for the implemented local and qualifying foreign-income preview.', mimeType: 'application/json',
   }, () => ({ contents: [{ uri: 'lktax://rules/2025-26', mimeType: 'application/json', text: JSON.stringify(envelope({ rules })) }] }));
+  server.registerResource('instalment-rules', 'lktax://rules/instalments/2026-27', {
+    description: 'YA 2026/27 instalment source, verified dates and unreviewed rule version. Does not supply annual return rates.', mimeType: 'application/json',
+  }, () => ({ contents: [{ uri: 'lktax://rules/instalments/2026-27', mimeType: 'application/json', text: JSON.stringify(envelope({ rules: instalmentRules }, 'instalments')) }] }));
   server.registerResource('known-issues', 'lktax://known-issues', {
     description: 'Dated unresolved rules, unavailable features and release blockers.', mimeType: 'application/json',
   }, () => ({ contents: [{ uri: 'lktax://known-issues', mimeType: 'application/json', text: JSON.stringify(envelope({ issues: knownIssues })) }] }));

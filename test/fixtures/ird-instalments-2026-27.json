@@ -1,0 +1,18 @@
+{
+  "source": "https://www.ird.gov.lk/en/publications/Circulars_Circulars/SEC_2026_E_06_ReRiv_E.pdf",
+  "source_date": "2026-08-12",
+  "source_sha256": "4889d4b3647ef0d0d397e1669edd8db7c17611f27ea75087d7e73e2c5b98de23",
+  "cases": [
+    { "id": "G10-X", "example": 1, "pages": "2-3", "gross_tax": "270000", "credits": "0", "remaining": 4, "payable": "67500.00", "scope": "individual" },
+    { "id": "G10-Liquor", "example": 2, "pages": "3-4", "gross_tax": "742950000", "credits": "880000", "remaining": 4, "payable": "185517500.00", "scope": "arithmetic_only_corporate_excluded" },
+    { "id": "G10-ABC", "example": 3, "pages": "5-6", "gross_tax": "143400000", "credits": "1200000", "remaining": 4, "payable": "35550000.00", "scope": "arithmetic_only_corporate_excluded" },
+    { "id": "G10-XYZ", "example": 4, "pages": "6-7", "gross_tax": "6600000", "credits": "0", "remaining": 4, "payable": "1650000.00", "scope": "arithmetic_only_corporate_excluded" },
+    { "id": "G10-UVW", "example": 5, "pages": "7-8", "gross_tax": "128274000", "credits": "0", "remaining": 4, "payable": "32068500.00", "scope": "arithmetic_only_corporate_excluded" },
+    { "id": "G10-P", "example": 6, "pages": "9-10", "gross_tax": "1032000", "credits": "1050000", "remaining": 4, "payable": "0.00", "scope": "individual" }
+  ],
+  "notes": [
+    "Corporate figures printed in Rs.000 are converted to LKR here. These cases test only the division helper, never corporate eligibility or rate computation.",
+    "Mr X and Mrs P also exercise the full planner. Their eligibility and credit split are synthetic confirmations supplied by tests, not inferred taxpayer facts.",
+    "Mrs P uses the published A from 2025/26 and full-year projected APIT/AIT. Zero payable alone must not establish an employment credit-schedule or filing exemption."
+  ]
+}
