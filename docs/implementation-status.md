@@ -6,12 +6,12 @@ Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and in
 |---|---|---|
 | T1.1, T1.2 | Strict JSON rule validation, dated evidence, YA 2025/26 reliefs, donation parameters, dividend finality and progressive bands | TOML compatibility, full rule catalogue, reviewer sign-off and version-history lint |
 | T2.1 | Bigint cents and exact percentage accumulation; unsupported YA fails | Official filing rounding policy and upstream APIT fixtures |
-| T2.2 | Explicit writable facts; missing scope facts precede income; confirmed values not re-asked | Full dependency graph, placeholder semantics and all categories |
+| T2.2 | Writable fact dictionary, dependency-aware intake readiness, conditional foreign questions, early blockers and edit re-evaluation | Partial financial-node evaluation and unsupported income categories |
 | T2.3, T2.6, T2.7 | Local and qualifying foreign totals, supported deductions, final-WHT dividends, single-source, single-country capped foreign credits, balances, interpretation alternatives and cited traces | Remaining categories, credits and comprehensive cage mapping |
 | T2.8 | YA 2026/27 Methods 1 and 2(i)-(iv), externally supplied A, reconciled credits, dated schedule, SET and revision guards | Independent computation/validation of A, foreign credits, employment exception decisions and professional sign-off |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
-| T6.1, T6.2 | Official SDK stdio server, nine tools, shared instructions, four prompts, six resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
+| T6.1, T6.2 | Official SDK stdio server, nine tools, shared instructions, four prompts, seven resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
 | T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Verified cage-map resource, installed Skill parity and interactive host evaluations |
 | T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | G7 and independent source verification of remaining non-IRD cases; practitioner review |
 | T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and agent behaviour evaluation |
@@ -94,3 +94,12 @@ Validation: all 44 tests, including real SDK stdio interactions, and TypeScript 
 - This delivers host guidance and contract regression coverage, not installed-host certification or practitioner review. Agent Skill packaging, Inspector CLI, agent behaviour evals and the verified cage-map resource remain pending.
 
 Host milestone validation: TypeScript checking and all 48 tests pass, including both stdio protocol journeys. The generated contract candidate is identical on Node 22 and 24; its reviewed snapshot is now committed and checked in CI.
+
+## Dependency-aware interview milestone
+
+- Implemented T2.2 intake dependencies and a published writable fact dictionary. Readiness nodes report complete, incomplete or placeholder with their active dependencies. No partial tax amounts are emitted or implied.
+- Monetary facts, including all three foreign amounts and every deduction, still require explicit confirmation. Foreign salary, service and credit amounts determine the required eligibility booleans. Confirmed zero foreign amounts skip seven irrelevant flags.
+- Neutral booleans for proven-inapplicable branches are materialised only for the validated computation input and never stored. Edits reactivate missing eligibility questions; actual user-confirmed answers remain intact.
+- Known scope exclusions, unsupported claims and foreign eligibility failures short-circuit intake and provide fixed blocking guidance. Missing scope answers remain unknown; no additional facts are requested after a known block. Financial validations still run in the unchanged annual calculation pipeline.
+- Added modern SDK coverage for pruned intake and reactivation, and regression checks for zero handling, early refusals, privacy, consent, state reset and dictionary/schema parity. All prior golden computations remain unchanged.
+- Package version is 2026.25.0-preview.6; annual and instalment rule values and consent version are unchanged. This is an intake milestone, not complete partial evaluation of every financial node or a filing-ready release.

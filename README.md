@@ -11,7 +11,7 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 - TypeScript stdio MCP server using the official SDK, with legacy handshake and modern discovery regression tests.
 - Four guided MCP prompts, shared host instructions, a manual document checklist and rule-specific source catalogue.
 - Versioned public interface snapshot and SHA-256 check for tool schemas, descriptions, annotations, prompts and resources.
-- Versioned consent, memory-only sessions, explicit fact entry and missing-fact questions.
+- Versioned consent, memory-only sessions, explicit fact entry and dependency-aware interview progress. Confirmed monetary zeros prune irrelevant foreign eligibility questions; known exclusions stop intake early.
 - Deterministic SC-01 through SC-09 scope checks; computation rechecks current scope every time.
 - YA 2025/26 local employment, user-supplied local business **net profit**, interest and gross investment rent estimates with personal, rent and solar relief, eligible donations, progressive bands and manually confirmed APIT/AIT/WHT/instalment credits. Final-WHT resident-company dividends are informational and excluded from both assessable income and advance credits.
 - YA 2026/27 quarterly instalment estimates under Methods 1 and 2(i)-(iv), using a confirmed gross-tax basis prepared externally, with payment dates and administrative deadlines from the 12 August 2026 re-revised circular.
@@ -52,7 +52,7 @@ The server uses stdio only. Host compatibility beyond automated protocol tests m
 
 1. `lk_session` with `action: "start"` and `ya: "2025/26"`.
 2. Show `lk_get_disclaimer` verbatim, ask the user to agree, then call `lk_accept_disclaimer` with its version and `user_confirmed: true`.
-3. Use `lk_next_questions` and `lk_set_facts` to collect only missing scope, income, foreign and deduction facts. Every scope flag needs an explicit answer. Amounts are nonnegative LKR decimal strings, never JSON numbers. Ask the user to confirm zeros.
+3. Use `lk_next_questions` and `lk_set_facts` to collect only missing scope, income, foreign and deduction facts. Every requested scope flag needs an explicit answer; a confirmed exclusion stops further intake. Amounts are nonnegative LKR decimal strings, never JSON numbers. Ask the user to confirm zeros.
 4. Call `lk_check_scope`. Stop for out-of-scope cases. Partial status does not guarantee implementation support.
 5. Confirm each `deductions` fact, including zeros, then call `lk_compute_return` for the supported local and qualifying foreign-income preview. Display `display_summary` verbatim; never redo arithmetic in the model. Use `lk_explain` for a returned line.
 6. `lk_session` with `action: "wipe"` clears all facts and consent. Starting again also clears the prior session.
@@ -69,6 +69,14 @@ Read `lktax://checklist/documents` for the manual evidence checklist and `lktax:
 
 See [MCP contract verification](docs/mcp-contract.md) for the public interface hash, version-bump policy and protocol coverage. Interactive host testing, Inspector CLI and a separately installable Agent Skill remain pending.
 
+## Dependency-aware interview
+
+`lk_next_questions` now returns the active `stage`, next missing writable facts and a graph of derived intake-readiness states. `placeholder` means foreign selector amounts are still unknown; it never carries a provisional tax figure. `complete` intake means the required answers are present, while computation still checks financial validity. `calculation_performed` and `filing_ready` remain false on progress responses.
+
+Confirm all three foreign monetary amounts. When all are zero, seven foreign eligibility booleans become irrelevant and are skipped. Positive salary, services and foreign tax each activate their own required confirmations. Changing an amount re-evaluates those dependencies. Neutral values for skipped booleans are used only in the computation input, never saved as user answers. Explicit user answers are retained and require genuine corrections if new facts contradict them.
+
+An already confirmed scope exclusion or unsupported condition returns `out_of_scope` or `blocked`, no further questions and `blocking_guidance`. Stop gathering facts, show the guidance and seek professional review. Never remove real income or claims to bypass a block. See `lktax://facts/2025-26` and [interview policy](docs/interview-policy.md). This milestone covers intake dependencies; partial monetary-node evaluation remains future work.
+
 ## Local reliefs and donations
 
 All deduction amounts must be eligible and confirmed by the user. The tool does not verify institutions or documents:
@@ -80,11 +88,11 @@ All deduction amounts must be eligible and confirmed by the user. The tool does 
 
 Rent is gross local investment rent without an expense deduction claim. Enter the gross and actual deducted final WHT for supported resident-company dividends, and keep that WHT out of advance credits. A mismatch stops computation for review. The tool cannot detect a dividend amount incorrectly included in an aggregate credit, so those totals must be reconciled externally.
 
-Schema expansion is intentional: earlier sessions now need explicit rent/dividend and deduction facts; missing fields never default to zero. The disclaimer version is updated to reflect the expanded scope.
+Rent/dividend and deduction amounts remain explicit; missing monetary fields never default to zero. The disclaimer version is updated to reflect the expanded scope.
 
 ## Qualifying foreign income and credits
 
-Enter foreign amounts in `foreign`, never again in local `income` totals. Every field is explicit, including zeros and false answers when there is no foreign income:
+Enter foreign amounts in `foreign`, never again in local `income` totals. Every monetary amount requires explicit confirmation, including zeros. Use `lk_next_questions` for currently relevant boolean questions; do not invent answers for booleans marked `not_applicable_facts`:
 
 - `employment_lkr` and `service_net_lkr`: annual qualifying foreign salary and user-computed net service profit already converted to LKR. FX lookup and per-receipt capture are not implemented.
 - Confirm receipt in foreign currency, remittance through a licensed bank, and LKR conversion. Foreign salary additionally needs confirmation of the foreign employer; service income needs confirmation of use outside Sri Lanka. Unconfirmed eligibility refuses calculation instead of assuming a concession or omitting the income.

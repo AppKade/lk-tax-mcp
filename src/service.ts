@@ -1,9 +1,10 @@
 import { z } from 'zod';
+import { evaluateInterview, resolveForeign } from './interview.ts';
 import { planInstalments, instalmentRules } from './instalments.ts';
-import { foreignSchema } from './foreign.ts';
+import { foreignSchema, knownForeignBlock } from './foreign.ts';
 import { assertPrivateOutput } from './privacy.ts';
 import { rules, sources, selectRules } from './rules.ts';
-import { scopeSchema, checkScope } from './scope.ts';
+import { scopeSchema, checkScope, checkKnownScope } from './scope.ts';
 import { incomeSchema, deductionsSchema, computeReturn } from './engine.ts';
 export const DISCLAIMER_VERSION = '2026-10-19.4';
 export const CAUTION = 'Development preview. Verify before filing. Not IRD-approved; not tax advice.';
@@ -56,25 +57,25 @@ export class TaxSession {
   }
   nextQuestions() {
     this.requireConsent();
-    const scopeMissing = Object.keys(scopeSchema.shape).filter(k => this.facts.scope?.[k as keyof typeof scopeSchema.shape] === undefined);
-    if (scopeMissing.length) return { status: 'incomplete', missing_facts: scopeMissing.map(k => `scope.${k}`) };
-    // Stop gathering income if scope already excludes the user.
-    if (this.checkScope().status === 'out_of_scope') return { status: 'out_of_scope', missing_facts: [] };
-    const incomeMissing = Object.keys(incomeSchema.shape).filter(k => this.facts.income?.[k as keyof typeof incomeSchema.shape] === undefined);
-    if (incomeMissing.length) return { status: 'incomplete', missing_facts: incomeMissing.map(k => `income.${k}`) };
-    const foreignMissing = Object.keys(foreignSchema.shape).filter(k => this.facts.foreign?.[k as keyof typeof foreignSchema.shape] === undefined);
-    if (foreignMissing.length) return { status: 'incomplete', missing_facts: foreignMissing.map(k => `foreign.${k}`) };
-    const deductionMissing = Object.keys(deductionsSchema.shape).filter(k => this.facts.deductions?.[k as keyof typeof deductionsSchema.shape] === undefined);
-    return { status: deductionMissing.length ? 'incomplete' : 'complete', missing_facts: deductionMissing.map(k => `deductions.${k}`) };
+    const progress = evaluateInterview(this.facts);
+    return { ...progress, ...(progress.blocking_error ? { blocking_guidance: errors[progress.blocking_error] } : {}) };
   }
   checkScope() {
     this.requireConsent();
+    const known = checkKnownScope(this.facts.scope ?? {});
+    if (known.status === 'out_of_scope') return { ...known, assessment_basis: 'confirmed_scope_exclusions; other scope answers remain unknown' };
     const parsed = scopeSchema.safeParse(this.facts.scope);
     if (!parsed.success) throw new Error('MISSING_SCOPE_FACTS');
     return { ...checkScope(parsed.data), assessment_basis: 'scope_answers_only; computation derives foreign credit and interpretation flags from actual amounts' };
   }
   compute() {
     this.requireConsent();
+    const known = checkKnownScope(this.facts.scope ?? {});
+    if (known.status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
+    if (this.facts.scope?.multiple_foreign_tax_countries || this.facts.scope?.preparing_for_clients || this.facts.income?.other_income_or_claims)
+      throw new Error('FEATURE_NOT_IMPLEMENTED');
+    const foreignBlock = knownForeignBlock(this.facts.foreign ?? {});
+    if (foreignBlock) throw new Error(foreignBlock);
     const scope = scopeSchema.safeParse(this.facts.scope);
     if (!scope.success) throw new Error('MISSING_SCOPE_FACTS');
     if (checkScope(scope.data).status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
@@ -82,9 +83,8 @@ export class TaxSession {
     if (!income.success) throw new Error('MISSING_INCOME_FACTS');
     const deductions = deductionsSchema.safeParse(this.facts.deductions);
     if (!deductions.success) throw new Error('MISSING_DEDUCTION_FACTS');
-    const foreign = foreignSchema.safeParse(this.facts.foreign);
-    if (!foreign.success) throw new Error('MISSING_FOREIGN_FACTS');
-    return computeReturn({ ya: rules.ya, scope: scope.data, income: income.data, deductions: deductions.data, foreign: foreign.data });
+    const foreign = resolveForeign(this.facts.foreign ?? {});
+    return computeReturn({ ya: rules.ya, scope: scope.data, income: income.data, deductions: deductions.data, foreign });
   }
   planInstalments(input: unknown) {
     this.requireConsent();
@@ -111,7 +111,7 @@ const errors: Record<string, string> = {
   INVALID_FACTS: 'Use only published fact names, booleans and nonnegative decimal LKR strings with at most two decimal places. Do not send identifiers.',
   MISSING_SCOPE_FACTS: 'Use lk_next_questions and complete every scope fact before computation.',
   MISSING_INCOME_FACTS: 'Use lk_next_questions and complete the missing income facts. Confirm zero values with the user.',
-  MISSING_FOREIGN_FACTS: 'Use lk_next_questions and confirm foreign amounts and eligibility facts, including explicit zero amounts when there is no foreign income.',
+  MISSING_FOREIGN_FACTS: 'Use lk_next_questions and confirm all foreign amounts, including zeros, and the eligibility facts currently required by those amounts. Missing amounts are never zero; inapplicable booleans need no answer.',
   FOREIGN_ELIGIBILITY_REVIEW: 'This foreign income is not confirmed as qualifying for the supported concession or its LKR conversion is unconfirmed. Computation is refused. Do not relabel it as local income or guess eligibility; obtain professional review.',
   FOREIGN_CREDIT_SOURCE_REVIEW: 'Foreign tax credit requires separate source calculations. This preview accepts only one confirmed source in one country and does not pool employment and business credit claims. Obtain a source-specific calculation; do not remove genuine income to bypass the refusal.',
   FOREIGN_CREDIT_REVIEW: 'Confirm that foreign tax was actually paid, is income tax on the same qualifying income from one source in one country and is eligible under the applicable credit rules. No foreign credit is calculated without this confirmation.',

@@ -7,6 +7,7 @@ import { figureNames } from './engine.ts';
 import { rules } from './rules.ts';
 import { instalmentSchema, instalmentRules } from './instalments.ts';
 import { hostInstructions, workflowPrompts, promptText, documentChecklist } from './guidance.ts';
+import { factDictionary, interviewPolicy } from './interview.ts';
 import { assertPrivateOutput } from './privacy.ts';
 import pkg from '../package.json' with { type: 'json' };
 
@@ -42,11 +43,11 @@ export function createServer() {
     inputSchema: privateSchema(z.strictObject({ version: z.string().max(30), user_confirmed: z.boolean() })), outputSchema, annotations: localMutation,
   }, ({ version, user_confirmed }) => result(() => session.accept(version, user_confirmed)));
   server.registerTool('lk_set_facts', {
-    description: 'Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. Collect deductions separately. Every amount must be user-confirmed and eligible. Do not enter final dividend WHT as ait_wht_credit. Collect foreign aggregates and eligibility in the foreign object, never in local income. Foreign amounts must already be converted to LKR. Foreign tax paid must be eligible income tax on that same income from one confirmed source in one country; do not include Sri Lankan APIT or pool sources. other_income_or_claims is true for non-qualifying or otherwise unsupported foreign income, unsupported dividends, loan-funded solar claims, rent expense deductions or any other unsupported income or claim. Scope answers are mandatory, including explicit false answers. Scope foreign hints cannot override flags derived from computation amounts.',
+    description: 'Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. Collect deductions separately. Every amount must be user-confirmed and eligible. Do not enter final dividend WHT as ait_wht_credit. Collect foreign aggregates and eligibility in the foreign object, never in local income. Foreign amounts must already be converted to LKR. Foreign tax paid must be eligible income tax on that same income from one confirmed source in one country; do not include Sri Lankan APIT or pool sources. other_income_or_claims is true for non-qualifying or otherwise unsupported foreign income, unsupported dividends, loan-funded solar claims, rent expense deductions or any other unsupported income or claim. Scope answers are required unless an already confirmed exclusion stops intake. Confirm explicit false answers when requested. Use lk_next_questions to determine relevant foreign eligibility booleans; never invent answers for inapplicable facts. Scope foreign hints cannot override flags derived from computation amounts.',
     inputSchema: privateSchema(partialFactsSchema), outputSchema, annotations: localMutation,
   }, facts => result(() => session.setFacts(facts)));
   server.registerTool('lk_next_questions', {
-    description: 'Get missing scope, income, foreign and deduction facts in order. Ask only for listed facts. Never ask for names, TIN, NIC or credentials.',
+    description: 'Get dependency-aware interview progress and only the next missing writable facts. All monetary amounts, including zeros, require confirmation. Foreign eligibility booleans are requested only when confirmed amounts make them relevant. Placeholder readiness means selector amounts are unanswered; it is not a provisional tax estimate. Stop collecting facts for blocked or out_of_scope status and show blocking_guidance. Intake completeness does not establish filing readiness. Never ask for names, TIN, NIC or credentials.',
     inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.nextQuestions()));
   server.registerTool('lk_check_scope', {
@@ -97,5 +98,8 @@ export function createServer() {
       typeof value === 'object' && value !== null && 'id' in value && 'sources' in value);
     return { contents: [{ uri: 'lktax://sources/2025-26', mimeType: 'application/json', text: JSON.stringify(envelope({ evidence })) }] };
   });
+  server.registerResource('fact-dictionary', 'lktax://facts/2025-26', {
+    description: 'Writable fact dictionary and dependency-aware intake policy. Derived readiness is not a monetary estimate or filing decision.', mimeType: 'application/json',
+  }, () => ({ contents: [{ uri: 'lktax://facts/2025-26', mimeType: 'application/json', text: JSON.stringify(envelope({ facts: factDictionary, policy: interviewPolicy })) }] }));
   return server;
 }
