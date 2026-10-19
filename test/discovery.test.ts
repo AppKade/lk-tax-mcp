@@ -15,7 +15,7 @@ test('2026 discovery without initialize advertises static guidance and completes
   assert.equal(discovery.result.instructions, hostInstructions);
   for (const capability of ['tools', 'resources', 'prompts']) assert.ok(discovery.result.capabilities[capability]);
   const tools = (await host.request('tools/list')).result.tools;
-  assert.equal(tools.length, 9);
+  assert.equal(tools.length, 10);
   const prompts = (await host.request('prompts/list')).result.prompts;
   assert.deepEqual(prompts.map((p: any) => p.name).sort(), workflowPrompts.map(p => p.name).sort());
   for (const prompt of workflowPrompts) {
@@ -30,8 +30,8 @@ test('2026 discovery without initialize advertises static guidance and completes
   assert.ok(!JSON.stringify(invalid).includes('123456789V'));
   assert.ok(!JSON.stringify(invalid).includes('Secret Name'));
   const resources = (await host.request('resources/list')).result.resources;
-  assert.equal(resources.length, 7);
-  for (const uri of ['lktax://checklist/documents', 'lktax://sources/2025-26', 'lktax://facts/2025-26']) {
+  assert.equal(resources.length, 8);
+  for (const uri of ['lktax://checklist/documents', 'lktax://sources/2025-26', 'lktax://facts/2025-26', 'lktax://cagemap/2025-26']) {
     const response = await host.request('resources/read', { uri });
     assert.equal(response.error, undefined);
     const data = JSON.parse(response.result.contents[0].text);
@@ -50,6 +50,7 @@ test('2026 discovery without initialize advertises static guidance and completes
   }
   // Discovery, resources and prompt retrieval never create a session or accept consent.
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'SESSION_REQUIRED');
+  assert.equal((await call('lk_review_return')).structuredContent.error.code, 'SESSION_REQUIRED');
   await call('lk_session', { action: 'start' });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'CONSENT_REQUIRED');
   const disclaimer = (await call('lk_get_disclaimer')).structuredContent;
@@ -61,10 +62,16 @@ test('2026 discovery without initialize advertises static guidance and completes
   const calculated = (await call('lk_compute_return')).structuredContent;
   assert.equal(calculated.figures.balance_payable, '11200.00');
   assert.equal(calculated.filing_ready, false);
+  const reviewed = (await call('lk_review_return')).structuredContent;
+  assert.equal(reviewed.status, 'review_only');
+  assert.equal(reviewed.cages.find((r: any) => r.area === 'return' && r.cage === '80').amount, '1800000.00');
+  assert.equal(reviewed.cages.find((r: any) => r.area === 'return' && r.cage === '200').amount, null);
+  assert.equal(reviewed.filing_ready, false);
   const changed = (await call('lk_set_facts', { foreign: { employment_lkr: '3000000' } })).structuredContent;
   assert.ok(changed.missing_facts.includes('foreign.foreign_employer_confirmed'));
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'MISSING_FOREIGN_FACTS');
   await call('lk_session', { action: 'wipe' });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'SESSION_REQUIRED');
+  assert.equal((await call('lk_review_return')).structuredContent.error.code, 'SESSION_REQUIRED');
   host.assertClean();
 });
