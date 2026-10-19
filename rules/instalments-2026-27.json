@@ -1,0 +1,28 @@
+{
+  "ya": "2026/27",
+  "version": "2026.27.1",
+  "verified_on": "2026-10-19",
+  "review_status": "unreviewed",
+  "source": "https://www.ird.gov.lk/en/publications/Circulars_Circulars/SEC_2026_E_06_ReRiv_E.pdf",
+  "source_date": "2026-08-12",
+  "source_sha256": "4889d4b3647ef0d0d397e1669edd8db7c17611f27ea75087d7e73e2c5b98de23",
+  "payment_dates": [
+    "2026-08-15",
+    "2026-11-15",
+    "2027-02-15",
+    "2027-05-15"
+  ],
+  "credit_schedule_dates": [
+    "2026-08-31",
+    "2026-11-30",
+    "2027-02-28",
+    "2027-05-31"
+  ],
+  "revision_notice_dates": [
+    null,
+    "2026-10-31",
+    "2027-01-31",
+    "2027-04-30"
+  ],
+  "attachment_deadline": "2026-11-30"
+}
