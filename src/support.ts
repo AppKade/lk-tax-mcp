@@ -9,7 +9,7 @@ export const knownIssues = [
     detail: 'Only confirmed qualifying foreign salary/services and eligible single-source, single-country foreign income tax are supported. LKR conversion is supplied by the user. Credit claims require one confirmed source and are also limited by the statutory average-rate ceiling. Local-first deduction allocation and shared-band stacking are preview assumptions; low-local-income results show a flat-cap comparison. Non-qualifying income and multi-country credit allocation remain unsupported.' },
 ];
 export const supportedScenarios = {
-  supported: ['Confirmed qualifying foreign-employer salary and net foreign service income, already converted to LKR, with eligible single-source, single-source, single-country capped foreign income tax credit',
+  supported: ['Confirmed qualifying foreign-employer salary and net foreign service income, already converted to LKR, with eligible single-source, single-country capped foreign income tax credit',
     'Full-year resident individual with local employment, local user-supplied net business profit, interest or gross investment rent',
     'Confirmed eligible unused solar expenditure, approved cash charity donations where cap readings agree, Government donations and eligible Samurdhi shop contributions',
     'Resident-company dividends where final WHT was already deducted at the supported rate; informational only'],

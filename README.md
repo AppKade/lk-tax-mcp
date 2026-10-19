@@ -14,7 +14,7 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 - YA 2025/26 local employment, user-supplied local business **net profit**, interest and gross investment rent estimates with personal, rent and solar relief, eligible donations, progressive bands and manually confirmed APIT/AIT/WHT/instalment credits. Final-WHT resident-company dividends are informational and excluded from both assessable income and advance credits.
 - Decimal strings and bigint arithmetic, cited traces, text and structured tool results, identifier output checks.
 - All six IRD worked-example computations match their published balances exactly. Fixture notes record aggregation, eligibility assumptions, source-table ambiguities and inferred opening solar balances. Other release cases and practitioner sign-off remain pending.
-- Confirmed qualifying foreign salary and net foreign services in manually converted LKR, with an eligible single-source, single-source, single-country foreign income tax credit capped at tax attributable to that income.
+- Confirmed qualifying foreign salary and net foreign services in manually converted LKR, with an eligible single-source, single-country foreign income tax credit capped at tax attributable to that income.
 
 Non-qualifying foreign income, multi-country foreign credits, other dividends, rent expense deductions, loan-funded solar claims, film/cinema deductions, legacy qualifying-payment balances, filing-obligation triage, instalment planning, ingestion, persistence and filing outputs are **not implemented**. Mark `income.other_income_or_claims` true if any unsupported income or claim exists; computation will refuse. Do not enter such income under a local category.
 

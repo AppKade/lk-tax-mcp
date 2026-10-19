@@ -25,7 +25,7 @@ Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025
 ## Deliberate first-slice limits
 
 - Only YA 2025/26; no provisional copying into YA 2026/27.
-- Local employment, local user-computed business net profit, interest and gross investment rent; supported local deductions and final-WHT resident-company dividends; qualifying foreign salary/services and eligible single-source, single-source, single-country foreign income tax credit. Unimplemented scenarios still block calculation.
+- Local employment, local user-computed business net profit, interest and gross investment rent; supported local deductions and final-WHT resident-company dividends; qualifying foreign salary/services and eligible single-source, single-country foreign income tax credit. Unimplemented scenarios still block calculation.
 - Credits are user-confirmed aggregates, not reconciled evidence. Potential overpayment is not a validated refund claim.
 - Tax fractions accumulate exactly; each tax bucket is rounded to cents, half up, then summed. Do not present this as verified RAMIS whole-rupee rounding.
 - In-memory state only. Consent is re-required after restart, wipe or new session; no cleartext session storage exists.
@@ -51,7 +51,7 @@ Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025
 - SC-07 excess-credit and SC-08 interpretation flags in computation are derived from actual amounts. Triage scope hints cannot suppress them.
 - Foreign tax credit is limited to both the foreign bucket's computed tax and the section 81 average-rate ceiling, with a single-source guard, and recalculated for each interpretation; excess cannot become a refund or an asserted carry-forward.
 - Added G2, G3 and G6 fixtures. G2 records the source-table ambiguity and the credit necessary to reconcile its published balance. Eligibility facts absent from the published narrative are fixture assumptions, not facts to assume for users.
-- Rule version 2025.26.3 and disclaimer version 2026-10-19.3. All rules remain unreviewed. Original requirements and backlog are unchanged.
+- Rule version 2025.26.3 and disclaimer version 2026-10-19.3. All rules remain unreviewed. Original requirements and backlog are unchanged. Type checking and all 36 tests passed on Node 22 and 24, including the expanded stdio journey.
 
 ## Statutory correction to the credit summary
 
