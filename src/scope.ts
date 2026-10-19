@@ -11,12 +11,19 @@ export const scopeSchema = z.strictObject({
 });
 export type ScopeFacts = z.infer<typeof scopeSchema>;
 export function checkScope(input: ScopeFacts) {
-  const f = scopeSchema.parse(input);
+  return scopeResult(scopeSchema.parse(input));
+}
+// Missing answers stay unknown. Known exclusions can stop intake before more facts are collected.
+export function checkKnownScope(input: Partial<ScopeFacts>) {
+  const result = scopeResult(scopeSchema.partial().parse(input));
+  return { ...result, status: result.status === 'out_of_scope' ? 'out_of_scope' as const : 'undetermined' as const };
+}
+function scopeResult(f: Partial<ScopeFacts>) {
   const reasons: { code: string; severity: 'partial' | 'out_of_scope'; message: string }[] = [];
-  const add = (condition: boolean, code: string, severity: 'partial' | 'out_of_scope', message: string) => {
+  const add = (condition: boolean | undefined, code: string, severity: 'partial' | 'out_of_scope', message: string) => {
     if (condition) reasons.push({ code, severity, message });
   };
-  add(!f.resident_full_year || f.residency_special_case, 'SC-01', 'out_of_scope', 'Residency requires professional review.');
+  add(f.resident_full_year === false || f.residency_special_case === true, 'SC-01', 'out_of_scope', 'Residency requires professional review.');
   add(f.investment_asset_gains, 'SC-02', 'out_of_scope', 'Investment asset gains require a separate calculation and return.');
   add(f.partnership_or_trust, 'SC-03', 'out_of_scope', 'Partnership and trust shares are unsupported.');
   add(f.restricted_business, 'SC-04', 'out_of_scope', 'Special-rate business income is unsupported.');

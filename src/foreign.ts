@@ -14,17 +14,26 @@ export const foreignSchema = z.strictObject({
   single_source_confirmed: z.boolean().describe('The claimed foreign tax and ALL foreign income in this credit calculation belong to one source and one country; no pooling across jobs/businesses.'),
 });
 export type ForeignFacts = z.infer<typeof foreignSchema>;
+// A refusal may be established by confirmed facts even while other answers are unknown.
+export function knownForeignBlock(f: Partial<ForeignFacts>): string | undefined {
+  const employment = f.employment_lkr === undefined ? undefined : cents(f.employment_lkr);
+  const services = f.service_net_lkr === undefined ? undefined : cents(f.service_net_lkr);
+  const paid = f.foreign_tax_paid === undefined ? undefined : cents(f.foreign_tax_paid);
+  const positive = (v: bigint | undefined) => v !== undefined && v > 0n;
+  if (employment === 0n && services === 0n && positive(paid)) return 'FOREIGN_TAX_WITHOUT_INCOME';
+  if ((positive(employment) || positive(services)) &&
+      (f.received_in_foreign_currency === false || f.remitted_via_licensed_bank === false || f.fx_conversion_confirmed === false ||
+       (positive(employment) && f.foreign_employer_confirmed === false) ||
+       (positive(services) && f.services_used_outside_lk === false))) return 'FOREIGN_ELIGIBILITY_REVIEW';
+  if (positive(paid) && f.credit_eligibility_confirmed === false) return 'FOREIGN_CREDIT_REVIEW';
+  if (positive(paid) && (f.single_source_confirmed === false || (positive(employment) && positive(services))))
+    return 'FOREIGN_CREDIT_SOURCE_REVIEW';
+}
 export function validateForeign(f: ForeignFacts) {
-  const total = cents(f.employment_lkr) + cents(f.service_net_lkr);
-  const paid = cents(f.foreign_tax_paid);
-  if (total === 0n && paid > 0n) throw new Error('FOREIGN_TAX_WITHOUT_INCOME');
-  if (total > 0n && (!f.received_in_foreign_currency || !f.remitted_via_licensed_bank || !f.fx_conversion_confirmed ||
-    (cents(f.employment_lkr) > 0n && !f.foreign_employer_confirmed) ||
-    (cents(f.service_net_lkr) > 0n && !f.services_used_outside_lk))) throw new Error('FOREIGN_ELIGIBILITY_REVIEW');
-  if (paid > 0n && !f.credit_eligibility_confirmed) throw new Error('FOREIGN_CREDIT_REVIEW');
-  if (paid > 0n && (!f.single_source_confirmed || (cents(f.employment_lkr) > 0n && cents(f.service_net_lkr) > 0n)))
-    throw new Error('FOREIGN_CREDIT_SOURCE_REVIEW');
-  return { total, paid };
+  f = foreignSchema.parse(f);
+  const block = knownForeignBlock(f);
+  if (block) throw new Error(block);
+  return { total: cents(f.employment_lkr) + cents(f.service_net_lkr), paid: cents(f.foreign_tax_paid) };
 }
 export function cappedForeignTax(taxable: bigint, localTaxable: bigint, ya: string) {
   if (taxable < 0n || localTaxable < 0n) throw new Error('INVALID_MONEY');
