@@ -1,0 +1,121 @@
+[
+  {
+    "id": "G1",
+    "source": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "locator": "Example 1, printed page 39"
+    },
+    "notes": [
+      "Published amounts; zero tolerance."
+    ],
+    "income": {
+      "employment": "2880000",
+      "business_net": "0",
+      "interest": "140000",
+      "rent": "0",
+      "final_wht_dividends_gross": "0",
+      "final_wht_dividends_deducted": "0",
+      "apit_credit": "74400",
+      "ait_wht_credit": "14000",
+      "instalments_paid": "0",
+      "other_income_or_claims": false
+    },
+    "deductions": {
+      "solar_available": "0",
+      "approved_charity_cash": "0",
+      "government_donations": "0",
+      "government_donations_brought_forward": "0",
+      "samurdhi_shop_contributions": "0"
+    },
+    "expected": {
+      "assessable_income": "3020000.00",
+      "personal_relief": "1800000.00",
+      "taxable_income": "1220000.00",
+      "tax": "99600.00",
+      "credits": "88400.00",
+      "balance_payable": "11200.00"
+    }
+  },
+  {
+    "id": "G4",
+    "source": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "locator": "Example 4, printed pages 43-44"
+    },
+    "notes": [
+      "Local business net profit aggregates 11500000 and 240000 net solar-electricity income.",
+      "Solar eligible unused cost is 2000000 less 1800000 prior claims.",
+      "The source has an impossible 31 April date; no date is inferred or used."
+    ],
+    "income": {
+      "employment": "7500000",
+      "business_net": "11740000",
+      "interest": "8000000",
+      "rent": "1900000",
+      "final_wht_dividends_gross": "0",
+      "final_wht_dividends_deducted": "0",
+      "apit_credit": "1571316",
+      "ait_wht_credit": "990000",
+      "instalments_paid": "0",
+      "other_income_or_claims": false
+    },
+    "deductions": {
+      "solar_available": "200000",
+      "approved_charity_cash": "0",
+      "government_donations": "1000000",
+      "government_donations_brought_forward": "0",
+      "samurdhi_shop_contributions": "800000"
+    },
+    "expected": {
+      "assessable_income": "29140000.00",
+      "rent_relief": "475000.00",
+      "personal_relief": "1800000.00",
+      "solar_relief": "200000.00",
+      "qualifying_payments": "1800000.00",
+      "taxable_income": "24865000.00",
+      "tax": "8471400.00",
+      "balance_payable": "5910084.00"
+    }
+  },
+  {
+    "id": "G5",
+    "source": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "locator": "Example 5, printed pages 45-47"
+    },
+    "notes": [
+      "Employment aggregates 9000000 primary and 5000000 secondary.",
+      "Prior solar deduction 600000 is inferred from the source illustration showing 400000 remaining; it is not independently documented.",
+      "Final dividend WHT 75000 follows the explicitly stated 15 percent of 500000 gross, excluded from assessable income and credits."
+    ],
+    "income": {
+      "employment": "14000000",
+      "business_net": "360000",
+      "interest": "4500000",
+      "rent": "1800000",
+      "final_wht_dividends_gross": "500000",
+      "final_wht_dividends_deducted": "75000",
+      "apit_credit": "3912000",
+      "ait_wht_credit": "630000",
+      "instalments_paid": "800000",
+      "other_income_or_claims": false
+    },
+    "deductions": {
+      "solar_available": "400000",
+      "approved_charity_cash": "200000",
+      "government_donations": "250000",
+      "government_donations_brought_forward": "0",
+      "samurdhi_shop_contributions": "0"
+    },
+    "expected": {
+      "assessable_income": "20660000.00",
+      "rent_relief": "450000.00",
+      "solar_relief": "400000.00",
+      "charity_deduction": "75000.00",
+      "government_donation_deduction": "250000.00",
+      "taxable_income": "17685000.00",
+      "tax": "5886600.00",
+      "balance_payable": "544600.00"
+    }
+  }
+]

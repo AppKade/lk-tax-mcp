@@ -1,4 +1,5 @@
 import test from 'node:test';
+import cases from './fixtures/ird-local-2025-26.json' with { type: 'json' };
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
@@ -66,13 +67,26 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
     foreign_credit_exceeds_cap: false, qualifying_foreign_income: false, local_taxable_below_first_band: false,
     amendment_assessment_or_appeal: false, preparing_for_clients: false,
   }, income: {
-    employment: '2880000', business_net: '0', interest: '140000', apit_credit: '74400',
+    employment: '2880000', business_net: '0', interest: '140000', rent: '0', final_wht_dividends_gross: '0', final_wht_dividends_deducted: '0', apit_credit: '74400',
     ait_wht_credit: '14000', instalments_paid: '0', other_income_or_claims: false,
-  } });
+  }, deductions: { solar_available: '0', approved_charity_cash: '0', government_donations: '0', government_donations_brought_forward: '0', samurdhi_shop_contributions: '0' } });
   const computed = (await call('lk_compute_return')).structuredContent;
   assert.equal(computed.figures.balance_payable, '11200.00');
   assert.equal(computed.filing_ready, false);
   assert.equal((await call('lk_explain', { line: 'tax' })).structuredContent.trace.value, '99600.00');
+  const g5 = cases.find(c => c.id === 'G5')!;
+  await call('lk_set_facts', { income: g5.income, deductions: g5.deductions });
+  const expanded = (await call('lk_compute_return')).structuredContent;
+  assert.equal(expanded.figures.balance_payable, '544600.00');
+  assert.equal(expanded.figures.charity_deduction, '75000.00');
+  assert.equal(expanded.figures.credits, '5342000.00');
+  assert.equal((await call('lk_explain', { line: 'charity_deduction' })).structuredContent.trace.value, '75000.00');
+  const known = await request('resources/read', { uri: 'lktax://known-issues' });
+  assert.ok(JSON.parse(known.result.contents[0].text).issues.some((i: { id: string }) => i.id === 'KI-CHARITY-CAP'));
+  const supported = await request('resources/read', { uri: 'lktax://supported-scenarios' });
+  assert.ok(JSON.parse(supported.result.contents[0].text).unsupported.includes('Foreign income and tax credits'));
+  await call('lk_set_facts', { income: { employment: '1900000', business_net: '0', interest: '0', rent: '0' }, deductions: { solar_available: '0', approved_charity_cash: '60000', government_donations: '0' } });
+  assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'CHARITY_CAP_REVIEW');
   await call('lk_set_facts', { scope: { losses: true } });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'OUT_OF_SCOPE');
   await call('lk_session', { action: 'wipe' });

@@ -9,18 +9,8 @@ import { scopeSchema, checkScope, type ScopeFacts } from '../src/scope.ts';
 import { TaxSession, DISCLAIMER_VERSION, errorResult, envelope } from '../src/service.ts';
 import { assertPrivateOutput } from '../src/privacy.ts';
 
-export const cleanScope: ScopeFacts = {
-  resident_full_year: true, residency_special_case: false, investment_asset_gains: false,
-  partnership_or_trust: false, restricted_business: false, terminal_benefits_or_arrears: false,
-  business_profit_needs_computation: false, losses: false, multiple_foreign_tax_countries: false,
-  foreign_credit_exceeds_cap: false, qualifying_foreign_income: false, local_taxable_below_first_band: false,
-  amendment_assessment_or_appeal: false, preparing_for_clients: false,
-};
-export const income = {
-  employment: '2880000', business_net: '0', interest: '140000', apit_credit: '74400',
-  ait_wht_credit: '14000', instalments_paid: '0', other_income_or_claims: false,
-};
-const calculate = (i = income, scope = cleanScope) => computeReturn({ ya: '2025/26', scope, income: i });
+import { cleanScope, income, zeroDeductions } from './fixtures.ts';
+const calculate = (i = income, scope = cleanScope) => computeReturn({ ya: '2025/26', scope, income: i, deductions: zeroDeductions });
 
 test('strict money boundary, exact cents and large values', () => {
   for (const invalid of ['-1', '1e6', 'NaN', 'Infinity', '1,000', ' 1', '01', '1.234', '', '1000000000000000'])
@@ -31,7 +21,7 @@ test('strict money boundary, exact cents and large values', () => {
 });
 test('G1: IRD 2025/26 guide example 1, printed page 39 (zero tolerance)', () => {
   const result = calculate();
-  assert.deepEqual(result.figures, {
+  assert.deepEqual(Object.fromEntries(['assessable_income', 'personal_relief', 'taxable_income', 'tax', 'credits', 'balance_payable', 'potential_overpayment'].map(k => [k, result.figures[k as keyof typeof result.figures]])), {
     assessable_income: '3020000.00', personal_relief: '1800000.00', taxable_income: '1220000.00',
     tax: '99600.00', credits: '88400.00', balance_payable: '11200.00', potential_overpayment: '0.00',
   });
@@ -103,7 +93,7 @@ test('consent, selective interview, atomic updates, current-fact scope and wipe'
   s.setFacts({ scope: { resident_full_year: true } });
   assert.ok(!s.nextQuestions().missing_facts.includes('scope.resident_full_year'));
   assert.throws(() => s.compute(), /MISSING_SCOPE_FACTS/);
-  s.setFacts({ scope: cleanScope, income });
+  s.setFacts({ scope: cleanScope, income, deductions: zeroDeductions });
   assert.equal(s.compute().figures.balance_payable, '11200.00');
   assert.throws(() => s.setFacts({ income: { employment: '-1' } }), /INVALID_FACTS/);
   assert.equal(s.compute().figures.balance_payable, '11200.00');
