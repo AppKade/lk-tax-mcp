@@ -115,3 +115,5 @@ Interview milestone verification covers 56 tests, including full legacy and mode
 - Refund cage 200, exempt disclosures at 210, gross foreign remittances at 210A and historical solar carry-forward remain unset. Aggregate credits are not guessed into certificate, Table 08 or payment-row cages. Gaps remain manual and do not become export acknowledgements.
 - Added conservative return-format hints without claiming portal eligibility or a filing obligation. All foreign allocation flags, interpretation alternatives and financial refusals are preserved.
 - Cage-map version 2025.26.cages.1 and package preview.7. Annual/instalment tax rules and consent version are unchanged. This delivers partial T1.3/T3.3 coverage; it does not deliver T8.1 filing outputs or professional approval.
+
+Return-review validation covers 64 tests, including all prior computations, eight new review regressions, both MCP protocol journeys, the reviewed public contract snapshot and TypeScript checking on Node 22 and 24.
