@@ -29,7 +29,7 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   assert.ok(hello.result.capabilities.prompts);
   host.notify('notifications/initialized');
   const listed = await request('tools/list');
-  assert.equal(listed.result.tools.length, 9);
+  assert.equal(listed.result.tools.length, 10);
   for (const tool of listed.result.tools) {
     assert.ok(tool.inputSchema && tool.outputSchema);
     assert.equal(tool.annotations.openWorldHint, false);
@@ -71,6 +71,9 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   const computed = (await call('lk_compute_return')).structuredContent;
   assert.equal(computed.figures.balance_payable, '11200.00');
   assert.equal(computed.filing_ready, false);
+  const review = (await call('lk_review_return')).structuredContent;
+  assert.equal(review.cages.find((r: any) => r.area === 'return' && r.cage === '190').amount, '11200.00');
+  assert.equal(review.export_available, false);
   assert.equal((await call('lk_explain', { line: 'tax' })).structuredContent.trace.value, '99600.00');
   const g5 = cases.find(c => c.id === 'G5')!;
   await call('lk_set_facts', { income: g5.income, deductions: g5.deductions });

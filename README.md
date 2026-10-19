@@ -15,6 +15,7 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 - Deterministic SC-01 through SC-09 scope checks; computation rechecks current scope every time.
 - YA 2025/26 local employment, user-supplied local business **net profit**, interest and gross investment rent estimates with personal, rent and solar relief, eligible donations, progressive bands and manually confirmed APIT/AIT/WHT/instalment credits. Final-WHT resident-company dividends are informational and excluded from both assessable income and advance credits.
 - YA 2026/27 quarterly instalment estimates under Methods 1 and 2(i)-(iv), using a confirmed gross-tax basis prepared externally, with payment dates and administrative deadlines from the 12 August 2026 re-revised circular.
+- Source-verified YA 2025/26 cage references and a consent-gated return review with consistency checks and explicit manual review gaps.
 - Decimal strings and bigint arithmetic, cited traces, text and structured tool results, identifier output checks.
 - All six IRD worked-example computations match their published balances exactly. Fixture notes record aggregation, eligibility assumptions, source-table ambiguities and inferred opening solar balances. Other release cases and practitioner sign-off remain pending.
 - Confirmed qualifying foreign salary and net foreign services in manually converted LKR, with an eligible single-source, single-country foreign income tax credit capped at tax attributable to that income.
@@ -54,7 +55,7 @@ The server uses stdio only. Host compatibility beyond automated protocol tests m
 2. Show `lk_get_disclaimer` verbatim, ask the user to agree, then call `lk_accept_disclaimer` with its version and `user_confirmed: true`.
 3. Use `lk_next_questions` and `lk_set_facts` to collect only missing scope, income, foreign and deduction facts. Every requested scope flag needs an explicit answer; a confirmed exclusion stops further intake. Amounts are nonnegative LKR decimal strings, never JSON numbers. Ask the user to confirm zeros.
 4. Call `lk_check_scope`. Stop for out-of-scope cases. Partial status does not guarantee implementation support.
-5. Confirm each `deductions` fact, including zeros, then call `lk_compute_return` for the supported local and qualifying foreign-income preview. Display `display_summary` verbatim; never redo arithmetic in the model. Use `lk_explain` for a returned line.
+5. Confirm each `deductions` fact, including zeros, then call `lk_compute_return` for the supported local and qualifying foreign-income preview. Display `display_summary` verbatim; never redo arithmetic in the model. Use `lk_explain` for a returned line and `lk_review_return` to inspect mapped preview cages and unresolved review gaps.
 6. `lk_session` with `action: "wipe"` clears all facts and consent. Starting again also clears the prior session.
 
 No names, NIC, TIN, employer names, account numbers, documents or credentials are accepted. There are no arbitrary-text fact fields. Tool amounts and user messages still reach the host and possibly its AI provider. Data lives only in this server process; restarting loses it. Other host tools can access the same conversation. See [SECURITY.md](SECURITY.md).
@@ -67,7 +68,7 @@ Hosts with MCP prompt support can select `file_my_return`, `do_i_need_to_file`, 
 
 Read `lktax://checklist/documents` for the manual evidence checklist and `lktax://sources/2025-26` for rule-specific source evidence. Keep evidence locally and enter only confirmed aggregate facts. Document uploads, filing exports and RAMIS submission remain unavailable.
 
-See [MCP contract verification](docs/mcp-contract.md) for the public interface hash, version-bump policy and protocol coverage. Interactive host testing, Inspector CLI and a separately installable Agent Skill remain pending.
+Read `lktax://cagemap/2025-26` for the supported cage map, source hashes and unresolved bindings. See [MCP contract verification](docs/mcp-contract.md) for the public interface hash, version-bump policy and protocol coverage. Interactive host testing, Inspector CLI and a separately installable Agent Skill remain pending.
 
 ## Dependency-aware interview
 
@@ -76,6 +77,16 @@ See [MCP contract verification](docs/mcp-contract.md) for the public interface h
 Confirm all three foreign monetary amounts. When all are zero, seven foreign eligibility booleans become irrelevant and are skipped. Positive salary, services and foreign tax each activate their own required confirmations. Changing an amount re-evaluates those dependencies. Neutral values for skipped booleans are used only in the computation input, never saved as user answers. Explicit user answers are retained and require genuine corrections if new facts contradict them.
 
 An already confirmed scope exclusion or unsupported condition returns `out_of_scope` or `blocked`, no further questions and `blocking_guidance`. Stop gathering facts, show the guidance and seek professional review. Never remove real income or claims to bypass a block. See `lktax://facts/2025-26` and [interview policy](docs/interview-policy.md). This milestone covers intake dependencies; partial monetary-node evaluation remains future work.
+
+## Return review
+
+`lk_review_return` recomputes current confirmed annual facts through the same validation path as `lk_compute_return`. It maps supported preview amounts to cited main-return and schedule cages, checks transfers and totals, and lists unresolved review gaps. Every engine figure has an explicit mapped, reference-only or working-only disposition.
+
+Null cage amounts stay unset. Reference amounts are not filing values: potential overpayment is not an approved refund, and an unused solar balance is not an independently verified historical carry-forward. The tool does not infer primary/secondary APIT or Table 08 allocations, detailed advance-credit/payment rows, exempt disclosures or gross foreign remittances from aggregates.
+
+Final dividend WHT already deducted is shown at Schedule 6A cage 607. It is never added to unpaid final withholding, total tax or advance credits. All interpretation flags and alternatives remain visible; mapping does not confirm a preferred interpretation. Format hints require portal confirmation and do not establish a filing obligation.
+
+This is an in-memory development review, with no files, identifiers, filing export or pre-export approval. See [cage evidence and review limits](docs/return-review.md).
 
 ## Local reliefs and donations
 

@@ -1,0 +1,370 @@
+{
+  "ya": "2025/26",
+  "version": "2025.26.cages.1",
+  "verified_on": "2026-10-19",
+  "evidence_status": "confirmed",
+  "review_status": "unreviewed",
+  "sources": {
+    "return": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_001_2025_2026_E.pdf",
+      "sha256": "d89252750a27800e82139de8543eaa5be0f48236f3c61df47c95dea01aab6161",
+      "bytes": 778937
+    },
+    "schedules": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_002_2025_2026_E.pdf",
+      "sha256": "13941f60b8f45824eb5eb5d6d97387dd25c7078ee86c4e35a555b84fbcbb0264",
+      "bytes": 3107459
+    },
+    "guide": {
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "sha256": "7e789b520538b45750d874fd67b6fc0ab277fad8b8597d7f01f4934979fa64d6",
+      "bytes": 1982988
+    }
+  },
+  "rows": [
+    {
+      "area": "return",
+      "cage": "10",
+      "label": "Employment income",
+      "binding": "employment_total",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "20",
+      "label": "Business income",
+      "binding": "business_total",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "30",
+      "label": "Investment income",
+      "binding": "investment_total",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "40",
+      "label": "Other income",
+      "binding": "scope_zero",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": "Zero only within the validated supported scope; never omit genuine unsupported income."
+    },
+    {
+      "area": "return",
+      "cage": "50",
+      "label": "Assessable income",
+      "binding": "assessable_income",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "60",
+      "label": "Rent relief",
+      "binding": "rent_relief",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "70",
+      "label": "Solar relief",
+      "binding": "solar_relief",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "80",
+      "label": "Personal relief",
+      "binding": "personal_relief",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "90",
+      "label": "Total reliefs",
+      "binding": "total_reliefs",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "100",
+      "label": "Qualifying payments",
+      "binding": "qualifying_payments",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "110",
+      "label": "Total deductions",
+      "binding": "deductions_total",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "120",
+      "label": "Taxable income",
+      "binding": "taxable_income",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "130",
+      "label": "Terminal-benefit tax",
+      "binding": "scope_zero",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": "Zero only within the validated supported scope; never omit genuine unsupported income."
+    },
+    {
+      "area": "return",
+      "cage": "140",
+      "label": "Investment-asset-gain tax",
+      "binding": "scope_zero",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": "Zero only within the validated supported scope; never omit genuine unsupported income."
+    },
+    {
+      "area": "return",
+      "cage": "150",
+      "label": "Tax on balance taxable income",
+      "binding": "tax",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "160",
+      "label": "Final withholding not deducted",
+      "binding": "scope_zero",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": "Zero only within the validated supported scope; never omit genuine unsupported income."
+    },
+    {
+      "area": "return",
+      "cage": "170",
+      "label": "Total tax payable",
+      "binding": "tax",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "180",
+      "label": "Tax credits",
+      "binding": "credits",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "190",
+      "label": "Balance tax payable",
+      "binding": "balance_payable",
+      "source_doc": "return",
+      "locator": "PDF page 1, Section 01 Parts A-C",
+      "note": ""
+    },
+    {
+      "area": "return",
+      "cage": "200",
+      "label": "Refund claimed",
+      "binding": "unresolved",
+      "source_doc": "return",
+      "locator": "PDF page 1, Part C",
+      "note": "Potential overpayment is a reference amount only, not a validated refund claim.",
+      "reference_figure": "potential_overpayment"
+    },
+    {
+      "area": "return",
+      "cage": "210",
+      "label": "Exempt and excluded income",
+      "binding": "unresolved",
+      "source_doc": "return",
+      "locator": "PDF page 1, Part D",
+      "note": "The supported taxable-income aggregates do not establish this disclosure total."
+    },
+    {
+      "area": "return",
+      "cage": "210A",
+      "label": "Foreign currency remitted",
+      "binding": "unresolved",
+      "source_doc": "return",
+      "locator": "PDF page 1, Part D",
+      "note": "Taxable salary and net service income do not establish gross remittance disclosures or their receipt categories."
+    },
+    {
+      "area": "schedule_5C",
+      "cage": "512",
+      "label": "Solar claim",
+      "binding": "solar_relief",
+      "source_doc": "schedules",
+      "locator": "PDF page 6, Schedule 5C",
+      "note": "User supplies eligible unused expenditure, not full historical acquisition cost. Cage 511 remains unpopulated."
+    },
+    {
+      "area": "schedule_5C",
+      "cage": "513",
+      "label": "Unused solar balance",
+      "binding": "unresolved",
+      "source_doc": "schedules",
+      "locator": "PDF page 6, Schedule 5C",
+      "note": "Unused eligible expenditure is a reference only. Historical acquisition cost and prior claims must be reconciled before using a filing carry-forward cage.",
+      "reference_figure": "solar_unused_balance"
+    },
+    {
+      "area": "schedule_6A",
+      "cage": "607",
+      "label": "Final withholding already deducted",
+      "binding": "final_wht_dividends_deducted",
+      "source_doc": "schedules",
+      "locator": "PDF page 7, Schedule 6A",
+      "note": "Supported resident-company dividend withholding only. This is not unpaid final withholding at 614, 811 or return 160, and never an advance credit."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "801",
+      "label": "Total taxable income",
+      "binding": "taxable_income",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Preserve any engine interpretation flags and alternatives; mapping does not confirm the allocation policy."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "808.1",
+      "label": "Special-rate taxable income",
+      "binding": "scope_zero",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Excluded categories are zero only in the validated supported scope."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "808.3",
+      "label": "Special-rate tax",
+      "binding": "scope_zero",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Excluded categories are zero only in the validated supported scope."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "809A.1",
+      "label": "Progressive taxable income",
+      "binding": "local_taxable_income",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Preserve any engine interpretation flags and alternatives; mapping does not confirm the allocation policy."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "809A.3",
+      "label": "Progressive tax",
+      "binding": "tax_progressive",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Preserve any engine interpretation flags and alternatives; mapping does not confirm the allocation policy."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "809B.1",
+      "label": "Qualifying foreign taxable income",
+      "binding": "foreign_taxable_income",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Preserve any engine interpretation flags and alternatives; mapping does not confirm the allocation policy."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "809B.3",
+      "label": "Foreign bucket tax",
+      "binding": "tax_foreign",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Preserve any engine interpretation flags and alternatives; mapping does not confirm the allocation policy."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "809C.1",
+      "label": "Other taxable income",
+      "binding": "scope_zero",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Excluded categories are zero only in the validated supported scope."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "809C.3",
+      "label": "Other bucket tax",
+      "binding": "scope_zero",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Excluded categories are zero only in the validated supported scope."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "810",
+      "label": "Balance-income tax total",
+      "binding": "tax",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Preserve any engine interpretation flags and alternatives; mapping does not confirm the allocation policy."
+    },
+    {
+      "area": "schedule_8",
+      "cage": "811",
+      "label": "Undeducted final-withholding tax",
+      "binding": "scope_zero",
+      "source_doc": "schedules",
+      "locator": "PDF page 9, Schedule 8; guide printed pages 21-24",
+      "note": "Excluded categories are zero only in the validated supported scope."
+    },
+    {
+      "area": "schedule_9",
+      "cage": "901",
+      "label": "Allowable foreign credit",
+      "binding": "foreign_tax_credit",
+      "source_doc": "schedules",
+      "locator": "PDF page 10, Schedule 9; guide printed page 24",
+      "note": ""
+    },
+    {
+      "area": "schedule_9",
+      "cage": "912",
+      "label": "Total credits",
+      "binding": "credits",
+      "source_doc": "schedules",
+      "locator": "PDF page 10, Schedule 9; guide printed page 27",
+      "note": "Aggregate total only. Detailed credit cages are not reconciled by this review."
+    }
+  ]
+}

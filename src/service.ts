@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { reviewReturn, cageMap } from './return-review.ts';
 import { evaluateInterview, resolveForeign, foreignRequirements, interviewPolicy } from './interview.ts';
 import { planInstalments, instalmentRules } from './instalments.ts';
 import { foreignSchema, knownForeignBlock } from './foreign.ts';
@@ -68,7 +69,7 @@ export class TaxSession {
     if (!parsed.success) throw new Error('MISSING_SCOPE_FACTS');
     return { ...checkScope(parsed.data), assessment_basis: 'scope_answers_only; computation derives foreign credit and interpretation flags from actual amounts' };
   }
-  compute() {
+  private currentReturnInput() {
     this.requireConsent();
     const known = checkKnownScope(this.facts.scope ?? {});
     if (known.status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
@@ -84,12 +85,17 @@ export class TaxSession {
     const deductions = deductionsSchema.safeParse(this.facts.deductions);
     if (!deductions.success) throw new Error('MISSING_DEDUCTION_FACTS');
     const foreign = resolveForeign(this.facts.foreign ?? {});
-    const result = computeReturn({ ya: rules.ya, scope: scope.data, income: income.data, deductions: deductions.data, foreign });
+    return { ya: rules.ya, scope: scope.data, income: income.data, deductions: deductions.data, foreign };
+  }
+  compute() {
+    const input = this.currentReturnInput();
+    const result = computeReturn(input);
     const notApplicable = foreignRequirements(this.facts.foreign ?? {}).not_applicable;
     return { ...result, intake_context: { policy_version: interviewPolicy.version, foreign_not_applicable_facts: notApplicable,
-      foreign_neutral_default_facts: notApplicable.filter(path => this.facts.foreign?.[path.slice('foreign.'.length) as keyof typeof foreign] === undefined),
+      foreign_neutral_default_facts: notApplicable.filter(path => this.facts.foreign?.[path.slice('foreign.'.length) as keyof typeof input.foreign] === undefined),
       defaults_saved: false, note: 'Not-applicable foreign flags do not establish eligibility. Neutral false values for uncollected flags exist only in this computation input, not as user-confirmed facts.' } };
   }
+  review() { return reviewReturn(this.currentReturnInput()); }
   planInstalments(input: unknown) {
     this.requireConsent();
     return planInstalments(input);
@@ -102,6 +108,7 @@ export class TaxSession {
   }
 }
 const errors: Record<string, string> = {
+  REVIEW_MAPPING_MISMATCH: 'Return review mapping failed its consistency checks. Do not use or reconstruct these fields. Report the mapping problem without personal data.',
   NOT_COVERED: 'Annual return calculations support only YA 2025/26. The separate instalment planner supports only YA 2026/27. Do not substitute another year.',
   INVALID_INSTALMENT_FACTS: 'Use the published instalment schema, explicit eligibility answers and nonnegative decimal LKR strings. Only YA 2026/27 is supported.',
   INSTALMENT_BASIS_REVIEW: 'Confirm that gross tax was independently prepared under the selected circular method, before credits. Foreign tax credits in this instalment basis require professional review and are unsupported. Do not remove a genuine claim to bypass this refusal.',
@@ -127,15 +134,16 @@ const errors: Record<string, string> = {
   FEATURE_NOT_IMPLEMENTED: 'This scenario is not implemented in this development slice. Do not estimate it yourself. Consult a qualified tax adviser.',
   UNKNOWN_LINE: 'Choose a line returned in the computation trace.',
 };
-export function envelope(payload: Record<string, unknown>, context: 'annual' | 'instalments' = 'annual') {
+export function envelope(payload: Record<string, unknown>, context: 'annual' | 'instalments' | 'review' = 'annual') {
   const output = { ...payload, ya: rules.ya, ruleset_version: rules.version, verified_on: rules.personal_relief.verified_on,
     review_status: rules.review_status, caution: CAUTION, sources, known_issues_uri: 'lktax://known-issues',
+    ...(context === 'review' ? { mapping_version: cageMap.version, sources: [...new Set([...sources, ...Object.values(cageMap.sources).map(s => s.url)])] } : {}),
     ...(context === 'instalments' ? { ya: instalmentRules.ya, ruleset_version: instalmentRules.version, verified_on: instalmentRules.verified_on,
       review_status: instalmentRules.review_status, sources: [instalmentRules.source] } : {}) };
   assertPrivateOutput(output);
   return output;
 }
-export function errorResult(error: unknown, context: 'annual' | 'instalments' = 'annual') {
+export function errorResult(error: unknown, context: 'annual' | 'instalments' | 'review' = 'annual') {
   const code = error instanceof Error && Object.hasOwn(errors, error.message) ? error.message : 'INTERNAL_ERROR';
   return envelope({ error: { code, message: errors[code] ?? 'Request failed. Retry with the published schema. Do not send identifiers.' } }, context);
 }

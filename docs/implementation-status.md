@@ -5,14 +5,15 @@ Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and in
 | Backlog | Delivered in this slice | Remaining acceptance criteria |
 |---|---|---|
 | T1.1, T1.2 | Strict JSON rule validation, dated evidence, YA 2025/26 reliefs, donation parameters, dividend finality and progressive bands | TOML compatibility, full rule catalogue, reviewer sign-off and version-history lint |
+| T1.3, T3.3 | Source-verified supported main/schedule cages, conserved totals and conservative return-format hints | Full disclosure/credit breakdowns, partial-figure cage coverage, portal confirmation, prior-YA comparison and practitioner sign-off |
 | T2.1 | Bigint cents and exact percentage accumulation; unsupported YA fails | Official filing rounding policy and upstream APIT fixtures |
 | T2.2 | Writable fact dictionary, dependency-aware intake readiness, conditional foreign questions, early blockers and edit re-evaluation | Partial financial-node evaluation and unsupported income categories |
 | T2.3, T2.6, T2.7 | Local and qualifying foreign totals, supported deductions, final-WHT dividends, single-source, single-country capped foreign credits, balances, interpretation alternatives and cited traces | Remaining categories, credits and comprehensive cage mapping |
 | T2.8 | YA 2026/27 Methods 1 and 2(i)-(iv), externally supplied A, reconciled credits, dated schedule, SET and revision guards | Independent computation/validation of A, foreign credits, employment exception decisions and professional sign-off |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
-| T6.1, T6.2 | Official SDK stdio server, nine tools, shared instructions, four prompts, seven resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
-| T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Verified cage-map resource, installed Skill parity and interactive host evaluations |
+| T6.1, T6.2 | Official SDK stdio server, ten tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
+| T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Complete filing map, installed Skill parity and interactive host evaluations |
 | T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | G7 and independent source verification of remaining non-IRD cases; practitioner review |
 | T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and agent behaviour evaluation |
 
@@ -67,7 +68,7 @@ Source: https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_A
 2. Add remaining primary-source golden fixtures; resolve the low-income charity-cap ambiguity before broadening donation support.
 3. Obtain professional review of foreign qualification, deduction allocation, stacking, FTC eligibility and low-local-income interpretations; extend per-country/per-source credit allocation only with appropriate evidence.
 4. Verify filing-obligation law from primary sources before exposing a no-return-required decision.
-5. Obtain IRD Schedule 7 verifier/template and validate cage map and rounding.
+5. Obtain IRD Schedule 7 verifier/template; extend the verified cage map to missing disclosure and credit details and confirm filing rounding.
 6. Add export verification checklist, then worksheet/payment summaries after all P0 golden cases pass.
 7. Package npm and signed desktop extension only after release gates pass.
 
@@ -105,3 +106,14 @@ Host milestone validation: TypeScript checking and all 48 tests pass, including 
 - Package version is 2026.25.0-preview.6; annual and instalment rule values and consent version are unchanged. This is an intake milestone, not complete partial evaluation of every financial node or a filing-ready release.
 
 Interview milestone verification covers 56 tests, including full legacy and modern SDK journeys, all prior tax examples and conditional-question regressions. CI verifies the refreshed public contract and package version change on Node 22 and 24.
+
+## Mapped return review milestone
+
+- Added a validated, language-neutral YA 2025/26 cage map from the complete official return, schedules and guide. Source hashes and page locators are recorded. Main page 1 and Schedule 6A/8/9 layouts were visually inspected. The temporary source capture workflow is removed before merging.
+- Added consent-gated `lk_review_return`, sharing current-fact validation with annual computation. Supported figures map to main and schedule cages; eleven deterministic transfer/aggregation checks enforce consistency, including the supported Schedule 8 taxable-income split. Every engine figure has an explicit mapping or working/reference disposition.
+- The actual form puts solar relief in cage 70 and personal relief in cage 80. Final WHT already deducted belongs to Schedule 6A; only undeducted final withholding transfers through Schedule 8 cage 811 to main cage 160. The supported dividend amount therefore does not increase tax or advance credits. This resolves that placement within the implemented final-WHT scope.
+- Refund cage 200, exempt disclosures at 210, gross foreign remittances at 210A and historical solar carry-forward remain unset. Aggregate credits are not guessed into certificate, Table 08 or payment-row cages. Gaps remain manual and do not become export acknowledgements.
+- Added conservative return-format hints without claiming portal eligibility or a filing obligation. All foreign allocation flags, interpretation alternatives and financial refusals are preserved.
+- Cage-map version 2025.26.cages.1 and package preview.7. Annual/instalment tax rules and consent version are unchanged. This delivers partial T1.3/T3.3 coverage; it does not deliver T8.1 filing outputs or professional approval.
+
+Return-review validation covers 64 tests, including all prior computations, eight new review regressions, both MCP protocol journeys, the reviewed public contract snapshot and TypeScript checking on Node 22 and 24.

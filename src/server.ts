@@ -7,6 +7,7 @@ import { figureNames } from './engine.ts';
 import { rules } from './rules.ts';
 import { instalmentSchema, instalmentRules } from './instalments.ts';
 import { hostInstructions, workflowPrompts, promptText, documentChecklist } from './guidance.ts';
+import { cageMap } from './return-review.ts';
 import { factDictionary, interviewPolicy } from './interview.ts';
 import { assertPrivateOutput } from './privacy.ts';
 import pkg from '../package.json' with { type: 'json' };
@@ -18,7 +19,7 @@ export function createServer() {
     ya: z.enum(['2025/26', '2026/27']), ruleset_version: z.string(), verified_on: z.string(),
     review_status: z.string(), caution: z.string(), sources: z.array(z.string()),
   }).passthrough();
-  function result(action: () => Record<string, unknown>, context: 'annual' | 'instalments' = 'annual') {
+  function result(action: () => Record<string, unknown>, context: 'annual' | 'instalments' | 'review' = 'annual') {
     try {
       const structuredContent = envelope(action(), context);
       return { content: [{ type: 'text' as const, text: JSON.stringify(structuredContent) }], structuredContent };
@@ -58,6 +59,10 @@ export function createServer() {
     description: 'Compute a development estimate for local employment, local business net profit, interest, investment rent and supported local reliefs/donations; final-WHT resident-company dividends are informational only. Also supports confirmed qualifying foreign salary and net foreign services with single-source, single-country capped foreign credits. Uses an assumed local-first deduction allocation and capped progressive stacking. Show every interpretation warning and alternative summary; never select a preferred interpretation or claim the allocation is optimal. Rechecks consent, facts and scope every time. Not a full return. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.',
     inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.compute()));
+  server.registerTool('lk_review_return', {
+    description: 'Review the current supported annual estimate against verified YA 2025/26 return and schedule cage references. Recomputes current facts and enforces the same consent, scope, eligibility and financial validations as lk_compute_return. Returns mapped preview amounts, arithmetic checks, trace coverage, manual review gaps and a conservative return-format hint. Null cage amounts must remain unset. Reference amounts are not filing values: potential overpayment is not an approved refund, and unused solar amounts require historical reconciliation. Never invent primary/secondary APIT, Table 08, withholding or payment-row splits, exempt disclosures or gross remittances from aggregate facts. Final dividend WHT already deducted is informational at Schedule 6A, never additional unpaid tax or an advance credit. Preserve every flag and interpretation alternative; do not select one. Show display_summary verbatim. This is not a complete return, export, filing obligation or pre-export checklist approval. No files, identifiers, payments or RAMIS access.',
+    inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
+  }, () => result(() => session.review(), 'review'));
   server.registerTool('lk_plan_instalments', {
     description: 'Plan one YA 2026/27 quarterly instalment under the 12 August 2026 re-revised IRD circular. Requires active session and current explicit consent. Confirm current-year scope separately in this input. A must be gross tax prepared externally under the selected method, not an annual net balance or a copied current-year estimate. Method 1 uses YA 2025/26 gross tax; 2(i) uses zero; 2(ii)/(iii) use adjusted previous-year figures, with final SET allowed only for quarter one before return finalisation and exactly one return revision thereafter; 2(iv) uses an independently prepared current-year estimate in the first year only. Never infer eligibility. C includes actual earlier instalments and eligible full-year APIT/AIT/WHT, split into deducted and expected remaining, without overlap or final WHT. No foreign-credit basis, Method 3, corporate cases, payments or identifiers. Confirm timely notice when switching from Method 1 to 2(iii). Display display_summary and administrative requirements verbatim. Zero payable is not a filing exemption. Recompute each quarter with actual paid credits; schedule dates do not assume future payments.',
     inputSchema: privateSchema(instalmentSchema), outputSchema, annotations: readOnly,
@@ -101,5 +106,8 @@ export function createServer() {
   server.registerResource('fact-dictionary', 'lktax://facts/2025-26', {
     description: 'Writable fact dictionary and dependency-aware intake policy. Derived readiness is not a monetary estimate or filing decision.', mimeType: 'application/json',
   }, () => ({ contents: [{ uri: 'lktax://facts/2025-26', mimeType: 'application/json', text: JSON.stringify(envelope({ facts: factDictionary, policy: interviewPolicy })) }] }));
+  server.registerResource('cage-map', 'lktax://cagemap/2025-26', {
+    description: 'Verified source references for supported annual cage mappings. Practitioner-unreviewed; unsupported or insufficiently evidenced filing fields remain unresolved.', mimeType: 'application/json',
+  }, () => ({ contents: [{ uri: 'lktax://cagemap/2025-26', mimeType: 'application/json', text: JSON.stringify(envelope({ cage_map: cageMap }, 'review')) }] }));
   return server;
 }

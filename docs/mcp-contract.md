@@ -1,6 +1,6 @@
 # MCP host workflows and contract verification
 
-The server publishes shared instructions, four argument-free prompts and seven resources. This supplies a guided interview to MCP hosts that support prompts without requiring an Agent Skill. Prompt retrieval is static: it cannot start a session, accept consent, write facts or calculate tax. All four prompts reuse the same consent, privacy, scope and deterministic calculation instructions. Prompt arguments reject unexpected fields through the same sanitised validation used for tools.
+The server publishes shared instructions, four argument-free prompts and eight resources. This supplies a guided interview to MCP hosts that support prompts without requiring an Agent Skill. Prompt retrieval is static: it cannot start a session, accept consent, write facts or calculate tax. All four prompts reuse the same consent, privacy, scope and deterministic calculation instructions. Prompt arguments reject unexpected fields through the same sanitised validation used for tools.
 
 | Prompt | Behaviour |
 |---|---|
@@ -9,7 +9,7 @@ The server publishes shared instructions, four argument-free prompts and seven r
 | `plan_my_instalments` | Separately confirmed instalment year, method, gross-tax basis, credits and administrative requirements |
 | `explain_my_tax` | Current annual line via `lk_explain`, or the returned instalment trace; preserves warnings |
 
-`lktax://checklist/documents` is a manual preparation aid. Evidence stays with the user; ingestion is unavailable. `lktax://sources/2025-26` exposes rule-specific citations, locators, dates and evidence status, including assumed interpretation policies. `lktax://facts/2025-26` adds the writable dictionary and intake dependency policy. The existing annual and instalment rule resources, supported scenarios and known issues remain available. A cage-map resource is deferred until primary verification is complete.
+`lktax://checklist/documents` is a manual preparation aid. Evidence stays with the user; ingestion is unavailable. `lktax://sources/2025-26` exposes rule-specific citations, locators, dates and evidence status, including assumed interpretation policies. `lktax://facts/2025-26` adds the writable dictionary and intake dependency policy. The existing annual and instalment rule resources, supported scenarios and known issues remain available. `lktax://cagemap/2025-26` supplies verified source references and deliberately unresolved bindings. The separate `lk_review_return` tool remains a development review with no filing export.
 
 ## Protocol checks
 

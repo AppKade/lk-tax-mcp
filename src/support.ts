@@ -1,4 +1,5 @@
 export const knownIssues = [
+  { id: 'KI-CAGE-REVIEW', status: 'partial', updated_on: '2026-10-19', detail: 'Supported annual estimates have source-verified cage references and consistency checks, but mappings are practitioner-unreviewed. Refund claims, exempt and gross remittance disclosures, credit and payment details, historical solar balances, declarations and filing rounding require manual review. No export is available.' },
   { id: 'KI-INSTALMENTS', status: 'partial', updated_on: '2026-10-19',
     detail: 'YA 2026/27 planner follows the 12 August re-revised circular. Gross tax A is prepared externally and method eligibility is user-confirmed. Foreign-credit bases, corporate calculations and Method 3 require professional review. Cent ceiling is an unreviewed preview assumption. Actual payment status and administrative submissions are not verified; zero payable alone is not an employment or filing exemption.' },
   { id: 'KI-CHARITY-CAP', status: 'open', updated_on: '2026-10-19',
@@ -11,7 +12,7 @@ export const knownIssues = [
     detail: 'Only confirmed qualifying foreign salary/services and eligible single-source, single-country foreign income tax are supported. LKR conversion is supplied by the user. Credit claims require one confirmed source and are also limited by the statutory average-rate ceiling. Local-first deduction allocation and shared-band stacking are preview assumptions; low-local-income results show a flat-cap comparison. Non-qualifying income and multi-country credit allocation remain unsupported.' },
 ];
 export const supportedScenarios = {
-  supported: ['YA 2026/27 quarterly instalment arithmetic under Methods 1 and 2(i)-(iv), using an externally prepared and confirmed gross-tax basis and current-year scope', 'Confirmed qualifying foreign-employer salary and net foreign service income, already converted to LKR, with eligible single-source, single-country capped foreign income tax credit',
+  supported: ['YA 2025/26 mapped return review for supported estimates, with explicit unresolved filing fields and manual review gaps', 'YA 2026/27 quarterly instalment arithmetic under Methods 1 and 2(i)-(iv), using an externally prepared and confirmed gross-tax basis and current-year scope', 'Confirmed qualifying foreign-employer salary and net foreign service income, already converted to LKR, with eligible single-source, single-country capped foreign income tax credit',
     'Full-year resident individual with local employment, local user-supplied net business profit, interest or gross investment rent',
     'Confirmed eligible unused solar expenditure, approved cash charity donations where cap readings agree, Government donations and eligible Samurdhi shop contributions',
     'Resident-company dividends where final WHT was already deducted at the supported rate; informational only'],
