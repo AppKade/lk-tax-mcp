@@ -97,6 +97,8 @@ test('basis and credit attestations fail closed; outputs contain cited traces fo
   assert.ok(p.trace.every(t => t.sources[0] === fixtures.source && t.version === '2026.27.1'));
   assert.equal(p.attachment.required, 'none');
   assert.equal(p.attachment.deadline, null);
+  // Taxable income can still yield zero rounded gross tax; Method 1 has no minimum-A rule.
+  assert.equal(planInstalments({ ...input, gross_tax_basis: '0' }).figures.instalment_payable, '0.00');
 });
 test('planner session consent and output metadata do not reuse annual YA or bypass privacy', () => {
   const s = new TaxSession();

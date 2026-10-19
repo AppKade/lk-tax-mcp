@@ -54,7 +54,7 @@ export function planInstalments(input: unknown) {
   if (!f.credits_reconciled_without_overlap) throw new Error('INSTALMENT_CREDIT_REVIEW');
   const basis = f.basis;
   const a = cents(f.gross_tax_basis);
-  if ((basis.method === '1' && (!basis.prior_taxable_income_exists || a === 0n)) ||
+  if ((basis.method === '1' && !basis.prior_taxable_income_exists) ||
       (basis.method === '2_i' && (!basis.no_prior_taxable_income || !basis.no_current_assessable_income_expected || a !== 0n)) ||
       (basis.method === '2_ii' && (!basis.no_prior_taxable_income || !basis.current_assessable_income_expected)) ||
       (basis.method === '2_iii' && (!basis.prior_assessable_income_exists || !basis.lower_assessable_income_expected || !basis.lower_taxable_income_expected)) ||

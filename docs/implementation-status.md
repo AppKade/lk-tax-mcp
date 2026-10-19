@@ -80,3 +80,5 @@ Practitioner review, unresolved allocation questions and verifier samples need h
 - G10 covers all six published arithmetic cases; corporate cases use the arithmetic helper only, while resident-individual scope remains enforced. Mr X and Mrs P run through the full planner. No automatic employment exemption is inferred from a zero payable amount.
 - Cent ceiling remains an explicitly assumed preview policy. Foreign-credit instalment bases, Method 3, underlying loss/exemption calculations, professional sign-off and payment processing remain unsupported. This is partial T2.8 delivery, not a filing-ready P0 release.
 - Disclaimer version is 2026-10-19.4; instalment rule version is 2026.27.1.
+
+Validation: all 44 tests, including real SDK stdio interactions, and TypeScript checking pass in GitHub CI on Node 22 and 24. Corporate instalment fixtures establish arithmetic only, not corporate tax eligibility or rate correctness.
