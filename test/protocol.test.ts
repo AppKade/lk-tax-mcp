@@ -29,7 +29,7 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   assert.ok(hello.result.capabilities.prompts);
   host.notify('notifications/initialized');
   const listed = await request('tools/list');
-  assert.equal(listed.result.tools.length, 10);
+  assert.equal(listed.result.tools.length, 13);
   for (const tool of listed.result.tools) {
     assert.ok(tool.inputSchema && tool.outputSchema);
     assert.equal(tool.annotations.openWorldHint, false);
@@ -74,6 +74,12 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   const review = (await call('lk_review_return')).structuredContent;
   assert.equal(review.cages.find((r: any) => r.area === 'return' && r.cage === '190').amount, '11200.00');
   assert.equal(review.export_available, false);
+  const sheetChecklist = (await call('lk_get_checklist')).structuredContent;
+  await call('lk_acknowledge_checklist', { digest: sheetChecklist.digest, items: sheetChecklist.items.map((i: { id: string }) => i.id), user_confirmed: true });
+  assert.ok((await call('lk_generate_worksheet')).structuredContent.worksheet.includes('| 190 |'));
+  const rejected = await request('tools/call', { name: 'lk_acknowledge_checklist', arguments: { digest: sheetChecklist.digest, items: [], user_confirmed: true, tin: '123456789V' } });
+  assert.ok(rejected.error || rejected.result?.isError);
+  assert.ok(!JSON.stringify(rejected).includes('123456789V'));
   assert.equal((await call('lk_explain', { line: 'tax' })).structuredContent.trace.value, '99600.00');
   const g5 = cases.find(c => c.id === 'G5')!;
   await call('lk_set_facts', { income: g5.income, deductions: g5.deductions });

@@ -15,7 +15,7 @@ test('2026 discovery without initialize advertises static guidance and completes
   assert.equal(discovery.result.instructions, hostInstructions);
   for (const capability of ['tools', 'resources', 'prompts']) assert.ok(discovery.result.capabilities[capability]);
   const tools = (await host.request('tools/list')).result.tools;
-  assert.equal(tools.length, 10);
+  assert.equal(tools.length, 13);
   const prompts = (await host.request('prompts/list')).result.prompts;
   assert.deepEqual(prompts.map((p: any) => p.name).sort(), workflowPrompts.map(p => p.name).sort());
   for (const prompt of workflowPrompts) {
@@ -67,11 +67,24 @@ test('2026 discovery without initialize advertises static guidance and completes
   assert.equal(reviewed.cages.find((r: any) => r.area === 'return' && r.cage === '80').amount, '1800000.00');
   assert.equal(reviewed.cages.find((r: any) => r.area === 'return' && r.cage === '200').amount, null);
   assert.equal(reviewed.filing_ready, false);
+  assert.equal((await call('lk_generate_worksheet')).structuredContent.error.code, 'CHECKLIST_REQUIRED');
+  const checklist = (await call('lk_get_checklist')).structuredContent;
+  assert.equal(checklist.acknowledged, false);
+  const everyItem = checklist.items.map((i: { id: string }) => i.id);
+  assert.equal((await call('lk_acknowledge_checklist', { digest: checklist.digest, items: everyItem.slice(1), user_confirmed: true })).structuredContent.error.code, 'CHECKLIST_INCOMPLETE');
+  assert.equal((await call('lk_acknowledge_checklist', { digest: '0'.repeat(64), items: everyItem, user_confirmed: true })).structuredContent.error.code, 'CHECKLIST_STALE');
+  assert.equal((await call('lk_acknowledge_checklist', { digest: checklist.digest, items: everyItem, user_confirmed: true })).structuredContent.acknowledged, true);
+  const worksheet = (await call('lk_generate_worksheet')).structuredContent;
+  assert.equal(worksheet.file_written, false);
+  assert.equal(worksheet.filing_ready, false);
+  assert.ok(worksheet.worksheet.startsWith('# YA 2025/26 return worksheet'));
+  assert.ok(worksheet.worksheet.includes('11200.00'));
   const changed = (await call('lk_set_facts', { foreign: { employment_lkr: '3000000' } })).structuredContent;
   assert.ok(changed.missing_facts.includes('foreign.foreign_employer_confirmed'));
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'MISSING_FOREIGN_FACTS');
   await call('lk_session', { action: 'wipe' });
   assert.equal((await call('lk_compute_return')).structuredContent.error.code, 'SESSION_REQUIRED');
   assert.equal((await call('lk_review_return')).structuredContent.error.code, 'SESSION_REQUIRED');
+  assert.equal((await call('lk_generate_worksheet')).structuredContent.error.code, 'SESSION_REQUIRED');
   host.assertClean();
 });

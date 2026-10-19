@@ -12,7 +12,7 @@ Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and in
 | T2.8 | YA 2026/27 Methods 1 and 2(i)-(iv), externally supplied A, reconciled credits, dated schedule, SET and revision guards | Independent computation/validation of A, foreign credits, employment exception decisions and professional sign-off |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
-| T6.1, T6.2 | Official SDK stdio server, ten tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
+| T6.1, T6.2 | Official SDK stdio server, thirteen tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
 | T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Complete filing map, installed Skill parity and interactive host evaluations |
 | T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | G7 and independent source verification of remaining non-IRD cases; practitioner review |
 | T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and agent behaviour evaluation |
@@ -32,7 +32,7 @@ Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025
 - Credits are user-confirmed aggregates, not reconciled evidence. Potential overpayment is not a validated refund claim.
 - Tax fractions accumulate exactly; each tax bucket is rounded to cents, half up, then summed. Do not present this as verified RAMIS whole-rupee rounding.
 - In-memory state only. Consent is re-required after restart, wipe or new session; no cleartext session storage exists.
-- No Schedule 7, worksheet, payment output, document parsing, FX, encrypted draft, bundled Skill, npm release or signed extension yet.
+- No Schedule 7, file output, payment output, document parsing, FX, encrypted draft, bundled Skill, npm release or signed extension yet.
 - SDK and transitive dependencies are pinned in package-lock.json with integrity hashes, captured from successful GitHub CI. CI uses npm ci. Type checking and the foundation tests passed on Node 22 and 24; the expanded milestone adds source fixtures, deduction boundaries and a full stdio G5 workflow.
 - Scope and intake mutations use accurate mutation annotations, despite the research suggesting every tool be read-only. No tool alters external services.
 
@@ -69,7 +69,7 @@ Source: https://www.ird.gov.lk/si/publications/Acts_Income%20Tax_2017/IRA_Cons_A
 3. Obtain professional review of foreign qualification, deduction allocation, stacking, FTC eligibility and low-local-income interpretations; extend per-country/per-source credit allocation only with appropriate evidence.
 4. Verify filing-obligation law from primary sources before exposing a no-return-required decision.
 5. Obtain IRD Schedule 7 verifier/template; extend the verified cage map to missing disclosure and credit details and confirm filing rounding.
-6. Add export verification checklist, then worksheet/payment summaries after all P0 golden cases pass.
+6. Add payment and instalment summaries (T8.4) after verifying period codes and payment channel steps from primary sources; extend the worksheet to Simplified/Standard variants and optional local file output once the data-handling policy allows it.
 7. Package npm and signed desktop extension only after release gates pass.
 
 Practitioner review, unresolved allocation questions and verifier samples need human evidence. They do not block this foundation work, but they block claiming a filing-ready release. No message has been sent to IRD or an external contributor.
@@ -128,3 +128,13 @@ Return-review validation covers 64 tests, including all prior computations, eigh
 - Package preview.8; annual rules 2025.26.3, instalment rules 2026.27.1, cage map 2025.26.cages.1 and consent version are unchanged.
 
 Governance validation: all 72 tests, including both SDK stdio journeys, pass in CI. The final gate checks TypeScript, the archived catalogue, PR-base preservation and the refreshed SDK-version metadata snapshot on Node 22 and 24.
+
+## Checklist and worksheet milestone
+
+- Added T8.6 as `lk_get_checklist` and `lk_acknowledge_checklist`. The checklist is derived from the current review: preview limits, scope and known issues, unresolved review gaps, plus credit reconciliation and calculation-flag items only when credits or flags are present. Statements must be shown verbatim and confirmed by the user; the tool refuses partial or unconfirmed acknowledgement.
+- Acknowledgements bind to a SHA-256 digest of rule and mapping versions, cage amounts and statuses, gap codes, flags and alternatives. A stale digest is rejected. Any fact change, new consent, new session or wipe clears the acknowledgement. State is memory-only.
+- Added partial T8.1 as `lk_generate_worksheet`: Markdown text only, in cage-map order (main return, Schedules 5C, 6A, 8, 9), with banners, versions, arithmetic checks, manual gaps, flags and comparative alternatives. Unresolved cages read "enter manually". It is refused until the current checklist is acknowledged and inherits all consent, scope and financial refusals from the review.
+- No file is written, so the memory-only privacy posture in SECURITY.md is unchanged. The worksheet follows the verified cage-map order, not a verified RAMIS screen order, and has no Simplified/Standard variants. It is not a filing export, and `export_available` on the review stays false.
+- Public contract: thirteen tools; package preview.9. Annual/instalment rules, cage map and consent version are unchanged. The `file_my_return` prompt now describes the checklist and worksheet steps.
+
+Validation: TypeScript checking, 79 tests (new worksheet suite plus both stdio journeys), rules governance, the refreshed contract snapshot and the base-commit contract version gate pass locally on Node 22.

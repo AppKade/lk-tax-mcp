@@ -1,7 +1,7 @@
 {
   "format_version": 1,
-  "version": "2026.25.0-preview.8",
-  "sha256": "b1bc6afba23f53fd6bf3ca5349dd8dd3ea88db949c7adee4b8a5a30e71508398",
+  "version": "2026.25.0-preview.9",
+  "sha256": "0b4236b7154c5aa805807493d4862d28599161e44dbfe38f02698402cdb10258",
   "contract": {
     "server_name": "lk-tax-mcp",
     "supportedVersions": [
@@ -37,6 +37,82 @@
           },
           "required": [
             "version",
+            "user_confirmed"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_acknowledge_checklist",
+        "description": "Record in memory that the user explicitly confirmed every statement in the current checklist. Pass the digest from lk_get_checklist and the ids of the statements the user confirmed. Never confirm on the user's behalf. Any later fact change invalidates the acknowledgement.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {
+            "digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "items": {
+              "maxItems": 10,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 40
+              }
+            },
+            "user_confirmed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "digest",
+            "items",
             "user_confirmed"
           ],
           "additionalProperties": false
@@ -243,6 +319,116 @@
           "required": [
             "line"
           ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_generate_worksheet",
+        "description": "Generate a Markdown worksheet of the current supported estimate by return and schedule cage, with arithmetic checks, unresolved gaps, flags and banners. Refused until the current checklist is acknowledged. Returns text only: no file is written and it is neither a RAMIS submission nor a filing output. Present the worksheet verbatim and never fill unset cages.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "outputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "ya": {
+              "type": "string",
+              "enum": [
+                "2025/26",
+                "2026/27"
+              ]
+            },
+            "ruleset_version": {
+              "type": "string"
+            },
+            "verified_on": {
+              "type": "string"
+            },
+            "review_status": {
+              "type": "string"
+            },
+            "caution": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "ya",
+            "ruleset_version",
+            "verified_on",
+            "review_status",
+            "caution",
+            "sources"
+          ],
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "lk_get_checklist",
+        "description": "Get the pre-export verification checklist for the current supported estimate. Recomputes current facts with the same consent, scope and validation gates as lk_review_return. Show every statement to the user verbatim. The digest changes whenever facts, figures, gaps or flags change.",
+        "inputSchema": {
+          "type": "object",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "properties": {},
           "additionalProperties": false
         },
         "annotations": {
@@ -1169,7 +1355,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.8"
+              "version": "2026.25.0-preview.9"
             }
           }
         }
@@ -1193,7 +1379,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.8"
+              "version": "2026.25.0-preview.9"
             }
           }
         }
@@ -1201,7 +1387,7 @@
       {
         "name": "file_my_return",
         "title": "Prepare an annual tax estimate",
-        "description": "Guide the supported annual interview and estimate. Filing and exports are unavailable.",
+        "description": "Guide the supported annual interview and estimate. RAMIS filing, submission and file exports are unavailable.",
         "arguments": [],
         "result": {
           "messages": [
@@ -1209,7 +1395,7 @@
               "role": "user",
               "content": {
                 "type": "text",
-                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me prepare a supported annual tax estimate. Explain the preview limits first. After the consent workflow, follow lk_next_questions and lk_set_facts, check scope, and call lk_compute_return only when the required facts are complete. Use lk_explain for returned lines and lk_review_return for supported cage references and unresolved review gaps. Read lktax://checklist/documents as a manual evidence checklist; do not request uploads or identifiers. Do not claim that this prepares or submits a complete return."
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me prepare a supported annual tax estimate. Explain the preview limits first. After the consent workflow, follow lk_next_questions and lk_set_facts, check scope, and call lk_compute_return only when the required facts are complete. Use lk_explain for returned lines and lk_review_return for supported cage references and unresolved review gaps. To prepare a manual-entry worksheet, call lk_get_checklist, show each statement verbatim, call lk_acknowledge_checklist only with statements I explicitly confirm, then call lk_generate_worksheet and present its text verbatim. Never fill unset cages or confirm on my behalf; changing any fact requires a new acknowledgement. Read lktax://checklist/documents as a manual evidence checklist; do not request uploads or identifiers. Do not claim that this prepares or submits a complete return."
               }
             }
           ],
@@ -1217,7 +1403,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.8"
+              "version": "2026.25.0-preview.9"
             }
           }
         }
@@ -1241,7 +1427,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.8"
+              "version": "2026.25.0-preview.9"
             }
           }
         }

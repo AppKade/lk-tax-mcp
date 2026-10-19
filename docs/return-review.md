@@ -33,3 +33,7 @@ Each mapped cage has its calculation binding, source locator, mapping version an
 Eleven passed arithmetic checks establish only internal consistency for the supported estimate. `mapping_complete`, `filing_ready` and `export_available` remain false. A review gap is not an instruction to send identifiers or unsupported documents to chat. There is no checklist acknowledgement, filing file, RAMIS interaction, payment or submission.
 
 Original requirements and golden-case release gates remain unchanged. Full cage coverage, prior-year comparison, Schedule 7 verifier testing, the remaining independent golden cases and practitioner sign-off are still required before filing outputs can ship.
+
+## Checklist and worksheet
+
+`lk_get_checklist`, `lk_acknowledge_checklist` and `lk_generate_worksheet` build on this review. The checklist digest covers rule and mapping versions, every cage amount and status, gap codes, flags and alternatives, so acknowledgement applies only to the exact figures shown. The worksheet is Markdown returned as tool output. It lists cages in mapping order, leaves unresolved fields as "enter manually", carries every review gap and flag, and is neither a filing export nor a RAMIS screen-order walkthrough. Nothing is written to disk.

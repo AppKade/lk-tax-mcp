@@ -16,6 +16,7 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 - YA 2025/26 local employment, user-supplied local business **net profit**, interest and gross investment rent estimates with personal, rent and solar relief, eligible donations, progressive bands and manually confirmed APIT/AIT/WHT/instalment credits. Final-WHT resident-company dividends are informational and excluded from both assessable income and advance credits.
 - YA 2026/27 quarterly instalment estimates under Methods 1 and 2(i)-(iv), using a confirmed gross-tax basis prepared externally, with payment dates and administrative deadlines from the 12 August 2026 re-revised circular.
 - Source-verified YA 2025/26 cage references and a consent-gated return review with consistency checks and explicit manual review gaps.
+- Pre-export verification checklist and a text-only, cage-mapped Markdown worksheet. The worksheet is refused until the user explicitly acknowledges the current checklist; any fact change requires a new acknowledgement. No file is written.
 - Decimal strings and bigint arithmetic, cited traces, text and structured tool results, identifier output checks.
 - All six IRD worked-example computations match their published balances exactly. Fixture notes record aggregation, eligibility assumptions, source-table ambiguities and inferred opening solar balances. Other release cases and practitioner sign-off remain pending.
 - Confirmed qualifying foreign salary and net foreign services in manually converted LKR, with an eligible single-source, single-country foreign income tax credit capped at tax attributable to that income.
@@ -56,7 +57,8 @@ The server uses stdio only. Host compatibility beyond automated protocol tests m
 3. Use `lk_next_questions` and `lk_set_facts` to collect only missing scope, income, foreign and deduction facts. Every requested scope flag needs an explicit answer; a confirmed exclusion stops further intake. Amounts are nonnegative LKR decimal strings, never JSON numbers. Ask the user to confirm zeros.
 4. Call `lk_check_scope`. Stop for out-of-scope cases. Partial status does not guarantee implementation support.
 5. Confirm each `deductions` fact, including zeros, then call `lk_compute_return` for the supported local and qualifying foreign-income preview. Display `display_summary` verbatim; never redo arithmetic in the model. Use `lk_explain` for a returned line and `lk_review_return` to inspect mapped preview cages and unresolved review gaps.
-6. `lk_session` with `action: "wipe"` clears all facts and consent. Starting again also clears the prior session.
+6. For a manual-entry worksheet, call `lk_get_checklist`, show each statement verbatim, and call `lk_acknowledge_checklist` only with statements the user explicitly confirms. Then `lk_generate_worksheet` returns Markdown text to present verbatim. Unresolved cages stay unset.
+7. `lk_session` with `action: "wipe"` clears all facts and consent. Starting again also clears the prior session.
 
 No names, NIC, TIN, employer names, account numbers, documents or credentials are accepted. There are no arbitrary-text fact fields. Tool amounts and user messages still reach the host and possibly its AI provider. Data lives only in this server process; restarting loses it. Other host tools can access the same conversation. See [SECURITY.md](SECURITY.md).
 
@@ -86,7 +88,7 @@ Null cage amounts stay unset. Reference amounts are not filing values: potential
 
 Final dividend WHT already deducted is shown at Schedule 6A cage 607. It is never added to unpaid final withholding, total tax or advance credits. All interpretation flags and alternatives remain visible; mapping does not confirm a preferred interpretation. Format hints require portal confirmation and do not establish a filing obligation.
 
-This is an in-memory development review, with no files, identifiers, filing export or pre-export approval. See [cage evidence and review limits](docs/return-review.md).
+This is an in-memory development review, with no files, identifiers or filing export. The separate checklist and worksheet tools below give a manual-entry aid, not an export. See [cage evidence and review limits](docs/return-review.md).
 
 ## Local reliefs and donations
 
