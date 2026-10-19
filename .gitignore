@@ -1,0 +1,6 @@
+node_modules/
+coverage/
+*.lktax
+.env
+.env.*
+!.env.example
