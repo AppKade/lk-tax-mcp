@@ -12,7 +12,7 @@ export const ruleFamilies = {
 export type Family = keyof typeof ruleFamilies;
 const familyNames = Object.keys(ruleFamilies) as Family[];
 const entrySchema = z.strictObject({
-  family: z.enum(familyNames), version: z.string(), sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  family: z.enum(familyNames), version: z.string().regex(/^\d{4}\.\d{2}\.(?:cages\.)?[1-9]\d*$/), sha256: z.string().regex(/^[a-f0-9]{64}$/),
   archive: z.string(), reason: z.string().trim().min(1),
 });
 const historySchema = z.strictObject({ format_version: z.literal(1), entries: z.array(entrySchema).min(3) });
