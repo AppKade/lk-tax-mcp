@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
+import { privateSchema } from './schema.ts';
 import { TaxSession, envelope, errorResult, partialFactsSchema } from './service.ts';
 import { rules } from './rules.ts';
 
@@ -23,36 +24,36 @@ export function createServer() {
   const localMutation = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
   server.registerTool('lk_session', {
     description: 'Start a fresh memory-only YA 2025/26 session or wipe it. Starting discards all prior facts and consent. No identifiers, files or credentials. No data persists after shutdown.',
-    inputSchema: z.strictObject({ action: z.enum(['start', 'wipe']), ya: z.string().max(7).default('2025/26') }),
+    inputSchema: privateSchema(z.strictObject({ action: z.enum(['start', 'wipe']), ya: z.string().max(7).default('2025/26') })),
     outputSchema, annotations: { ...localMutation, destructiveHint: true },
   }, ({ action, ya }) => result(() => action === 'start' ? session.start(ya) : session.wipe()));
   server.registerTool('lk_get_disclaimer', {
     description: 'Show this versioned disclaimer verbatim before asking for any tax facts. English development preview only. Then ask the user to agree.',
-    inputSchema: z.strictObject({}), outputSchema, annotations: readOnly,
+    inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.disclaimer()));
   server.registerTool('lk_accept_disclaimer', {
     description: 'Record explicit user agreement to the exact current disclaimer in memory. Never infer consent. Required before fact entry and calculation.',
-    inputSchema: z.strictObject({ version: z.string().max(30), user_confirmed: z.boolean() }), outputSchema, annotations: localMutation,
+    inputSchema: privateSchema(z.strictObject({ version: z.string().max(30), user_confirmed: z.boolean() })), outputSchema, annotations: localMutation,
   }, ({ version, user_confirmed }) => result(() => session.accept(version, user_confirmed)));
   server.registerTool('lk_set_facts', {
     description: 'Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. other_income_or_claims is true for ANY foreign income, rent, dividends, donations, solar relief or other unsupported claims. Scope answers are mandatory, including explicit false answers.',
-    inputSchema: partialFactsSchema, outputSchema, annotations: localMutation,
+    inputSchema: privateSchema(partialFactsSchema), outputSchema, annotations: localMutation,
   }, facts => result(() => session.setFacts(facts)));
   server.registerTool('lk_next_questions', {
     description: 'Get missing scope facts first, then missing income facts. Ask only for listed facts. Never ask for names, TIN, NIC or credentials.',
-    inputSchema: z.strictObject({}), outputSchema, annotations: readOnly,
+    inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.nextQuestions()));
   server.registerTool('lk_check_scope', {
     description: 'Evaluate all confirmed scope facts deterministically. Out-of-scope cases must stop. Partial status is not a promise that computation is implemented.',
-    inputSchema: z.strictObject({}), outputSchema, annotations: readOnly,
+    inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.checkScope()));
   server.registerTool('lk_compute_return', {
     description: 'Compute a development estimate for local employment, local business net profit and interest only. Rechecks consent, facts and scope every time. Not a full return. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.',
-    inputSchema: z.strictObject({}), outputSchema, annotations: readOnly,
+    inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
   }, () => result(() => session.compute()));
   server.registerTool('lk_explain', {
     description: 'Explain a computed line using deterministic inputs, formula, rule version and source. Recomputes from current facts to avoid stale results. Never invent arithmetic.',
-    inputSchema: z.strictObject({ line: z.enum(['assessable_income', 'personal_relief', 'taxable_income', 'tax', 'credits', 'balance_payable', 'potential_overpayment']) }),
+    inputSchema: privateSchema(z.strictObject({ line: z.enum(['assessable_income', 'personal_relief', 'taxable_income', 'tax', 'credits', 'balance_payable', 'potential_overpayment']) })),
     outputSchema, annotations: readOnly,
   }, ({ line }) => result(() => session.explain(line)));
   server.registerResource('rules', 'lktax://rules/2025-26', {

@@ -49,6 +49,10 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
     assert.ok(tool.inputSchema && tool.outputSchema);
     assert.equal(tool.annotations.openWorldHint, false);
   }
+  const invalid = await request('tools/call', { name: 'lk_set_facts', arguments: { '123456789V': 'Secret Name' } });
+  assert.ok(invalid.error || invalid.result?.isError);
+  assert.ok(!JSON.stringify(invalid).includes('123456789V'));
+  assert.ok(!JSON.stringify(invalid).includes('Secret Name'));
   assert.equal((await call('lk_compute_return')).isError, true);
   await call('lk_session', { action: 'start' });
   assert.equal((await call('lk_set_facts', { income: { employment: '1' } })).structuredContent.error.code, 'CONSENT_REQUIRED');

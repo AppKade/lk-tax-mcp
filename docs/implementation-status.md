@@ -30,7 +30,7 @@ Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025
 - Tax fractions accumulate exactly; the preview rounds once to cents, half up. Do not present this as verified RAMIS whole-rupee rounding.
 - In-memory state only. Consent is re-required after restart, wipe or new session; no cleartext session storage exists.
 - No Schedule 7, worksheet, payment output, document parsing, FX, encrypted draft, bundled Skill, npm release or signed extension yet.
-- SDK and transitive dependencies are pinned in package-lock.json with integrity hashes, captured from successful GitHub CI. CI uses npm ci. Type checking and all ten tests passed on Node 22 and 24, including the stdio host workflow.
+- SDK and transitive dependencies are pinned in package-lock.json with integrity hashes, captured from successful GitHub CI. CI uses npm ci. Type checking and all eleven tests passed on Node 22 and 24, including the stdio host workflow.
 - Scope and intake mutations use accurate mutation annotations, despite the research suggesting every tool be read-only. No tool alters external services.
 
 ## Next implementation work

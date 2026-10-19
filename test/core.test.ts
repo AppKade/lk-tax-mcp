@@ -1,4 +1,6 @@
 import test from 'node:test';
+import { z } from 'zod';
+import { privateSchema } from '../src/schema.ts';
 import assert from 'node:assert/strict';
 import { cents, money } from '../src/money.ts';
 import { computeReturn, progressiveTax } from '../src/engine.ts';
@@ -131,4 +133,14 @@ test('private data rejected and errors never echo arbitrary exception messages',
   assert.throws(() => s.setFacts({ name: 'Secret Name', tin: '123456789' }), /INVALID_FACTS/);
   const output = JSON.stringify(errorResult(new Error('Secret Name 123456789V')));
   assert.ok(!output.includes('Secret Name') && !output.includes('123456789'));
+});
+
+test('SDK boundary validation sanitises unknown keys and enum values', () => {
+  const schema = privateSchema(z.strictObject({ line: z.enum(['tax']) }));
+  for (const input of [{ '123456789V': 'Secret Name' }, { line: '123456789012' }]) {
+    const result = schema['~standard'].validate(input);
+    assert.ok(result.issues);
+    assert.ok(!JSON.stringify(result).includes('123456789'));
+    assert.ok(!JSON.stringify(result).includes('Secret Name'));
+  }
 });
