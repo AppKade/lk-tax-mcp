@@ -30,12 +30,12 @@ Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025
 - Tax fractions accumulate exactly; the preview rounds once to cents, half up. Do not present this as verified RAMIS whole-rupee rounding.
 - In-memory state only. Consent is re-required after restart, wipe or new session; no cleartext session storage exists.
 - No Schedule 7, worksheet, payment output, document parsing, FX, encrypted draft, bundled Skill, npm release or signed extension yet.
-- SDK and direct dependency versions are pinned. A transitive dependency lock must be captured from a successful install and committed before distribution. CI emits its generated lock as an artifact during initial bootstrap.
+- SDK and transitive dependencies are pinned in package-lock.json with integrity hashes, captured from successful GitHub CI. CI uses npm ci. Type checking and all ten tests passed on Node 22 and 24, including the stdio host workflow.
 - Scope and intake mutations use accurate mutation annotations, despite the research suggesting every tool be read-only. No tool alters external services.
 
 ## Next implementation work
 
-1. Capture and commit dependency lock; verify SDK protocol negotiation and supported host behaviour.
+1. Expand protocol tests to current-protocol discovery and verify supported host behaviour.
 2. Add remaining primary-source golden fixtures and complete local reliefs/QPs before expanding calculations.
 3. Implement and review foreign buckets, both mixed-income interpretations and FTC limits.
 4. Verify filing-obligation law from primary sources before exposing a no-return-required decision.

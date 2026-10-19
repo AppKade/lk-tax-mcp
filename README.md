@@ -22,7 +22,7 @@ Foreign income, rent, dividends, additional reliefs, qualifying payments, foreig
 Node.js 22.18 or newer is required. This private development package is not published to npm.
 
 ```sh
-npm install --ignore-scripts
+npm ci --ignore-scripts
 npm run check
 npm test
 npm start
