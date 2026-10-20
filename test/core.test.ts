@@ -4,7 +4,7 @@ import { privateSchema } from '../src/schema.ts';
 import assert from 'node:assert/strict';
 import { cents, money } from '../src/money.ts';
 import { computeReturn, progressiveTax } from '../src/engine.ts';
-import { rules, rulesSchema, selectRules } from '../src/rules.ts';
+import { rules, rulesSchema, selectRules, amountSchema } from '../src/rules.ts';
 import { scopeSchema, checkScope, type ScopeFacts } from '../src/scope.ts';
 import { TaxSession, DISCLAIMER_VERSION, errorResult, envelope } from '../src/service.ts';
 import { assertPrivateOutput } from '../src/privacy.ts';
@@ -13,8 +13,11 @@ import { cleanScope, income, zeroDeductions, noForeign } from './fixtures.ts';
 const calculate = (i = income, scope = cleanScope) => computeReturn({ ya: '2025/26', scope, income: i, deductions: zeroDeductions, foreign: noForeign });
 
 test('strict money boundary, exact cents and large values', () => {
-  for (const invalid of ['-1', '1e6', 'NaN', 'Infinity', '1,000', ' 1', '01', '1.234', '', '1000000000000000'])
+  for (const invalid of ['-1', '1e6', 'NaN', 'Infinity', '1,000', ' 1', '01', '1.234', '', '1000000000000000', '1.2\n', '1.2\r\n', '1.2\u2028', '1.2\u2029'])
     assert.throws(() => cents(invalid));
+  for (const invalid of ['1.2\n', '1.2\r\n', '1.2\u2028', '1.2\u2029'])
+    assert.equal(amountSchema.safeParse(invalid).success, false);
+  assert.equal(cents('1.2'), 120n);
   assert.equal(cents('0.01'), 1n);
   assert.equal(money(cents('999999999999999.99')), '999999999999999.99');
   assert.equal(money(cents('0.10') + cents('0.20')), '0.30');
