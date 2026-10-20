@@ -13,7 +13,7 @@ The server publishes shared instructions, four argument-free prompts and eight r
 
 ## Protocol checks
 
-Automated stdio tests exercise both the legacy `2025-11-25` initialise handshake and `2026-07-28` discovery with per-request metadata. Both complete server-enforced consent and calculation journeys. Discovery tests also verify prompt retrieval, resource availability, sanitised prompt-argument errors and that reading static guidance never accepts consent. This is automated protocol coverage, not certification of Claude Desktop, Cursor, VS Code or local-model behaviour. Interactive host testing and Inspector CLI coverage remain pending.
+Automated stdio tests exercise both the legacy `2025-11-25` initialise handshake and `2026-07-28` discovery with per-request metadata. Both complete server-enforced consent and calculation journeys. Discovery tests also verify prompt retrieval, resource availability, sanitised prompt-argument errors and that reading static guidance never accepts consent. The separately pinned Inspector 2.11.0 CLI checks both eras with strict schema discovery, exact tool contract parity, prompts, a resource and a guarded refusal. See [validation](validation.md) for coverage and commands. Interactive installed-host and model-driven evaluation remain pending.
 
 SDK references checked on 2026-10-19:
 

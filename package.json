@@ -15,7 +15,8 @@
     "contract:check": "node scripts/check-contract.ts",
     "contract:update": "node scripts/check-contract.ts --update",
     "contract:version": "node scripts/check-contract-version.ts",
-    "rules:check": "node scripts/check-rules.ts"
+    "rules:check": "node scripts/check-rules.ts",
+    "test:inspector": "node scripts/check-inspector.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",

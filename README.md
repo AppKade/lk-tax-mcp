@@ -148,3 +148,6 @@ The preview ceilings fractional cents and labels that policy `assumed`; official
 See [implementation progress and release blockers](docs/implementation-status.md). Contributions must preserve exact arithmetic, consent gates, explicit missing facts and identifier minimisation. Never use real taxpayer documents in fixtures. Rule changes require source locators and regression tests. The original research remains preserved; corrections are recorded separately.
 
 Rule data and version-history checks: `npm run rules:check`. See [rules governance](docs/rules-governance.md) for the archive and PR process.
+
+
+For the real MCP Inspector CLI gate, install the isolated development tools with `npm ci --ignore-scripts --prefix tools/inspector`, then run `npm run test:inspector` (Node 22.19+). See [validation and compatibility](docs/validation.md) and [remaining source verification](docs/source-verification-next.md). This supplements the raw stdio journeys; installed desktop hosts and model-driven behaviour still require their own evaluations.

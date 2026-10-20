@@ -39,3 +39,17 @@ jobs:
           path: artifacts/mcp-contract.actual.json
           if-no-files-found: ignore
           retention-days: 7
+  inspector:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --prefix tools/inspector
+      - run: npm run test:inspector

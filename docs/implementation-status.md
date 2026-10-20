@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
+Updated: 2026-10-20. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
 
 | Backlog | Delivered in this slice | Remaining acceptance criteria |
 |---|---|---|
@@ -12,11 +12,11 @@ Updated: 2026-10-19. Foundation, local-reliefs, qualifying foreign-income and in
 | T2.8 | YA 2026/27 Methods 1 and 2(i)-(iv), externally supplied A, reconciled credits, dated schedule, SET and revision guards | Independent computation/validation of A, foreign credits, employment exception decisions and professional sign-off |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
-| T6.1, T6.2 | Official SDK stdio server, thirteen tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue, Inspector CLI and interactive host matrix |
+| T6.1, T6.2 | Official SDK stdio server, thirteen tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue and interactive installed-host matrix |
 | T7.1 | Agent Skill `skills/lk-tax/SKILL.md` (about 70 lines): consent, interview, verbatim `display_summary`, review/worksheet and escalation blocks; tool/resource parity and no-rates test | RAMIS walkthrough references, trigger-description evals, installable packaging |
 | T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Complete filing map, installed Skill parity and interactive host evaluations |
-| T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | G7 and independent source verification of remaining non-IRD cases; practitioner review |
-| T10.2, T10.4 | Band boundaries, monotonicity, consent/privacy regressions and real stdio test | Inspector CLI, full properties and agent behaviour evaluation |
+| T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | Full G7 intake and independent source verification of remaining non-IRD cases; practitioner review |
+| T10.2, T10.4 | Band boundaries, monotonicity, adversarial stdio regressions and pinned Inspector CLI in both eras | Full properties, installed-host and model-driven behaviour evaluation |
 
 No full backlog task above is marked complete when its original acceptance criteria remain unmet.
 
@@ -145,3 +145,15 @@ Validation: TypeScript checking, 79 tests (new worksheet suite plus both stdio j
 - Added T7.1: `skills/lk-tax/SKILL.md`, a modular Agent Skill covering role and limits, consent and privacy, the dependency-aware interview, compute and explain, review and worksheet, instalment planning and escalation. It instructs verbatim use of `display_summary`, never confirming on the user's behalf, and referral for unsupported or unresolved cases.
 - `test/skill.test.ts` checks frontmatter, the 500-line budget, that every `lk_` tool and `lktax://` resource it names is published in the contract snapshot, that every published tool is mentioned, and that it contains no percentages, currency amounts or large numbers.
 - No server, schema or prompt change, so the public contract and package version are unchanged. Trigger-description evals, agent behaviour evals, the RAMIS walkthrough reference and packaging into a plugin or extension remain pending.
+
+
+## Independent validation and Inspector milestone
+
+- Added a separate development-only Inspector 2.11.0 package and integrity lockfile. CI runs its actual CLI on Node 22 and 24 for legacy and modern stdio: strict schema discovery, exact tool-contract digest/content parity, prompt retrieval, resources, disclaimer output and explicit refusal exit semantics. All 22 probes pass locally.
+- Added twelve adversarial persistent-host regressions across both protocol eras. They cover consent provenance limits, missing amounts, eligibility reactivation, partial/declined/stale confirmations, scope and unsupported-claim refusals across every output path, atomic rejection of injection-like input, output privacy, process isolation and session reset. These tests exercise actual SDK stdio, not a mocked dispatcher. They do not invoke or certify an LLM.
+- Retrieved the complete official AAT YA 2025/26 supplement from its www URL and visually verified Answer 7. Added an independent published-taxable-income/tax/balance oracle with source digest and precise locator. The missing original question/investment schedule is not guessed into a full intake fixture; full G7 intake validation remains pending.
+- Downloaded both officially linked Schedule File Verifier archives and inspected their .NET configuration and IIT template headers. Recorded hashes, observed column order/encoding and the lack of data rows. This is partial T14.1 evidence only: a Windows GUI run and verified synthetic samples remain required. See `docs/source-verification-next.md`.
+- Rechecked rounding and payment source gaps. The retrieved DIN page is historical, and no supported-year code or official rounding convention is inferred from it. Payment summaries, Schedule 7 export, registry publication and signed bundles remain gated by their own evidence/review requirements.
+- Runtime implementation, consent, rules, tool schemas and the public contract are unchanged; package remains preview.9. This improves T6.1/T6.2/T10.1/T10.4 evidence without claiming full backlog completion, practitioner sign-off or installed-host certification.
+
+Local verification: TypeScript checking, all 95 tests, rules governance, public contract check and 22 real Inspector probes pass. CI repeats verification on Node 22 and 24. See `docs/validation.md` for commands and limits.
