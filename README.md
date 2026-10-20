@@ -32,6 +32,7 @@ npm ci --ignore-scripts
 npm run check
 npm test
 npm run contract:check
+npm run build
 npm start
 ```
 
@@ -42,7 +43,7 @@ Example local MCP host configuration, replacing the path with your checkout:
   "mcpServers": {
     "lk-tax": {
       "command": "node",
-      "args": ["/absolute/path/lk-tax-mcp/src/cli.ts"]
+      "args": ["/absolute/path/lk-tax-mcp/dist/cli.js"]
     }
   }
 }
@@ -151,3 +152,6 @@ Rule data and version-history checks: `npm run rules:check`. See [rules governan
 
 
 For the real MCP Inspector CLI gate, install the isolated development tools with `npm ci --ignore-scripts --prefix tools/inspector`, then run `npm run test:inspector` (Node 22.19+). See [validation and compatibility](docs/validation.md) and [remaining source verification](docs/source-verification-next.md). This supplements the raw stdio journeys; installed desktop hosts and model-driven behaviour still require their own evaluations.
+
+
+The private npm preview now has a compiled `lk-tax-mcp` executable and a restricted tarball inventory. Run `npm run package:check` to build, install and exercise that tarball outside the checkout. See [private preview installation](docs/installation.md). The package remains unpublished; registry provenance, licensing and signed desktop release preparation are separate release work.

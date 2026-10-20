@@ -1,6 +1,6 @@
 {
   "name": "@appkade/lk-tax-mcp",
-  "version": "2026.25.0-preview.9",
+  "version": "2026.25.0-preview.10",
   "private": true,
   "description": "Local Sri Lankan individual income tax assistance over MCP",
   "type": "module",
@@ -8,7 +8,7 @@
     "node": ">=22.18.0"
   },
   "scripts": {
-    "start": "node src/cli.ts",
+    "start": "node dist/cli.js",
     "test": "node --test test/*.test.ts",
     "test:core": "node --test test/core.test.ts",
     "check": "tsc --noEmit",
@@ -16,7 +16,11 @@
     "contract:update": "node scripts/check-contract.ts --update",
     "contract:version": "node scripts/check-contract-version.ts",
     "rules:check": "node scripts/check-rules.ts",
-    "test:inspector": "node scripts/check-inspector.ts"
+    "test:inspector": "node scripts/check-inspector.ts",
+    "dev": "node src/cli.ts",
+    "build": "node scripts/build.ts",
+    "prepack": "npm run build",
+    "package:check": "node scripts/check-package.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",
@@ -25,5 +29,21 @@
   "devDependencies": {
     "@types/node": "24.10.4",
     "typescript": "5.7.3"
+  },
+  "bin": {
+    "lk-tax-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist/*.js",
+    "rules/2025-26.json",
+    "rules/instalments-2026-27.json",
+    "rules/cages-2025-26.json",
+    "skills/lk-tax/SKILL.md",
+    "SECURITY.md",
+    "docs/installation.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AppKade/lk-tax-mcp.git"
   }
 }

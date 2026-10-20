@@ -157,3 +157,13 @@ Validation: TypeScript checking, 79 tests (new worksheet suite plus both stdio j
 - Runtime implementation, consent, rules, tool schemas and the public contract are unchanged; package remains preview.9. This improves T6.1/T6.2/T10.1/T10.4 evidence without claiming full backlog completion, practitioner sign-off or installed-host certification.
 
 Local verification: TypeScript checking, all 95 tests, rules governance, public contract check and 22 real Inspector probes pass. CI repeats verification on Node 22 and 24. See `docs/validation.md` for commands and limits.
+
+
+## Private package preparation milestone
+
+- Added a shebang executable and a JavaScript build using the pinned TypeScript compiler. Relative imports are rewritten to `.js`; active rule JSON and package identity resolve from the installed package root. Source development remains available through `npm run dev`; `npm start` now runs the compiled `dist/cli.js` after a build.
+- Added a strict npm file allowlist and a private tarball check. It packs the actual compiled runtime, compares the exact inventory, installs the tarball outside the checkout into a path with spaces and checks installed bytes and npm's platform executable shim. TypeScript, Inspector, source, tests, developer configuration and archived rules are excluded from the installed runtime.
+- The installed executable is exercised through offline `npm exec` in both protocol eras: contract/schema parity, consent guards, the G1 computation, cage map, checklist/worksheet, YA 2026/27 instalment planning, edit invalidation and wipe. Installation uses production dependencies with lifecycle scripts disabled. Registry fallback is disabled during the workflow probes, not during dependency installation.
+- CI adds Node 22/24 package checks on Linux, Windows and macOS, with a seven-day tarball and integrity-report artifact. These are automated package-level checks, not installed desktop-host certification or signed release assets.
+- Package preview.10. The contract refresh changes only SDK package identity in the four prompt response metadata entries. Tools, schemas, prompts/instructions, rule values, consent and filing readiness remain unchanged. `private: true` still blocks npm publication; no credentials, publish workflow or signing keys are introduced.
+- This delivers local packaging and executable verification for part of T9.1. Public release, license selection, provenance, signed desktop bundles, full source validation and practitioner sign-off remain pending.

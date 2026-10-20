@@ -53,3 +53,24 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm ci --ignore-scripts --prefix tools/inspector
       - run: npm run test:inspector
+  package:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci --ignore-scripts
+      - run: npm run package:check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: private-package-${{ matrix.os }}-node-${{ matrix.node }}
+          path: artifacts/package/
+          if-no-files-found: error
+          retention-days: 7
