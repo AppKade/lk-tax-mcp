@@ -16,6 +16,7 @@ Node.js 22.18 or newer. Development source runs directly with `npm run dev`. Bui
 ```sh
 npm ci --ignore-scripts       # install; scripts are never needed
 npm run check                 # tsc --noEmit
+npm run security:check        # application runtime capability regression check
 npm test                      # node --test test/*.test.ts
 npm run test:core             # engine tests only
 npm run rules:check           # validate rule JSON and archived history
@@ -60,3 +61,5 @@ Any change to tool schemas, descriptions, annotations, prompts, resources or ins
 Match the surrounding code: terse TypeScript with ES modules, explicit `.ts` import extensions, Zod for validation, no new dependencies without a reason. Add or update tests with every behaviour change and keep docs in step (`README.md`, `docs/implementation-status.md`, `src/support.ts` known issues).
 
 Package preparation remains private. Run `npm run package:check` after packaging/build changes. It enforces the tarball allowlist and tests the installed npm executable without checkout dependencies. No public registry publish, provenance or signing workflow is configured.
+
+Security boundary changes must update `docs/threat-model.md`. The source capability lint is not a sandbox. Package checks validate the production SBOM against the lockfile and isolated installation; do not describe SBOM metadata as a vulnerability scan or signed provenance.

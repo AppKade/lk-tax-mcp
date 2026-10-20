@@ -19,6 +19,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm ci --ignore-scripts
       - run: npm run check
+      - run: npm run security:check
       - run: npm test
       - run: npm run rules:check
       - name: Preserve published rule history

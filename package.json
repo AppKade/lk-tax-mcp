@@ -20,7 +20,8 @@
     "dev": "node src/cli.ts",
     "build": "node scripts/build.ts",
     "prepack": "npm run build",
-    "package:check": "node scripts/check-package.ts"
+    "package:check": "node scripts/check-package.ts",
+    "security:check": "node scripts/check-runtime.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",
