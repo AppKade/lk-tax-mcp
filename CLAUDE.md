@@ -17,6 +17,7 @@ Node.js 22.18 or newer. Development source runs directly with `npm run dev`. Bui
 npm ci --ignore-scripts       # install; scripts are never needed
 npm run check                 # tsc --noEmit
 npm run security:check        # application runtime capability regression check
+npm run payments:check        # development payment evidence, not payment instructions
 npm test                      # node --test test/*.test.ts
 npm run test:core             # engine tests only
 npm run rules:check           # validate rule JSON and archived history
