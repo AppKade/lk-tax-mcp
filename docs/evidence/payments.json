@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-20",
+  "review_status": "unreviewed",
+  "sources": [
+    {
+      "id": "annual-guide",
+      "filename": "return-guide-2025-26.pdf",
+      "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+      "bytes": 1982988,
+      "sha256": "7e789b520538b45750d874fd67b6fc0ab277fad8b8597d7f01f4934979fa64d6",
+      "pages": 49
+    },
+    {
+      "id": "calendar",
+      "filename": "calendar-2026.pdf",
+      "url": "https://www.ird.gov.lk/en/publications/Tax%20Calendar_Documents/Tax_Calendar_2026_E.pdf",
+      "bytes": 219219,
+      "sha256": "5ad65e484179bcb883b65edb70a133ebfab7b291b7814f180e41c49a751528f8",
+      "pages": 6
+    },
+    {
+      "id": "final-notice",
+      "filename": "final-payment-2025-26.pdf",
+      "url": "https://www.ird.gov.lk/en/Lists/Latest%20News%20%20Notices/Attachments/813/IT_28092026_E.pdf",
+      "bytes": 1195558,
+      "sha256": "44878d511a0026ed8dba7c0157c7c1e13e27f16f2f61bd7171102ada5ece2850",
+      "pages": 1
+    },
+    {
+      "id": "otpp-guide",
+      "filename": "otpp-guide.pdf",
+      "url": "https://www.ird.gov.lk/en/eServices/Lists/PaymentRefund/Attachments/7/User_Guide_for_IRD_Online_Payment_E.pdf",
+      "bytes": 680965,
+      "sha256": "1a5bbc50d72668c542a79999b33fbe479a993e97da38e6962c158c33a13a1b52",
+      "pages": 7
+    },
+    {
+      "id": "instalment-circular",
+      "filename": "instalments-2026-27.pdf",
+      "url": "https://www.ird.gov.lk/en/publications/Circulars_Circulars/SEC_2026_E_06_ReRiv_E.pdf",
+      "bytes": 2281315,
+      "sha256": "4889d4b3647ef0d0d397e1669edd8db7c17611f27ea75087d7e73e2c5b98de23",
+      "pages": 16
+    }
+  ],
+  "tax_type": {
+    "code": "05",
+    "evidence": [
+      {
+        "source": "final-notice",
+        "page": 1,
+        "section": "IIT code, final payment period and deadline"
+      },
+      {
+        "source": "calendar",
+        "page": 4,
+        "section": "September, Income Tax final payment, IIT row"
+      }
+    ]
+  },
+  "payments": [
+    {
+      "ya": "2025/26",
+      "instalment": "1",
+      "due_date": "2025-08-15",
+      "period_code": "25261",
+      "date_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      },
+      "code_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      }
+    },
+    {
+      "ya": "2025/26",
+      "instalment": "2",
+      "due_date": "2025-11-15",
+      "period_code": "25262",
+      "date_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      },
+      "code_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      }
+    },
+    {
+      "ya": "2025/26",
+      "instalment": "3",
+      "due_date": "2026-02-15",
+      "period_code": "25263",
+      "date_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      },
+      "code_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      }
+    },
+    {
+      "ya": "2025/26",
+      "instalment": "4",
+      "due_date": "2026-05-15",
+      "period_code": "25264",
+      "date_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      },
+      "code_evidence": {
+        "source": "annual-guide",
+        "page": 4,
+        "section": "section 8, Payment of Tax, due-date/payment-code table"
+      }
+    },
+    {
+      "ya": "2025/26",
+      "instalment": "final",
+      "due_date": "2026-09-30",
+      "period_code": "25260",
+      "date_evidence": {
+        "source": "final-notice",
+        "page": 1,
+        "section": "IIT code, final payment period and deadline"
+      },
+      "code_evidence": {
+        "source": "final-notice",
+        "page": 1,
+        "section": "IIT code, final payment period and deadline"
+      }
+    },
+    {
+      "ya": "2026/27",
+      "instalment": "1",
+      "due_date": "2026-08-15",
+      "period_code": "26271",
+      "date_evidence": {
+        "source": "instalment-circular",
+        "page": 1,
+        "section": "section 1, statutory due dates"
+      },
+      "code_evidence": {
+        "source": "calendar",
+        "page": 4,
+        "section": "August, Income Tax first instalment, IIT row"
+      }
+    },
+    {
+      "ya": "2026/27",
+      "instalment": "2",
+      "due_date": "2026-11-15",
+      "period_code": "26272",
+      "date_evidence": {
+        "source": "instalment-circular",
+        "page": 1,
+        "section": "section 1, statutory due dates"
+      },
+      "code_evidence": {
+        "source": "calendar",
+        "page": 5,
+        "section": "November, Income Tax second instalment, IIT row"
+      }
+    },
+    {
+      "ya": "2026/27",
+      "instalment": "3",
+      "due_date": "2027-02-15",
+      "period_code": null,
+      "date_evidence": {
+        "source": "instalment-circular",
+        "page": 1,
+        "section": "section 1, statutory due dates"
+      },
+      "code_evidence": null
+    },
+    {
+      "ya": "2026/27",
+      "instalment": "4",
+      "due_date": "2027-05-15",
+      "period_code": null,
+      "date_evidence": {
+        "source": "instalment-circular",
+        "page": 1,
+        "section": "section 1, statutory due dates"
+      },
+      "code_evidence": null
+    }
+  ],
+  "channels": [
+    {
+      "id": "otpp",
+      "url": "https://www.ird.gov.lk/en/publications/SitePages/Online_Pay_OTP.aspx?menuid=141601",
+      "evidence": [
+        {
+          "source": "final-notice",
+          "page": 1,
+          "section": "Easy Online Payment"
+        },
+        {
+          "source": "otpp-guide",
+          "page": 2,
+          "section": "required fields and step 4"
+        },
+        {
+          "source": "otpp-guide",
+          "page": 3,
+          "section": "step 5"
+        },
+        {
+          "source": "otpp-guide",
+          "page": 7,
+          "section": "notes 1, 3, 5 and 6"
+        }
+      ],
+      "notes": "The current final-payment notice links this guide. Its screenshots use historical corporate/VAT examples. Bank screens and settlement timing vary; no supported-year IIT bank flow has been tested."
+    },
+    {
+      "id": "boc_din",
+      "url": "https://eservices.ird.gov.lk/Payment/PayingInSlip/Index",
+      "evidence": [
+        {
+          "source": "final-notice",
+          "page": 1,
+          "section": "Pay In-Person and Avoid Late Fees"
+        }
+      ],
+      "notes": "The notice directs payers to BOC and to put the IRD-issued DIN in the payment voucher field. No DIN is generated or retrieved here."
+    }
+  ]
+}

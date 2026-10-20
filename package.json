@@ -21,7 +21,8 @@
     "build": "node scripts/build.ts",
     "prepack": "npm run build",
     "package:check": "node scripts/check-package.ts",
-    "security:check": "node scripts/check-runtime.ts"
+    "security:check": "node scripts/check-runtime.ts",
+    "payments:check": "node scripts/check-payment-reference.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",

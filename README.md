@@ -157,3 +157,5 @@ For the real MCP Inspector CLI gate, install the isolated development tools with
 The private npm preview now has a compiled `lk-tax-mcp` executable and a restricted tarball inventory. Run `npm run package:check` to build, install and exercise that tarball outside the checkout. See [private preview installation](docs/installation.md). The package remains unpublished; registry provenance, licensing and signed desktop release preparation are separate release work.
 
 Security review: `npm run security:check` checks application runtime capabilities. Private package artifacts include a production CycloneDX SBOM checked against the lockfile and isolated installation. See the [threat model](docs/threat-model.md) for host/dependency boundaries and limitations.
+
+Payment groundwork: `npm run payments:check` validates the [development payment reference](docs/payment-reference.md) and reports remaining blockers. This catalogue is excluded from the installed runtime; no payment summary tool or payable amount is enabled.
