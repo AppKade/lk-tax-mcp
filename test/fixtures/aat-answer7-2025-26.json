@@ -1,0 +1,33 @@
+{
+  "id": "G7",
+  "ya": "2025/26",
+  "source": {
+    "url": "https://www.aatsl.lk/images/pdf/corporate-and-personal-taxation-supplementary-en.pdf",
+    "index_url": "https://www.aatsl.lk/index.php/en/examination/syllabus",
+    "locator": "PDF page 11, printed supplement page 10, Answer 7 replacing book pages 73-74; cover confirms YA 2025/2026",
+    "verified_on": "2026-10-20",
+    "sha256": "39603ddaf539453ae331c1530f757e6195bbc5faa2f38a8362b6141d5441e054",
+    "bytes": 510727,
+    "pages": 27
+  },
+  "validation_scope": "published taxable-income band calculation and balance arithmetic only",
+  "notes": [
+    "The complete PDF was downloaded and its Answer 7 table visually inspected.",
+    "The supplement gives aggregate investment income, rent relief and an allowed qualifying payment, but does not reproduce the full original question or investment schedule.",
+    "Do not invent the investment composition, classify the donation into a supported input category, or treat this as full end-to-end intake validation.",
+    "The older cpt-2025-supplementary.pdf has a YA 2024/2025 cover and is not the source for this YA 2025/26 answer."
+  ],
+  "published": {
+    "employment_income": "3740000.00",
+    "investment_income": "821500.00",
+    "assessable_income": "4561500.00",
+    "personal_relief": "1800000.00",
+    "rent_relief": "150000.00",
+    "qualifying_payments": "100000.00",
+    "taxable_income": "2511500.00",
+    "tax": "424140.00",
+    "apit_credit": "45000.00",
+    "instalments_paid": "10000.00",
+    "balance_payable": "369140.00"
+  }
+}
