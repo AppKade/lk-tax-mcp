@@ -11,6 +11,8 @@ import { cleanScope, income, zeroDeductions } from '../test/fixtures.ts';
 import { instalmentInput } from '../test/instalment-fixture.ts';
 import snapshot from '../test/fixtures/mcp-contract.json' with { type: 'json' };
 import pkg from '../package.json' with { type: 'json' };
+import lock from '../package-lock.json' with { type: 'json' };
+import { verifyProductionBom, verifyInstalledBom, type Bom } from './supply-chain.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const npm = process.env.npm_execpath;
@@ -40,6 +42,12 @@ try {
   writeFileSync(join(consumer, 'package.json'), JSON.stringify({ name: 'lk-tax-package-validation', version: '0.0.0', private: true }));
   // No source symlinks, TypeScript compiler, Inspector or install lifecycle scripts are available to this consumer.
   npmRun(['install', '--ignore-scripts', '--omit=dev', '--no-audit', '--no-fund', tarball], consumer);
+  const productionBom: Bom = JSON.parse(npmRun(['sbom', '--sbom-format=cyclonedx', '--omit=dev', '--package-lock-only'], root));
+  const productionComponents = verifyProductionBom(productionBom, lock, pkg);
+  const installedBom: Bom = JSON.parse(npmRun(['sbom', '--sbom-format=cyclonedx', '--omit=dev'], consumer));
+  verifyInstalledBom(productionBom, installedBom, packed.integrity);
+  const bomText = JSON.stringify(productionBom, null, 2) + '\n';
+  writeFileSync(join(output, 'production.cdx.json'), bomText);
   const installed = join(consumer, 'node_modules/@appkade/lk-tax-mcp');
   assert.ok(realpathSync(installed).startsWith(realpathSync(consumer)));
   const metadata = JSON.parse(readFileSync(join(installed, 'package.json'), 'utf8'));
@@ -110,7 +118,10 @@ try {
   const report = { name: pkg.name, version: pkg.version, private: true, published: false, filing_ready: false,
     platform: process.platform, node: process.version, filename: packed.filename,
     sha256: createHash('sha256').update(readFileSync(tarball)).digest('hex'), integrity: packed.integrity,
-    contract_sha256: snapshot.sha256, files: expected };
+    contract_sha256: snapshot.sha256, production_components: productionComponents,
+    sbom: { filename: 'production.cdx.json', format: productionBom.bomFormat, spec_version: productionBom.specVersion,
+      sha256: createHash('sha256').update(bomText).digest('hex') },
+    lockfile_sha256: createHash('sha256').update(readFileSync(join(root, 'package-lock.json'))).digest('hex'), files: expected };
   writeFileSync(join(output, 'validation.json'), JSON.stringify(report, null, 2) + '\n');
   process.stdout.write(`Verified private package: ${expected.length} allowed files, SHA-256 ${report.sha256}\n`);
 } finally { rmSync(temporary, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); }
