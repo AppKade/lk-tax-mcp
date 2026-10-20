@@ -11,7 +11,7 @@ Local Sri Lankan individual income tax assistance over MCP (stdio). Development 
 
 ## Commands
 
-Node.js 22.18 or newer. TypeScript runs directly through Node (`node src/cli.ts`), so there is no build step.
+Node.js 22.18 or newer. Development source runs directly with `npm run dev`. Build compiled JavaScript with `npm run build` before `npm start` or local packaging; installed packages must not rely on TypeScript stripping inside node_modules.
 
 ```sh
 npm ci --ignore-scripts       # install; scripts are never needed
@@ -20,14 +20,17 @@ npm test                      # node --test test/*.test.ts
 npm run test:core             # engine tests only
 npm run rules:check           # validate rule JSON and archived history
 npm run contract:check        # compare public MCP interface with test/fixtures/mcp-contract.json
-npm start                     # stdio MCP server
+npm run build                 # compile runtime JS to dist/
+npm start                     # compiled stdio MCP server
+npm run dev                   # source stdio server
+npm run package:check         # pack, isolated install and both protocol journeys
 ```
 
 CI (`.github/workflows/ci.yml`) runs check, test, rules:check and contract:check on Node 22 and 24. On pull requests it also runs `rules:check -- <base-sha>` and `contract:version -- <base-sha>`. Run the first four before you finish a change.
 
 ## Layout
 
-- `src/server.ts` registers tools, prompts and resources; `src/cli.ts` serves it over stdio.
+- `src/server.ts` registers tools, prompts and resources; `src/cli.ts` serves it over stdio. `scripts/build.ts` emits runtime JS into ignored `dist/`; the package executable is `dist/cli.js`.
 - `src/service.ts` holds sessions, consent and the tool handlers. `src/guidance.ts` holds host instructions and the four prompts.
 - `src/engine.ts` is the annual computation. `src/foreign.ts`, `src/instalments.ts`, `src/return-review.ts`, `src/scope.ts` and `src/interview.ts` cover foreign income, YA 2026/27 instalments, cage review, scope checks and the dependency-aware interview.
 - `src/money.ts` is decimal-string and bigint-cents arithmetic. `src/rules.ts` loads rule JSON. `src/privacy.ts` and `src/schema.ts` guard output and validation errors. `src/support.ts` lists known issues and supported scenarios.
@@ -55,3 +58,5 @@ Any change to tool schemas, descriptions, annotations, prompts, resources or ins
 ## Style
 
 Match the surrounding code: terse TypeScript with ES modules, explicit `.ts` import extensions, Zod for validation, no new dependencies without a reason. Add or update tests with every behaviour change and keep docs in step (`README.md`, `docs/implementation-status.md`, `src/support.ts` known issues).
+
+Package preparation remains private. Run `npm run package:check` after packaging/build changes. It enforces the tarball allowlist and tests the installed npm executable without checkout dependencies. No public registry publish, provenance or signing workflow is configured.

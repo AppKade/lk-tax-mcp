@@ -45,6 +45,6 @@ T8.4 still needs current supported-year period codes, tax-type confirmation, a c
 
 1. Complete primary-source cases and rounding/payment verification. Obtain qualified review for the recorded charity and foreign-income interpretation issues.
 2. Finish installed-host and model-driven evaluations. Automated Inspector support does not certify a desktop host or its model.
-3. Prepare the npm executable, package allowlist and installed-package smoke test, then provenance and signed desktop bundles. Keep the package private until release gates pass. No registry publish or signing step is configured in this validation milestone.
+3. The npm executable, package allowlist and installed-package check are now prepared in the private preview (see [installation](installation.md)). Complete license/registry decisions, provenance and signed desktop bundles after release gates pass. No registry publish or signing step is configured.
 
 Original requirements and backlog remain the planning baseline. Source downloads and versioned tests do not constitute professional sign-off.

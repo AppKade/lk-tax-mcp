@@ -34,5 +34,5 @@ export async function captureContract() {
     const contract = { server_name: serverInfo.name, supportedVersions: discovery.supportedVersions, capabilities: discovery.capabilities,
       instructions: discovery.instructions, tools, resources, prompts };
     return { format_version: 1, version: serverInfo.version as string, sha256: digest(contract), contract };
-  } finally { host.close(); }
+  } finally { await host.close(); }
 }
