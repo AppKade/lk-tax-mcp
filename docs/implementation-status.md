@@ -189,3 +189,9 @@ Local verification: TypeScript checking, all 95 tests, rules governance, public 
 - This advances evidence and developer groundwork for T8.4 only. No runtime tax rule, public MCP contract or package version change. The catalogue/scripts are excluded from the installed package; qualified review and verified rounding remain necessary before runtime payment-summary integration.
 
 Validation: all 108 tests, TypeScript, runtime capability lint, rules governance, public-contract check and isolated private-package verification pass locally. The public contract digest remains `03326be8f0fa2e35d59c9d6dff8391051884b637c3b70bf7f64bb2537f138a9e`.
+
+## Contributor entry point and decimal-boundary regression review
+
+- Added the root contribution guide linking setup, required checks, rule/contract governance, privacy rules and release blockers.
+- Extended the existing exact-money boundary test to exercise trailing LF, CRLF and Unicode line separators through both the shared amount schema and cents parser. They are already rejected; `1.2` remains exactly 120 cents. No monetary parsing defect was reproduced and no runtime change was needed.
+- Tax rules, consent, SDK contract, package version and release gates remain unchanged. License selection and professional/source review still require maintainer evidence.
