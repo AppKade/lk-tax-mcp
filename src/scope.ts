@@ -1,13 +1,20 @@
 import { z } from 'zod';
 // Every exclusion must be answered. Missing answers can never become false.
 export const scopeSchema = z.strictObject({
-  resident_full_year: z.boolean(), residency_special_case: z.boolean(),
-  investment_asset_gains: z.boolean(), partnership_or_trust: z.boolean(),
-  restricted_business: z.boolean(), terminal_benefits_or_arrears: z.boolean(),
-  business_profit_needs_computation: z.boolean(), losses: z.boolean(),
-  multiple_foreign_tax_countries: z.boolean(), foreign_credit_exceeds_cap: z.boolean(),
-  qualifying_foreign_income: z.boolean(), local_taxable_below_first_band: z.boolean(),
-  amendment_assessment_or_appeal: z.boolean(), preparing_for_clients: z.boolean(),
+  resident_full_year: z.boolean().describe('Were you resident in Sri Lanka throughout this year of assessment?'),
+  residency_special_case: z.boolean().describe('Does your residency need special review, such as a move into or out of Sri Lanka during the year?'),
+  investment_asset_gains: z.boolean().describe('Do you have gains from selling investment assets that need a capital-gains calculation?'),
+  partnership_or_trust: z.boolean().describe('Do you have income allocated from a partnership or trust?'),
+  restricted_business: z.boolean().describe('Do you have business income subject to special rates, such as betting, gaming, liquor or tobacco?'),
+  terminal_benefits_or_arrears: z.boolean().describe('Did you receive retirement or termination benefits, or salary arrears?'),
+  business_profit_needs_computation: z.boolean().describe('Do you need help calculating business net profit from receipts and expenses? This tool accepts only a net profit prepared outside it.'),
+  losses: z.boolean().describe('Do you need to claim or carry forward a business or other tax loss?'),
+  multiple_foreign_tax_countries: z.boolean().describe('Does your foreign income tax credit claim involve more than one country?'),
+  foreign_credit_exceeds_cap: z.boolean().optional().describe('Optional legacy hint. Do not ask the user to calculate a credit ceiling; computation derives this from amounts.'),
+  qualifying_foreign_income: z.boolean().optional().describe('Optional legacy hint. Foreign income and eligibility are collected separately; computation derives this flag.'),
+  local_taxable_below_first_band: z.boolean().optional().describe('Optional legacy hint. Do not ask the user to calculate a tax-band position; computation derives this from amounts.'),
+  amendment_assessment_or_appeal: z.boolean().describe('Is this an amendment to a filed return, an assessment dispute or an appeal?'),
+  preparing_for_clients: z.boolean().describe('Are you preparing this estimate for a client rather than yourself?'),
 });
 export type ScopeFacts = z.infer<typeof scopeSchema>;
 export function checkScope(input: ScopeFacts) {

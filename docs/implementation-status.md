@@ -1,6 +1,8 @@
 # Implementation status
 
-Updated: 2026-10-20. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
+Updated: 2026-10-24. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
+
+Real-user validation follow-up, preview.11: plain-language intake, optional derived scope hints, current confirmed-fact snapshots, credit anomaly warnings with a specific worksheet acknowledgement, evidence-reconciliation checklist, no-op edit preservation and explicit instalment basis-source selection. Method 1 can opt in to matching the supplied basis to current prior-year preview gross tax; external evidence is still unverified. No tax-rule JSON or arithmetic changed. See [user-validation coverage and remaining gaps](user-validation.md).
 
 | Backlog | Delivered in this slice | Remaining acceptance criteria |
 |---|---|---|

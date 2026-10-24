@@ -27,9 +27,9 @@ Before offering help, read the resources `lktax://supported-scenarios` and `lkta
 
 ## Interview
 
-- Use `lk_next_questions` to learn what is missing. Ask only for those facts, in plain language, a few at a time.
+- Use `lk_next_questions` to learn what is missing and use its plain-language questions, a few at a time. Review its `confirmed_facts` when the user wants to check existing entries; do not reset the session. Missing values stay absent. Never ask the user to calculate optional legacy scope hints for band position or credit ceilings.
 - Enter facts with `lk_set_facts` only after the user has confirmed them. Amounts are nonnegative decimal strings in LKR, never numbers. Ask the user to confirm every zero. A missing amount is never zero and a missing yes/no answer is never "no".
-- Skip a yes/no question only when the server lists it under `not_applicable_facts`. Do not invent answers for those.
+- Skip a yes/no question only when the server lists it under `not_applicable_facts` or marks it as an optional legacy hint. Do not invent answers for those.
 - Foreign amounts must already be converted to LKR by the user. Foreign income is entered only in the foreign facts, never again as local income.
 - Business income is a net profit the user computed outside this tool. Do not compute it for them.
 - Use `lk_check_scope` after the scope answers are in. If the status is `out_of_scope`, stop, show the reasons and refer the user to a qualified tax adviser. A `partial` status needs its reasons read aloud; it does not promise that computation is supported.
@@ -37,11 +37,12 @@ Before offering help, read the resources `lktax://supported-scenarios` and `lkta
 
 ## Compute and explain
 
-1. When intake is complete, call `lk_compute_return`.
+1. When intake is complete, review the entered aggregate facts with the user. Confirm the year, gross rather than take-home or net income, exclusion of duplicate documents and replacement of superseded certificates. Keep records on the user's device. Then call `lk_compute_return`.
 2. Present `display_summary` verbatim, with every warning, flag and interpretation alternative the result carries. Do not add, subtract, round or re-derive any figure. Do not pick an interpretation for the user.
 3. When the user asks why a line has its value, call `lk_explain` with a line name from the result's trace and explain its formula, inputs, rule version and sources in plain words.
 4. If any tool returns `isError`, read its `error.code` and message, relay the guidance, and fix only what it names. Never work around an error by estimating the answer yourself.
 5. Say that rules are `unreviewed` and that a qualified practitioner has not approved them, whenever the user is about to rely on a figure.
+6. Show every `input_warnings` message. These are evidence anomalies, not legal credit caps; never erase genuine credits or income to suppress them. The checklist requires separate confirmation of reconciliation with a qualified adviser when anomalies exist.
 
 ## Review and worksheet
 
@@ -52,9 +53,9 @@ Before offering help, read the resources `lktax://supported-scenarios` and `lkta
 
 ## Instalment planning (YA 2026/27)
 
-- Use `lk_plan_instalments` after consent. It does not read the annual facts.
+- Use `lk_plan_instalments` after consent. Current-year scope and credits always come from separate confirmed inputs. Only an explicit Method 1 gross-tax source match reads current prior-year annual facts.
 - Confirm separately: the quarter, current-year scope answers, the method and its eligibility conditions, the gross-tax basis, and each credit component without overlap.
-- The gross-tax basis must be prepared independently under the chosen method, before credits. Never use an annual net balance or your own estimate as the basis. Foreign credits inside that basis are unsupported.
+- Select `basis_source` explicitly. An external gross-tax basis must be prepared independently under the chosen method, before credits, and remains unverified. Never use an annual net balance or your own estimate as the basis. With explicit user selection, Method 1 can match the supplied gross-tax amount against the current prior-year preview using `session_annual_gross_tax`; the server rechecks current facts and refuses mismatches or unresolved calculation/input warnings. It never copies amounts automatically and does not verify the final return or evidence. Foreign credits inside the basis are unsupported.
 - Show `display_summary` and the administrative requirements verbatim. A dated schedule is not a record of payments, and a zero result is not an exemption.
 
 ## Escalate instead of answering
