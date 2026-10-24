@@ -15,7 +15,7 @@ Real-user validation follow-up, preview.11: plain-language intake, optional deri
 | T8.4 | Development-only payment evidence: IIT type 05, seven observed period codes, nine dated records, current final-payment channels and source-byte checks | Rounding, two remaining codes, current bank field/flow verification, qualified review and runtime summary integration |
 | T3.2 | SC-01 through SC-09 checks and server-enforced refusal | Professional review of scope text; calculation support for partial cases |
 | T5.2, T5.3 | Identifier-free schema, output guard and consent gate | Local identifier configuration, handles for documents and durable encrypted acceptance |
-| T6.1, T6.2 | Official SDK stdio server, thirteen tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue and interactive installed-host matrix |
+| T6.1, T6.2 | Official SDK stdio server, eighteen tools, shared instructions, four prompts, eight resources, output schema and error envelopes | Full core catalogue and interactive installed-host matrix |
 | T7.1 | Agent Skill `skills/lk-tax/SKILL.md` (about 70 lines): consent, interview, verbatim `display_summary`, review/worksheet and escalation blocks; tool/resource parity and no-rates test | RAMIS walkthrough references, trigger-description evals, installable packaging |
 | T6.4, T7.2 | Shared host workflow instructions, four argument-free prompts, manual document checklist and rule-specific source catalogue | Complete filing map, installed Skill parity and interactive host evaluations |
 | T10.1 | All six annual IRD examples and all six instalment arithmetic examples match; G8/G9 arithmetic regression checks | Full G7 intake and independent source verification of remaining non-IRD cases; practitioner review |
@@ -139,7 +139,7 @@ Governance validation: all 72 tests, including both SDK stdio journeys, pass in 
 - Acknowledgements bind to a SHA-256 digest of rule and mapping versions, cage amounts and statuses, gap codes, flags and alternatives. A stale digest is rejected. Any fact change, new consent, new session or wipe clears the acknowledgement. State is memory-only.
 - Added partial T8.1 as `lk_generate_worksheet`: Markdown text only, in cage-map order (main return, Schedules 5C, 6A, 8, 9), with banners, versions, arithmetic checks, manual gaps, flags and comparative alternatives. Unresolved cages read "enter manually". It is refused until the current checklist is acknowledged and inherits all consent, scope and financial refusals from the review.
 - No file is written, so the memory-only privacy posture in SECURITY.md is unchanged. The worksheet follows the verified cage-map order, not a verified RAMIS screen order, and has no Simplified/Standard variants. It is not a filing export, and `export_available` on the review stays false.
-- Public contract: thirteen tools; package preview.9. Annual/instalment rules, cage map and consent version are unchanged. The `file_my_return` prompt now describes the checklist and worksheet steps.
+- Public contract: eighteen tools; package preview.9. Annual/instalment rules, cage map and consent version are unchanged. The `file_my_return` prompt now describes the checklist and worksheet steps.
 
 Validation: TypeScript checking, 79 tests (new worksheet suite plus both stdio journeys), rules governance, the refreshed contract snapshot and the base-commit contract version gate pass locally on Node 22.
 
@@ -197,3 +197,12 @@ Validation: all 108 tests, TypeScript, runtime capability lint, rules governance
 - Added the root contribution guide linking setup, required checks, rule/contract governance, privacy rules and release blockers.
 - Extended the existing exact-money boundary test to exercise trailing LF, CRLF and Unicode line separators through both the shared amount schema and cents parser. They are already rejected; `1.2` remains exactly 120 cents. No monetary parsing defect was reproduced and no runtime change was needed.
 - Tax rules, consent, SDK contract, package version and release gates remain unchanged. License selection and professional/source review still require maintainer evidence.
+
+## Real-document workflow follow-up, preview.12 (2026-10-24)
+
+- Added optional configured-root local PDF/PNG/JPEG and salary-CSV review. Native text extraction/OCR is bounded and disabled by default. Only typed candidates with page references leave the local adapter; no raw text or identifiers become facts.
+- Added reviewed evidence handles, byte/possible-semantic duplicate handling, wrong-year refusal, explicit supersession and digest-bound totals application. Pending records and stale provenance block calculation.
+- Added optional authenticated encrypted draft slots with restore expiry, strict local key-file configuration, atomic validation before restore and explicit deletion. Consent and approvals are excluded.
+- Added nonmutating copied-money normalization and case-specific external-preparation status. All tax figures and legal release limits are unchanged.
+- Added actual compiled-MCP text-PDF, PNG/image-only-PDF OCR with confirmed corrections, revision/duplicate/year/instruction, worksheet, encrypted process-restart and provenance integration coverage. CI installs local tools for that gate.
+- Complete official schedules, assets/liabilities output, legal interpretation resolution, official rounding and qualified practitioner sign-off remain external release gates. See [local-workflow.md](local-workflow.md).

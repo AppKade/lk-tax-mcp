@@ -19,6 +19,7 @@ npm run check                 # tsc --noEmit
 npm run security:check        # application runtime capability regression check
 npm run payments:check        # development payment evidence, not payment instructions
 npm test                      # node --test test/*.test.ts
+npm run test:documents         # required real PDF/OCR/draft gate with local Poppler/Tesseract
 npm run test:core             # engine tests only
 npm run rules:check           # validate rule JSON and archived history
 npm run contract:check        # compare public MCP interface with test/fixtures/mcp-contract.json
@@ -35,7 +36,7 @@ CI (`.github/workflows/ci.yml`) runs check, test, rules:check and contract:check
 - `src/server.ts` registers tools, prompts and resources; `src/cli.ts` serves it over stdio. `scripts/build.ts` emits runtime JS into ignored `dist/`; the package executable is `dist/cli.js`.
 - `src/service.ts` holds sessions, consent and the tool handlers. `src/guidance.ts` holds host instructions and the four prompts.
 - `src/engine.ts` is the annual computation. `src/foreign.ts`, `src/instalments.ts`, `src/return-review.ts`, `src/scope.ts` and `src/interview.ts` cover foreign income, YA 2026/27 instalments, cage review, scope checks and the dependency-aware interview.
-- `src/money.ts` is decimal-string and bigint-cents arithmetic. `src/rules.ts` loads rule JSON. `src/privacy.ts` and `src/schema.ts` guard output and validation errors. `src/support.ts` lists known issues and supported scenarios.
+- `src/money.ts` is decimal-string and bigint-cents arithmetic. `src/rules.ts` loads rule JSON. `src/privacy.ts` and `src/schema.ts` guard output and validation errors. `src/evidence.ts` is the typed source ledger; `src/local-files.ts` is the explicitly configured local document/encrypted-draft adapter. `src/support.ts` lists known issues and supported scenarios.
 - `rules/` holds versioned rule data (`2025-26.json`, `instalments-2026-27.json`, `cages-2025-26.json`), the `history/` archive and `history.json`.
 - `skills/lk-tax/SKILL.md` is the Agent Skill. Keep it in step with the tools, prompts and instructions; `test/skill.test.ts` checks it. It must never contain tax rates or amounts.
 - `test/` holds the suites and fixtures, including `test/fixtures/mcp-contract.json`. `scripts/` holds the rules and contract checks. `docs/` holds the policy documents.
@@ -45,7 +46,7 @@ CI (`.github/workflows/ci.yml`) runs check, test, rules:check and contract:check
 - **Exact arithmetic.** Money is a decimal string at the boundary and bigint cents inside (`src/money.ts`). Never use `Number`, floats or JSON numbers for money.
 - **Code calculates, the model explains.** Tax figures come only from deterministic code with cited traces. Host instructions and prompts must not contain tax rates or computed amounts.
 - **No guessing.** Missing facts never default to zero or false. Zeros and booleans need explicit user confirmation. Unsupported income or claims refuse computation; do not drop or relabel them to get a result.
-- **Consent and privacy.** Computation stays behind the disclaimer gate and re-checks scope every time. Accept no names, NIC, TIN, employer names, account numbers, documents or credentials, and no arbitrary free-text fact fields. Data lives only in memory. Errors come from a fixed catalogue and never echo input. See `SECURITY.md`.
+- **Consent and privacy.** Computation stays behind the disclaimer gate and re-checks scope every time. Accept no identifiers, credentials, keys or raw documents in chat or tax facts, and no arbitrary free-text fact fields. Optional local-file review and encrypted drafts require configured roots and per-action confirmation; only whitelisted structured candidates leave extraction. Keep them disabled by default, never expose raw text/paths/keys, and never restore consent or worksheet approval. Document source code must stay within the explicit local adapter capability allowlist. All other data remains memory-only. Errors come from a fixed catalogue and never echo input. See `SECURITY.md`.
 - **Estimates only.** Results stay `estimate: true` and `filing_ready: false`. Never describe a rule or output as practitioner-reviewed or IRD-approved without recorded approval.
 - **Never use real taxpayer documents** in fixtures, tests or docs.
 
