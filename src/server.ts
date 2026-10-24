@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 import { privateSchema } from './schema.ts';
-import { TaxSession, envelope, errorResult, partialFactsSchema } from './service.ts';
+import { TaxSession, envelope, errorResult, partialFactsSchema, documentActionSchema, draftActionSchema } from './service.ts';
 import { knownIssues, supportedScenarios } from './support.ts';
 import { figureNames } from './engine.ts';
 import { rules } from './rules.ts';
@@ -30,6 +30,26 @@ export function createServer() {
   }
   const readOnly = { readOnlyHint: true, destructiveHint: false, openWorldHint: false };
   const localMutation = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
+  server.registerTool('lk_documents', {
+    description: 'Optional local evidence review. Read only an explicitly selected relative file under the configured LK_TAX_DOCUMENT_ROOT after current consent and user confirmation; never upload raw documents or ask for identifiers. PDF/image extraction requires local Poppler and Tesseract. Returns only whitelisted amounts, years, page numbers and pseudonymous handles, never raw text or paths. Candidates are untrusted: confirm every included value/year, exclude wrong years and duplicates, and explicitly link replacements. Matching amounts may be distinct sources and require a distinct_source decision. Resolve all pending documents, show preview_apply totals and current income, then apply only with its current digest and explicit user confirmation of source completeness. Applying replaces covered category facts, including confirmed zeros for excluded sources. Clear removes ledger records but preserves income totals. Imported evidence blocks calculation until reconciled and applied; later fact edits are checked against provenance. No legal eligibility, completeness or filing approval is inferred.',
+    inputSchema: privateSchema(documentActionSchema), outputSchema, annotations: { ...localMutation, destructiveHint: true },
+  }, input => result(() => session.documents(input)));
+  server.registerTool('lk_local_capabilities', {
+    description: 'Check whether optional local document review and encrypted drafts are configured. Returns booleans and limits only, never paths, keys, document text or configuration contents. Reading this does not accept consent or authorize file access.',
+    inputSchema: privateSchema(z.strictObject({})), outputSchema, annotations: readOnly,
+  }, () => result(() => session.localCapabilities()));
+  server.registerTool('lk_normalize_amount', {
+    description: 'After consent, propose a canonical decimal string from a copied LKR amount with correctly grouped commas, optional LKR/Rs prefix and outer whitespace. Does not set facts. Show the canonical result and obtain explicit confirmation before lk_set_facts. Never use for blank, negative or ambiguous values, identifiers or currency conversion.',
+    inputSchema: privateSchema(z.strictObject({ value: z.string().min(1).max(60) })), outputSchema, annotations: readOnly,
+  }, ({ value }) => result(() => session.normalizeAmount(value)));
+  server.registerTool('lk_draft', {
+    description: 'Optional encrypted local draft slots, disabled unless LK_TAX_DRAFT_ROOT and a private 32-byte LK_TAX_DRAFT_KEY_FILE are configured locally. Never ask for keys, passwords or ciphertext in chat. Save typed facts and redacted evidence metadata only, with a one-to-thirty-day restore expiry; ciphertext is not automatically deleted. No documents, consent, manual completion claims or worksheet approval. Explicit user confirmation is required for save, overwrite, restore or delete. Restore replaces current facts atomically after authentication, expiry/schema/rule checks and requires current consent. Show restored facts for review. Wipe clears memory only; delete separately removes a saved ciphertext slot and does not guarantee physical erasure or delete backups.',
+    inputSchema: privateSchema(draftActionSchema), outputSchema, annotations: { ...localMutation, destructiveHint: true },
+  }, input => result(() => session.draft(input)));
+  server.registerTool('lk_preparation', {
+    description: 'Get a case-specific remaining-work checklist from the current supported review. After the user completes steps externally, record only returned step ids with explicit confirmation. These assertions do not verify assets/liabilities, disclosures, detailed credits, declarations, official rounding, portal eligibility or practitioner sign-off. Facts and evidence changes clear recorded completion. No filing output or filing-ready claim is produced.',
+    inputSchema: privateSchema(z.strictObject({ completed: z.array(z.string().regex(/^[A-Z_]{1,50}$/)).max(20).default([]), user_confirmed: z.boolean().default(false) })), outputSchema, annotations: localMutation,
+  }, ({ completed, user_confirmed }) => result(() => session.preparation(completed, user_confirmed), 'review'));
   server.registerTool('lk_session', {
     description: 'Start a fresh memory-only YA 2025/26 session or wipe it. Starting discards all prior facts and consent. No identifiers, files or credentials. No data persists after shutdown.',
     inputSchema: privateSchema(z.strictObject({ action: z.enum(['start', 'wipe']), ya: z.string().max(7).default('2025/26') })),
@@ -107,7 +127,7 @@ export function createServer() {
     });
   }
   server.registerResource('document-checklist', 'lktax://checklist/documents', {
-    description: 'Manual evidence checklist. Do not upload documents or identifiers; ingestion and filing remain unavailable.', mimeType: 'application/json',
+    description: 'Evidence checklist with optional local-file review. Check lk_local_capabilities first; never upload raw documents or identifiers into chat. Filing remains unavailable.', mimeType: 'application/json',
   }, () => ({ contents: [{ uri: 'lktax://checklist/documents', mimeType: 'application/json', text: JSON.stringify(envelope({ checklist: documentChecklist })) }] }));
   server.registerResource('annual-sources', 'lktax://sources/2025-26', {
     description: 'Annual rule citations and evidence status, including explicitly assumed interpretation policies.', mimeType: 'application/json',

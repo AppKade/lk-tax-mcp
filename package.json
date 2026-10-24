@@ -1,6 +1,6 @@
 {
   "name": "@appkade/lk-tax-mcp",
-  "version": "2026.25.0-preview.11",
+  "version": "2026.25.0-preview.12",
   "private": true,
   "description": "Local Sri Lankan individual income tax assistance over MCP",
   "type": "module",
@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node dist/cli.js",
     "test": "node --test test/*.test.ts",
+    "test:documents": "npm run build && node scripts/check-document-flow.ts",
     "test:core": "node --test test/core.test.ts",
     "check": "tsc --noEmit",
     "contract:check": "node scripts/check-contract.ts",
@@ -42,7 +43,8 @@
     "rules/cages-2025-26.json",
     "skills/lk-tax/SKILL.md",
     "SECURITY.md",
-    "docs/installation.md"
+    "docs/installation.md",
+    "docs/local-workflow.md"
   ],
   "repository": {
     "type": "git",

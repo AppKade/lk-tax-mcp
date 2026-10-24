@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { createHash } from 'node:crypto';
+import { EvidenceLedger, evidenceKind, evidenceValues, normalizeAmount } from './evidence.ts';
+import { readDocument, localCapabilities, saveDraft, loadDraft, deleteDraft } from './local-files.ts';
 import { reviewReturn, cageMap } from './return-review.ts';
 import { evaluateInterview, resolveForeign, foreignRequirements, interviewPolicy } from './interview.ts';
 import { planInstalments, instalmentRules, instalmentSchema } from './instalments.ts';
@@ -8,24 +11,39 @@ import { rules, sources, selectRules } from './rules.ts';
 import { scopeSchema, checkScope, checkKnownScope } from './scope.ts';
 import { incomeSchema, deductionsSchema, computeReturn } from './engine.ts';
 import { buildChecklist, renderWorksheet } from './worksheet.ts';
-export const DISCLAIMER_VERSION = '2026-10-24.1';
+export const DISCLAIMER_VERSION = '2026-10-24.2';
 export const CAUTION = 'Development preview. Verify before filing. Not IRD-approved; not tax advice.';
-export const DISCLAIMER = `${CAUTION} This preview only estimates local employment, user-supplied local business net profit, interest, gross investment rent, final-WHT resident-company dividends and supported local reliefs and donations plus qualifying foreign-employer salary and net foreign service income for resident individuals. Foreign aggregates must already be converted to LKR and eligibility must be confirmed. Only eligible foreign income tax for one confirmed source in one country on that same income is supported, with both attributable-tax and statutory average-rate ceilings. Mixed-income allocation and stacking are preview assumptions; comparison figures are shown where needed. Eligibility and evidence must be confirmed by you. Ambiguous donation caps and unsupported scenarios are refused. A separate YA 2026/27 instalment planner requires an explicitly selected gross-tax basis source, confirmed method eligibility and reconciled credits. External source amounts remain unverified; only an explicit Method 1 selection can match a supplied basis to current prior-year preview gross tax, without verifying evidence or the final return. Credit anomaly warnings are evidence checks, not legal credit limits. Its rounding is a preview assumption; foreign tax credits in the instalment basis are unsupported. It does not file returns or access RAMIS. Amounts, facts and tool results reach your AI host and may reach its provider. Do not type names, NIC, TIN, employer names, account numbers, certificates or credentials into chat or tool inputs. No documents or identifiers are accepted. Session data stays in process memory and is lost on restart or wipe. No draft is saved. The server has no network or file tools. Other tools installed in your host may access your conversation. Obtain professional review before relying on any figure. Accept this exact version only after the user agrees.`;
+export const DISCLAIMER = `${CAUTION} This preview only estimates local employment, user-supplied local business net profit, interest, gross investment rent, final-WHT resident-company dividends and supported local reliefs and donations plus qualifying foreign-employer salary and net foreign service income for resident individuals. Foreign aggregates must already be converted to LKR and eligibility must be confirmed. Only eligible foreign income tax for one confirmed source in one country on that same income is supported, with both attributable-tax and statutory average-rate ceilings. Mixed-income allocation and stacking are preview assumptions; comparison figures are shown where needed. Eligibility and evidence must be confirmed by you. Ambiguous donation caps and unsupported scenarios are refused. A separate YA 2026/27 instalment planner requires an explicitly selected gross-tax basis source, confirmed method eligibility and reconciled credits. External source amounts remain unverified; only an explicit Method 1 selection can match a supplied basis to current prior-year preview gross tax, without verifying evidence or the final return. Credit anomaly warnings are evidence checks, not legal credit limits. Its rounding is a preview assumption; foreign tax credits in the instalment basis are unsupported. It does not file returns or access RAMIS. Amounts, facts and tool results reach your AI host and may reach its provider. Do not type names, NIC, TIN, employer names, account numbers, certificates or credentials into chat or tool inputs. Raw documents and identifiers are never accepted in chat or tax facts. Optional local document review reads explicitly selected files only under a configured root, after separate confirmation, and returns structured candidates for review; never raw text. The local tools require installed Poppler/Tesseract, may create temporary OCR images and are not an OS sandbox. Optional drafts save typed facts and redacted evidence metadata encrypted with a private locally configured key file for a selected retention period. Never send keys or ciphertext through chat. These features are disabled by default. A memory wipe does not delete saved ciphertext; use the draft delete action separately. Without an explicitly saved draft, restart loses the session. No runtime network access is used. Other tools installed in your host may access your conversation. Obtain professional review before relying on any figure. Accept this exact version only after the user agrees.`;
 export const partialFactsSchema = z.strictObject({
   scope: scopeSchema.partial().optional(), income: incomeSchema.partial().optional(), deductions: deductionsSchema.partial().optional(), foreign: foreignSchema.partial().optional(),
 });
 type Facts = z.infer<typeof partialFactsSchema>;
+export const documentActionSchema = z.discriminatedUnion('action', [
+  z.strictObject({ action: z.literal('review_file'), file: z.string().min(1).max(240), kind: evidenceKind, user_confirmed: z.boolean() }),
+  z.strictObject({ action: z.literal('list') }),
+  z.strictObject({ action: z.literal('confirm'), id: z.string().regex(/^doc_[a-f0-9]{16}$/), include: z.boolean(), values: evidenceValues.optional(),
+    year: z.literal('2025/26').optional(), replaces: z.string().regex(/^doc_[a-f0-9]{16}$/).optional(),
+    duplicate_resolution: z.enum(['distinct_source', 'exclude_duplicate']).optional(), user_confirmed: z.boolean() }),
+  z.strictObject({ action: z.literal('preview_apply') }),
+  z.strictObject({ action: z.literal('apply'), digest: z.string().regex(/^[a-f0-9]{64}$/), user_confirmed: z.boolean() }),
+  z.strictObject({ action: z.literal('clear'), user_confirmed: z.boolean() }),
+]);
+export const draftActionSchema = z.strictObject({ action: z.enum(['save', 'restore', 'delete']), slot: z.enum(['draft_1', 'draft_2', 'draft_3', 'draft_4', 'draft_5']),
+  user_confirmed: z.boolean(), retention_days: z.number().int().min(1).max(30).default(7), overwrite: z.boolean().default(false) });
 export class TaxSession {
   private active = false;
   private acceptedVersion: string | undefined;
   private facts: Facts = {};
   private acknowledged: { digest: string; items: string[] } | undefined;
+  private evidence = new EvidenceLedger();
+  private manualPreparation: string[] = [];
   start(ya: string) {
     selectRules(ya);
     this.active = true;
     this.acceptedVersion = undefined;
     this.acknowledged = undefined;
     this.facts = {};
+    this.evidence.clear(); this.manualPreparation = [];
     return { started: true, persistence: 'memory_only', consent_required: true };
   }
   wipe() {
@@ -33,7 +51,8 @@ export class TaxSession {
     this.acceptedVersion = undefined;
     this.acknowledged = undefined;
     this.facts = {};
-    return { wiped: true };
+    this.evidence.clear(); this.manualPreparation = [];
+    return { wiped: true, saved_drafts_deleted: false, notice: 'Memory was cleared. Saved encrypted drafts and backups were not deleted; delete saved slots separately when requested.' };
   }
   private requireActive() { if (!this.active) throw new Error('SESSION_REQUIRED'); }
   private requireConsent() {
@@ -55,7 +74,7 @@ export class TaxSession {
     const patch = parsed.data;
     const changed = Object.entries(patch).some(([group, values]) => Object.entries(values).some(([key, value]) =>
       value !== (this.facts[group as keyof Facts] as Record<string, unknown> | undefined)?.[key]));
-    if (changed) this.acknowledged = undefined;
+    if (changed) { this.acknowledged = undefined; this.manualPreparation = []; }
     this.facts = {
       scope: { ...this.facts.scope, ...patch.scope },
       income: { ...this.facts.income, ...patch.income },
@@ -87,6 +106,7 @@ export class TaxSession {
       throw new Error('FEATURE_NOT_IMPLEMENTED');
     const foreignBlock = knownForeignBlock(this.facts.foreign ?? {});
     if (foreignBlock) throw new Error(foreignBlock);
+    this.evidence.check(this.facts.income ?? {});
     const scope = scopeSchema.safeParse(this.facts.scope);
     if (!scope.success) throw new Error('MISSING_SCOPE_FACTS');
     if (checkScope(scope.data).status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
@@ -122,7 +142,9 @@ export class TaxSession {
     const checklist = buildChecklist(review);
     if (this.acknowledged?.digest !== checklist.digest) throw new Error('CHECKLIST_REQUIRED');
     return { export_type: 'worksheet_text', format: 'markdown', file_written: false, filing_export_available: false, estimate: true, filing_ready: false,
-      needs_professional_review: true, checklist_digest: checklist.digest, worksheet: renderWorksheet(review, this.acknowledged.items) };
+      needs_professional_review: true, checklist_digest: checklist.digest,
+      worksheet: renderWorksheet(review, this.acknowledged.items) + '\n## Remaining external preparation\n\n' +
+        review.review_gaps.map(g => `- ${g.code}: ${this.manualPreparation.includes(g.code) ? 'User reports completed externally; not independently verified.' : 'Needs external review.'} ${g.detail}`).join('\n') + '\n' };
   }
   planInstalments(input: unknown) {
     this.requireConsent();
@@ -134,6 +156,53 @@ export class TaxSession {
     if (annual.flags.length || annual.input_warnings.length) throw new Error('INSTALMENT_BASIS_REVIEW');
     return planInstalments(parsed.data, annual.figures.tax);
   }
+  localCapabilities() { return localCapabilities(); }
+  normalizeAmount(value: string) {
+    this.requireConsent(); return { canonical_amount: normalizeAmount(value), user_confirmation_required: true, facts_changed: false };
+  }
+  documents(input: z.infer<typeof documentActionSchema>) {
+    this.requireConsent();
+    if (input.action === 'list') return this.evidence.list();
+    if (input.action === 'preview_apply') {
+      const totals = this.evidence.totals();
+      const digest = createHash('sha256').update(JSON.stringify({ evidence: this.evidence.snapshot(), current: this.facts.income })).digest('hex');
+      return { totals, current_income: structuredClone(this.facts.income ?? {}), digest, user_confirmation_required: true,
+        statement: 'Confirm these totals cover every source in the affected categories, including explicit zero totals for excluded documents. They replace existing category amounts; do not combine them again with manually entered totals.' };
+    }
+    if (!input.user_confirmed) throw new Error('EVIDENCE_CONFIRMATION');
+    if (input.action === 'apply') {
+      const preview = this.documents({ action: 'preview_apply' });
+      if (!('digest' in preview) || preview.digest !== input.digest) throw new Error('EVIDENCE_STALE');
+      this.setFacts({ income: this.evidence.totals() }); this.evidence.markApplied(); return this.evidence.list();
+    }
+    let result: Record<string, unknown>;
+    if (input.action === 'review_file') result = this.evidence.add(readDocument(input.file, input.kind));
+    else if (input.action === 'confirm') result = this.evidence.decide(input.id, input.include, input.values, input.year, input.replaces, input.duplicate_resolution, input.user_confirmed);
+    else { this.evidence.clear(); result = { cleared: true, income_totals_preserved: true }; }
+    this.acknowledged = undefined; this.manualPreparation = []; return result;
+  }
+  draft(input: z.infer<typeof draftActionSchema>) {
+    this.requireConsent(); if (!input.user_confirmed) throw new Error('DRAFT_CONFIRMATION');
+    if (input.action === 'save') return saveDraft(input.slot, { ya: rules.ya, ruleset_version: rules.version, facts: this.facts, evidence: this.evidence.snapshot() }, input.retention_days, input.overwrite);
+    if (input.action === 'delete') return deleteDraft(input.slot);
+    const parsed = z.strictObject({ ya: z.literal('2025/26'), ruleset_version: z.literal(rules.version), facts: partialFactsSchema, evidence: z.unknown() }).safeParse(loadDraft(input.slot));
+    if (!parsed.success) throw new Error('DRAFT_INVALID');
+    const ledger = new EvidenceLedger(); ledger.restore(parsed.data.evidence);
+    if (ledger.snapshot().applied) ledger.check(parsed.data.facts.income ?? {});
+    this.facts = parsed.data.facts; this.evidence = ledger; this.acknowledged = undefined; this.manualPreparation = [];
+    return { restored: true, approval_restored: false, review_required: true, progress: this.nextQuestions() };
+  }
+  preparation(confirm: string[] = [], userConfirmed = false) {
+    this.requireConsent(); const review = this.review();
+    const steps = review.review_gaps.map(g => ({ id: g.code, targets: g.targets, required_action: g.detail }));
+    if (confirm.length) {
+      if (!userConfirmed || confirm.some(id => !steps.some(step => step.id === id))) throw new Error('PREPARATION_CONFIRMATION');
+      this.manualPreparation = [...new Set([...this.manualPreparation, ...confirm])];
+    }
+    return { status: 'preparation_only', filing_ready: false, practitioner_review: 'pending', official_filing_supported: false,
+      steps: steps.map(s => ({ ...s, status: this.manualPreparation.includes(s.id) ? 'user_reports_completed_externally' : 'needs_external_review' })),
+      notice: 'External completion is a user assertion. No official filing output, assets/liabilities statement, portal validation or practitioner approval is produced.' };
+  }
   explain(line: string) {
     const result = this.compute();
     const trace = result.trace.find(t => t.line === line);
@@ -142,6 +211,27 @@ export class TaxSession {
   }
 }
 const errors: Record<string, string> = {
+  AMOUNT_FORMAT: 'Use an unambiguous nonnegative LKR amount with at most two decimal places. Optional LKR/Rs prefix and correctly grouped commas are accepted by lk_normalize_amount only. No signs, exponent notation or blank values. Confirm the canonical result before setting a fact.',
+  LOCAL_FEATURE_DISABLED: 'This optional local feature is disabled. Configure the document root or encrypted-draft root and key file locally, then restart. Never send keys or raw documents through chat.',
+  LOCAL_CONFIGURATION: 'Check the configured local directories and private 32-byte draft key file on your device. Never put the key or configuration contents in chat.',
+  LOCAL_FILE_REFUSED: 'Select a regular file within the configured document directory. Absolute paths, traversal, symbolic links, oversized files and files outside the directory are refused.',
+  DOCUMENT_FORMAT: 'Use a supported PDF, PNG, JPEG or the documented salary CSV format. Other layouts need manual aggregate entry; do not paste raw text or identifiers.',
+  DOCUMENT_DEPENDENCY: 'Install local Poppler tools and Tesseract with English language data to use PDF/image extraction. The server does not install or download them.',
+  DOCUMENT_EXTRACTION: 'Local document extraction failed or exceeded its resource/time limit. Check the file locally; no text, paths or subprocess diagnostics are returned.',
+  DOCUMENT_LIMIT: 'Documents are limited to ten pages. No pages were silently omitted. Split the evidence deliberately and reconcile all parts.',
+  EVIDENCE_LIMIT: 'The session supports at most one hundred document records. Reconcile or clear records before adding more.',
+  EVIDENCE_CONFIRMATION: 'Explicitly confirm every included amount, the year and source completeness from your local records. Extractions are candidates only; exclusions and file reads also require confirmation.',
+  EVIDENCE_NOT_FOUND: 'Choose a document handle returned by lk_documents list. Do not send a certificate number or taxpayer identifier.',
+  EVIDENCE_YEAR: 'This evidence does not match YA 2025/26. Exclude wrong-year documents; never relabel them to include their totals.',
+  EVIDENCE_DUPLICATE: 'An included source has matching amounts. Exclude the duplicate or explicitly confirm that these are distinct sources. Do not count the same certificate twice.',
+  EVIDENCE_REPLACEMENT: 'Choose an existing same-category document to replace. Self-replacement, cycles and re-including a superseded source are refused.',
+  EVIDENCE_PENDING: 'Resolve every imported document as included or excluded before applying or calculating. Confirm gross amounts and replace superseded sources.',
+  EVIDENCE_TOTALS_CHANGED: 'Imported evidence has not been applied or current category facts differ from its confirmed totals. Preview and confirm the evidence totals again, or correct the source record. Do not clear genuine income to bypass review.',
+  EVIDENCE_STALE: 'Evidence or entered income changed after the totals preview. Fetch preview_apply again and obtain fresh confirmation.',
+  DRAFT_CONFIRMATION: 'Saving, replacing, restoring or deleting an encrypted local draft requires explicit user confirmation. Restore replaces current facts and never restores consent or worksheet approval.',
+  DRAFT_WRITE: 'The encrypted draft could not be written, or that slot already exists. Select another slot or explicitly confirm overwrite.',
+  DRAFT_INVALID: 'The draft is missing, expired, incompatible, malformed or failed authentication. Current session facts were not replaced. Never send ciphertext, keys or file contents through chat.',
+  PREPARATION_CONFIRMATION: 'Confirm only preparation step ids returned for the current facts, after completing them externally. This does not establish filing readiness.',
   REVIEW_MAPPING_MISMATCH: 'Return review mapping failed its consistency checks. Do not use or reconstruct these fields. Report the mapping problem without personal data.',
   NOT_COVERED: 'Annual return calculations support only YA 2025/26. The separate instalment planner supports only YA 2026/27. Do not substitute another year.',
   INVALID_INSTALMENT_FACTS: 'Use the published instalment schema, explicit eligibility answers and nonnegative decimal LKR strings. Only YA 2026/27 is supported.',

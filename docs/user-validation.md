@@ -34,3 +34,9 @@ The existing three scope hint properties remain valid inputs, preserving old con
 5. Expand detailed credit schedules, disclosures, assets/liabilities and declarations with cited rules and qualified review. Complete filing preparation and practitioner sign-off are still release gates.
 
 The current contribution rules prohibit raw documents, identifiers and persistence in the runtime. The next work requires explicit boundary changes, updated threat review and corresponding acceptance tests rather than silently adding upload or disk access.
+
+## Delivered in preview.12
+
+The remaining engineering follow-up adds an explicitly configured local-file evidence path, typed source ledger, actual PDF/image OCR gate, candidate corrections and source-level year/duplicate/revision handling. The assistant never receives raw extracted text. Applied totals are checked against provenance. Copied-money normalization is a separate nonmutating confirmation step. Optional encrypted drafts restore typed facts and redacted ledger metadata across process restarts without restoring consent or worksheet approval. A case-specific preparation tool now identifies and tracks work the user reports completing externally.
+
+These capabilities supersede the earlier no-file adapter constraint through the explicit opt-in boundary documented in [local-workflow.md](local-workflow.md) and the updated threat model. They do not claim universal document recognition or a complete official return. Poor/multilingual scans, unknown labels and other document types still require explicit manual review. The filing-preparation gap is now made actionable, but official full statements, practitioner sign-off and unresolved tax interpretations cannot be certified by implementation tests alone.

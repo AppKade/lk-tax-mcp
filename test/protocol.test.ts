@@ -29,7 +29,7 @@ test('real stdio host: initialize, schemas, consent, estimate, scope invalidatio
   assert.ok(hello.result.capabilities.prompts);
   host.notify('notifications/initialized');
   const listed = await request('tools/list');
-  assert.equal(listed.result.tools.length, 13);
+  assert.equal(listed.result.tools.length, 18);
   for (const tool of listed.result.tools) {
     assert.ok(tool.inputSchema && tool.outputSchema);
     assert.equal(tool.annotations.openWorldHint, false);

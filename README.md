@@ -21,7 +21,7 @@ This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20
 - All six IRD worked-example computations match their published balances exactly. Fixture notes record aggregation, eligibility assumptions, source-table ambiguities and inferred opening solar balances. Other release cases and practitioner sign-off remain pending.
 - Confirmed qualifying foreign salary and net foreign services in manually converted LKR, with an eligible single-source, single-country foreign income tax credit capped at tax attributable to that income.
 
-Non-qualifying foreign income, multi-country foreign credits, other dividends, rent expense deductions, loan-funded solar claims, film/cinema deductions, legacy qualifying-payment balances, filing-obligation triage, ingestion, persistence and filing outputs are **not implemented**. Mark `income.other_income_or_claims` true if any unsupported income or claim exists; computation will refuse. Do not enter such income under a local category.
+Non-qualifying foreign income, multi-country foreign credits, other dividends, rent expense deductions, loan-funded solar claims, film/cinema deductions, legacy qualifying-payment balances, filing-obligation triage, general ingestion layouts, complete filing outputs and submission are **not implemented**. Optional local evidence and encrypted drafts are available as described below. Mark `income.other_income_or_claims` true if any unsupported income or claim exists; computation will refuse. Do not enter such income under a local category.
 
 ## Run locally
 
@@ -61,7 +61,7 @@ The server uses stdio only. Host compatibility beyond automated protocol tests m
 6. For a manual-entry worksheet, call `lk_get_checklist`, show each statement verbatim, and call `lk_acknowledge_checklist` only with statements the user explicitly confirms. The checklist includes evidence reconciliation; suspicious credits add a separate adviser-reconciliation acknowledgement. Then `lk_generate_worksheet` returns Markdown text to present verbatim. Unresolved cages stay unset. Reconfirming identical normalized facts preserves acknowledgement; substantive edits, re-consent, restart and wipe invalidate it.
 7. `lk_session` with `action: "wipe"` clears all facts and consent. Starting again also clears the prior session.
 
-No names, NIC, TIN, employer names, account numbers, documents or credentials are accepted. There are no arbitrary-text fact fields. Tool amounts and user messages still reach the host and possibly its AI provider. Data lives only in this server process; restarting loses it. Other host tools can access the same conversation. See [SECURITY.md](SECURITY.md).
+No names, NIC, TIN, employer names, account numbers, raw documents, keys or credentials are accepted in chat or tax facts. There are no arbitrary-text fact fields. Optional local document review reads selected files under a configured root and returns structured candidates only; encrypted local drafts require separate configuration and explicit confirmation. Both features are disabled by default. User messages and tool amounts still reach the host and possibly its provider. Memory wipe does not delete saved ciphertext. See [local workflow and setup](docs/local-workflow.md) and [SECURITY.md](SECURITY.md).
 
 Rule evidence is available at `lktax://rules/2025-26`; exclusions and unresolved issues are at `lktax://supported-scenarios` and `lktax://known-issues`. A `confirmed` source status means the value was checked against a primary source; it does not mean practitioner approval. All rules remain `unreviewed` and all computations are estimates with `filing_ready: false`.
 
@@ -73,7 +73,7 @@ Rule evidence is available at `lktax://rules/2025-26`; exclusions and unresolved
 
 Hosts with MCP prompt support can select `file_my_return`, `do_i_need_to_file`, `plan_my_instalments` or `explain_my_tax`. Prompts share consent, privacy and scope instructions and accept no taxpayer arguments. The filing prompt prepares only a supported development estimate. Filing-obligation decisions remain unavailable, including automatic exemptions for zero payable.
 
-Read `lktax://checklist/documents` for the manual evidence checklist and `lktax://sources/2025-26` for rule-specific source evidence. Keep evidence locally and enter only confirmed aggregate facts. Document uploads, filing exports and RAMIS submission remain unavailable.
+Read `lktax://checklist/documents` for the manual evidence checklist and `lktax://sources/2025-26` for rule-specific source evidence. Keep evidence locally and enter only confirmed aggregate facts. Raw document uploads, filing exports and RAMIS submission remain unavailable; optional local-file evidence review is separately configured.
 
 Read `lktax://cagemap/2025-26` for the supported cage map, source hashes and unresolved bindings. See [MCP contract verification](docs/mcp-contract.md) for the public interface hash, version-bump policy and protocol coverage. Interactive host testing, Inspector CLI and a separately installable Agent Skill remain pending.
 
@@ -161,3 +161,9 @@ The private npm preview now has a compiled `lk-tax-mcp` executable and a restric
 Security review: `npm run security:check` checks application runtime capabilities. Private package artifacts include a production CycloneDX SBOM checked against the lockfile and isolated installation. See the [threat model](docs/threat-model.md) for host/dependency boundaries and limitations.
 
 Payment groundwork: `npm run payments:check` validates the [development payment reference](docs/payment-reference.md) and reports remaining blockers. This catalogue is excluded from the installed runtime; no payment summary tool or payable amount is enabled.
+
+## Local document workflow and drafts
+
+`lk_local_capabilities` reports optional configuration without exposing paths. `lk_documents` reads a confirmed relative file under the local document root, proposes whitelisted amounts, and enforces source/year/duplicate/revision review before applying a digest-bound category total. Text PDFs, image-only PDFs, PNG/JPEG and a documented salary CSV are supported; unknown labels and degraded OCR need manual confirmation or correction. Extracted text never becomes instructions or leaves the extractor.
+
+`lk_normalize_amount` proposes canonical copied-money values without changing facts. `lk_draft` uses a private local key file and AES-256-GCM for explicit save/restore/delete slots; restore expiry does not automatically erase ciphertext. Consent and worksheet approval are never restored. `lk_preparation` tracks case-specific external preparation steps without claiming official filing readiness. Setup, limits, examples and the actual document/OCR/restart integration gate are in [docs/local-workflow.md](docs/local-workflow.md).

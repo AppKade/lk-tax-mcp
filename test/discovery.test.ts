@@ -15,7 +15,7 @@ test('2026 discovery without initialize advertises static guidance and completes
   assert.equal(discovery.result.instructions, hostInstructions);
   for (const capability of ['tools', 'resources', 'prompts']) assert.ok(discovery.result.capabilities[capability]);
   const tools = (await host.request('tools/list')).result.tools;
-  assert.equal(tools.length, 13);
+  assert.equal(tools.length, 18);
   const prompts = (await host.request('prompts/list')).result.prompts;
   assert.deepEqual(prompts.map((p: any) => p.name).sort(), workflowPrompts.map(p => p.name).sort());
   for (const prompt of workflowPrompts) {
@@ -38,7 +38,7 @@ test('2026 discovery without initialize advertises static guidance and completes
     assert.equal(data.ya, '2025/26');
     assert.equal(data.review_status, 'unreviewed');
     if (data.facts) assert.ok(data.facts.every((f: any) => f.kind === 'writable'));
-    if (data.checklist) assert.equal(data.checklist.ingestion_available, false);
+    if (data.checklist) assert.equal(data.checklist.ingestion_available, true);
     if (data.evidence) assert.ok(data.evidence.some((r: any) => r.status === 'assumed'));
   }
   async function call(name: string, args = {}) {

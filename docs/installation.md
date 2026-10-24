@@ -41,12 +41,12 @@ This builds fresh runtime JS, creates the actual tarball with lifecycle scripts 
 
 The validation consumer has no source symlinks, TypeScript compiler or Inspector dependency. It checks installed file bytes and npm's executable shim, full tool schemas and resource metadata against the reviewed contract, consent refusals, a source-example calculation, cage resource loading, a confirmed worksheet, an instalment calculation, edit invalidation and wipe. Temporary installation files are removed after the check.
 
-The local build products are `artifacts/package/appkade-lk-tax-mcp-2026.25.0-preview.11.tgz`, `artifacts/package/production.cdx.json` and `artifacts/package/validation.json`. The report records the archive/SBOM SHA-256, npm integrity, lockfile digest, file inventory, contract hash and tested platform/Node version. The CycloneDX production inventory is checked against the lockfile and isolated installation's recorded versions, hashes and dependency edges; it is not a vulnerability scan or independent file-by-file dependency audit. These are development artifacts, not signed release assets. CI repeats the check on Linux, Windows and macOS under Node 22 and 24 and retains passing artifacts for seven days.
+The local build products are `artifacts/package/appkade-lk-tax-mcp-2026.25.0-preview.12.tgz`, `artifacts/package/production.cdx.json` and `artifacts/package/validation.json`. The report records the archive/SBOM SHA-256, npm integrity, lockfile digest, file inventory, contract hash and tested platform/Node version. The CycloneDX production inventory is checked against the lockfile and isolated installation's recorded versions, hashes and dependency edges; it is not a vulnerability scan or independent file-by-file dependency audit. These are development artifacts, not signed release assets. CI repeats the check on Linux, Windows and macOS under Node 22 and 24 and retains passing artifacts for seven days.
 
 To test the tarball yourself, replace the paths below with absolute paths on your machine:
 
 ```sh
-npm install --prefix /absolute/path/tax-preview --ignore-scripts --omit=dev /absolute/path/appkade-lk-tax-mcp-2026.25.0-preview.11.tgz
+npm install --prefix /absolute/path/tax-preview --ignore-scripts --omit=dev /absolute/path/appkade-lk-tax-mcp-2026.25.0-preview.12.tgz
 npm exec --prefix /absolute/path/tax-preview --offline --no -- lk-tax-mcp
 ```
 
@@ -61,3 +61,5 @@ The tarball includes only compiled runtime JS, the three active rule JSON payloa
 The Agent Skill is included as an existing file. npm installation does not automatically register it with a host. Follow your host's Skill installation process; installed-host behaviour remains separately unverified.
 
 Public distribution still requires the documented source/review gates, installed-host evaluations, license selection, registry ownership and a reviewed provenance/release configuration. Signed desktop bundles additionally need manifest/platform testing and signing setup. This milestone neither publishes a package nor changes tax rules, consent, privacy policy or filing readiness. See [release blockers on GitHub](https://github.com/AppKade/lk-tax-mcp/blob/main/docs/implementation-status.md).
+
+Optional local document/OCR and encrypted drafts require configuration and native tools described in [local-workflow.md](local-workflow.md). Without configuration the normal memory-only protocol journey is unchanged.

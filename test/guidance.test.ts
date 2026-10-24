@@ -18,8 +18,8 @@ test('all four host workflows share consent, privacy and deterministic calculati
   assert.ok(promptText(workflowPrompts[2]).includes('independently prepared gross-tax basis'));
 });
 test('manual checklist never accepts documents, identifiers or implicit consent', () => {
-  assert.equal(documentChecklist.ingestion_available, false);
-  assert.equal(documentChecklist.status, 'manual_reference_only');
+  assert.equal(documentChecklist.ingestion_available, true);
+  assert.equal(documentChecklist.status, 'manual_reference_and_optional_local_review');
   assert.ok(documentChecklist.instructions.includes('Do not upload files'));
   assert.ok(documentChecklist.items.some(i => i.category === 'credits'));
   assert.doesNotThrow(() => assertPrivateOutput(documentChecklist));

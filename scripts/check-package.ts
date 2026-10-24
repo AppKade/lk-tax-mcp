@@ -32,7 +32,7 @@ try {
   rmSync(output, { recursive: true, force: true }); mkdirSync(output, { recursive: true });
   const [packed] = JSON.parse(npmRun(['pack', '--ignore-scripts', '--json', '--pack-destination', output], root));
   assert.equal(packed.name, pkg.name); assert.equal(packed.version, pkg.version);
-  const expected = ['package.json', 'README.md', 'SECURITY.md', 'docs/installation.md', 'skills/lk-tax/SKILL.md',
+  const expected = ['package.json', 'README.md', 'SECURITY.md', 'docs/installation.md', 'docs/local-workflow.md', 'skills/lk-tax/SKILL.md',
     'rules/2025-26.json', 'rules/instalments-2026-27.json', 'rules/cages-2025-26.json',
     ...readdirSync(join(root, 'src')).filter(p => p.endsWith('.ts')).map(p => `dist/${p.replace(/\.ts$/, '.js')}`)].sort();
   assert.deepEqual(packed.files.map((f: { path: string }) => f.path).sort(), expected,

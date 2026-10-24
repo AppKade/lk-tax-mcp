@@ -32,3 +32,10 @@ test('runtime process exception permits only the entry point shutdown hooks', ()
     assert.ok(check(code, 'src/cli.ts').length);
   assert.ok(check(`import { createHash, webcrypto } from 'node:crypto'`).length);
 });
+
+test('only the reviewed opt-in adapter may use named local I/O capabilities or its three configuration variables', () => {
+  assert.deepEqual(check(`import { readFileSync } from 'node:fs'; import { execFileSync } from 'node:child_process';
+    import { createCipheriv } from 'node:crypto'; const root = process.env.LK_TAX_DOCUMENT_ROOT;`, 'src/local-files.ts'), []);
+  for (const code of [`import { exec } from 'node:child_process'`, `import fs from 'node:fs'`, `import { createPrivateKey } from 'node:crypto'`,
+    `process.env.TOKEN`, `process.exit(0)`, `const all = process.env`, `process['env']['LK_TAX_DOCUMENT_ROOT']`]) assert.ok(check(code, 'src/local-files.ts').length,code);
+});
