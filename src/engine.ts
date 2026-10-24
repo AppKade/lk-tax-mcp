@@ -4,13 +4,14 @@ import { amountSchema, selectRules } from './rules.ts';
 import { cents, money, min, nonnegative } from './money.ts';
 import { checkScope, scopeSchema } from './scope.ts';
 export const incomeSchema = z.strictObject({
-  employment: amountSchema.describe('Total local gross taxable employment income for this year, including taxable bonuses and benefits, before employee deductions or APIT. Do not use take-home pay or add superseded certificates. Exclude foreign salary entered separately.'),
+  employment: amountSchema.describe('Your total local employment pay for this tax year before tax and employee deductions, including taxable bonuses and benefits. Use the annual taxable-employment certificate, not take-home pay. Exclude foreign salary entered separately and do not add an old certificate to its replacement.'),
   business_net: amountSchema.describe('Local taxable business net profit prepared outside this tool, not revenue or bank deposits. Do not include foreign services entered separately. Losses and account preparation are unsupported.'),
-  interest: amountSchema.describe('Gross taxable local interest for this year before advance withholding, across all included sources. Do not use net interest credited. Enter eligible withholding separately as ait_wht_credit.'),
-  rent: amountSchema.describe('Gross local investment rent, with no repair or other expense deduction claimed.'),
-  final_wht_dividends_gross: amountSchema.describe('Resident-company dividends with final withholding already deducted; otherwise mark other_income_or_claims true.'),
+  interest: amountSchema.describe('Total taxable local bank interest for this year before the bank withheld tax. Use gross interest, not the net amount credited. We ask about the tax withheld separately.'),
+  rent: amountSchema.describe('Total local rental income before any expenses. Tell the assistant if you want to claim repairs or other rental expenses, which this preview cannot calculate.'),
+  final_wht_dividends_gross: amountSchema.describe('Total resident-company dividends before final tax already withheld. If final tax was not already deducted, tell the assistant so it can check whether the case is supported.'),
   final_wht_dividends_deducted: amountSchema.describe('Actual final WHT deducted on these dividends. Informational only, never an advance tax credit.'),
-  apit_credit: amountSchema.describe('Sri Lankan APIT actually paid for this year, including Table 08; exclude foreign income tax and duplicate certificates.'), ait_wht_credit: amountSchema.describe('Sri Lankan non-final advance credits for this year only; exclude foreign income tax and final dividend WHT.'),
+  apit_credit: amountSchema.describe('Tax already deducted or paid on your employment for this year, shown as APIT/PAYE on the employer certificate, including any separately paid Table 08 tax. Do not infer it from take-home pay or other employee deductions. If the tax amount is not stated, say it is unknown rather than zero. Exclude foreign income tax and duplicate certificates.'),
+  ait_wht_credit: amountSchema.describe('Eligible advance tax already withheld by your bank or another local payer for this year, shown as AIT/WHT on certificates. Exclude final dividend tax, foreign income tax and duplicate certificates. If it is not stated, say it is unknown rather than zero.'),
   instalments_paid: amountSchema.describe('Actual income-tax instalments paid for this year from payment records. Exclude projected payments and payments for another year.'),
   other_income_or_claims: z.boolean().describe('Do you have any other income or claim outside the supported categories, including unsupported or exempt income, rent expenses, other dividends or loan-funded solar claims? Do not omit genuine income to bypass a refusal.'),
 });
