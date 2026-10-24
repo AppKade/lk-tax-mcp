@@ -1,7 +1,7 @@
 {
   "format_version": 1,
-  "version": "2026.25.0-preview.10",
-  "sha256": "03326be8f0fa2e35d59c9d6dff8391051884b637c3b70bf7f64bb2537f138a9e",
+  "version": "2026.25.0-preview.11",
+  "sha256": "56c1921787fabfaf090d43df1dd92cc53e52d2c6bce1de0182a830dc4f53354e",
   "contract": {
     "server_name": "lk-tax-mcp",
     "supportedVersions": [
@@ -18,7 +18,7 @@
         "listChanged": true
       }
     },
-    "instructions": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.",
+    "instructions": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, using its plain-language questions. Confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Never ask the user to calculate legacy scope hints for tax-band position or credit ceilings; computation derives them. Use confirmed_facts from lk_next_questions to review already entered aggregate values without resetting the session. Missing values remain absent. Before computing, reconcile the year, gross rather than take-home or net income, duplicate documents and revised certificates with the user; no records are verified by the server. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts or optional legacy hints, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an explicitly selected gross-tax basis source and reconciled credits. Never copy annual facts or results into another year automatically. With explicit user selection, Method 1 can match a supplied gross-tax amount to the current prior-year preview; this is not evidence or final-return verification. External gross-tax sources remain unverified. Never use an annual net balance as gross tax.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.",
     "tools": [
       {
         "name": "lk_accept_disclaimer",
@@ -220,7 +220,7 @@
       },
       {
         "name": "lk_compute_return",
-        "description": "Compute a development estimate for local employment, local business net profit, interest, investment rent and supported local reliefs/donations; final-WHT resident-company dividends are informational only. Also supports confirmed qualifying foreign salary and net foreign services with single-source, single-country capped foreign credits. Uses an assumed local-first deduction allocation and capped progressive stacking. Show every interpretation warning and alternative summary; never select a preferred interpretation or claim the allocation is optimal. Rechecks consent, facts and scope every time. Not a full return. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.",
+        "description": "Compute a development estimate for local employment, local business net profit, interest, investment rent and supported local reliefs/donations; final-WHT resident-company dividends are informational only. Also supports confirmed qualifying foreign salary and net foreign services with single-source, single-country capped foreign credits. Uses an assumed local-first deduction allocation and capped progressive stacking. Show every interpretation warning and alternative summary; never select a preferred interpretation or claim the allocation is optimal. Rechecks consent, facts and scope every time. Not a full return. Preserve input_warnings for suspicious credits; they are evidence checks, not legal credit limits. Show display_summary verbatim. Never recompute or bypass an error. Exports are unavailable.",
         "inputSchema": {
           "type": "object",
           "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -534,7 +534,7 @@
       },
       {
         "name": "lk_next_questions",
-        "description": "Get dependency-aware interview progress and only the next missing writable facts. All monetary amounts, including zeros, require confirmation. Foreign eligibility booleans are requested only when confirmed amounts make them relevant. Placeholder readiness means selector amounts are unanswered; it is not a provisional tax estimate. Stop collecting facts for blocked or out_of_scope status and show blocking_guidance. Intake completeness does not establish filing readiness. Never ask for names, TIN, NIC or credentials.",
+        "description": "Get dependency-aware interview progress, plain-language questions and a detached confirmed_facts snapshot of entered aggregates for review without resetting. Missing values stay absent. Optional legacy scope hints for calculated credit ceilings and tax-band position are never requested; computation derives them. All monetary amounts, including zeros, require confirmation. Reconcile year, gross versus net amounts, duplicates and superseded certificates with the user before computing; no documents are verified. Foreign eligibility booleans are requested only when confirmed amounts make them relevant. Placeholder readiness is not a provisional estimate. Stop for blocked or out_of_scope status and show blocking_guidance. Intake completeness does not establish filing readiness. Never ask for names, TIN, NIC or credentials.",
         "inputSchema": {
           "type": "object",
           "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -589,7 +589,7 @@
       },
       {
         "name": "lk_plan_instalments",
-        "description": "Plan one YA 2026/27 quarterly instalment under the 12 August 2026 re-revised IRD circular. Requires active session and current explicit consent. Confirm current-year scope separately in this input. A must be gross tax prepared externally under the selected method, not an annual net balance or a copied current-year estimate. Method 1 uses YA 2025/26 gross tax; 2(i) uses zero; 2(ii)/(iii) use adjusted previous-year figures, with final SET allowed only for quarter one before return finalisation and exactly one return revision thereafter; 2(iv) uses an independently prepared current-year estimate in the first year only. Never infer eligibility. C includes actual earlier instalments and eligible full-year APIT/AIT/WHT, split into deducted and expected remaining, without overlap or final WHT. No foreign-credit basis, Method 3, corporate cases, payments or identifiers. Confirm timely notice when switching from Method 1 to 2(iii). Display display_summary and administrative requirements verbatim. Zero payable is not a filing exemption. Recompute each quarter with actual paid credits; schedule dates do not assume future payments.",
+        "description": "Plan one YA 2026/27 quarterly instalment under the 12 August 2026 re-revised IRD circular. Requires active session and current explicit consent. Confirm current-year scope separately. Select basis_source explicitly; annual_net_balance is refused. external_gross_tax remains unverified. session_annual_gross_tax opts in to matching the supplied amount to current complete YA 2025/26 preview gross tax for Method 1 only, without unresolved flags or input warnings. Never select it or copy a figure without user confirmation; it is not evidence or final-return verification. Method 1 uses YA 2025/26 gross tax; 2(i) uses zero; 2(ii)/(iii) use adjusted previous-year figures with final SET first-quarter only and exactly one SET-to-return revision; 2(iv) uses an independently prepared current-year estimate in the first year only. Never infer eligibility. C includes actual earlier instalments and eligible full-year APIT/AIT/WHT split into deducted and expected remaining without overlap or final WHT. No foreign-credit basis, Method 3, corporate cases, payments or identifiers. Confirm timely notice when switching from Method 1 to 2(iii). Display display_summary and administrative requirements verbatim. Zero payable is not a filing exemption; schedule dates do not assume future payments.",
         "inputSchema": {
           "type": "object",
           "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -607,46 +607,60 @@
               "type": "object",
               "properties": {
                 "resident_full_year": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Were you resident in Sri Lanka throughout this year of assessment?"
                 },
                 "residency_special_case": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Does your residency need special review, such as a move into or out of Sri Lanka during the year?"
                 },
                 "investment_asset_gains": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you have gains from selling investment assets that need a capital-gains calculation?"
                 },
                 "partnership_or_trust": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you have income allocated from a partnership or trust?"
                 },
                 "restricted_business": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you have business income subject to special rates, such as betting, gaming, liquor or tobacco?"
                 },
                 "terminal_benefits_or_arrears": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Did you receive retirement or termination benefits, or salary arrears?"
                 },
                 "business_profit_needs_computation": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you need help calculating business net profit from receipts and expenses? This tool accepts only a net profit prepared outside it."
                 },
                 "losses": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you need to claim or carry forward a business or other tax loss?"
                 },
                 "multiple_foreign_tax_countries": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Does your foreign income tax credit claim involve more than one country?"
                 },
                 "foreign_credit_exceeds_cap": {
+                  "description": "Optional legacy hint. Do not ask the user to calculate a credit ceiling; computation derives this from amounts.",
                   "type": "boolean"
                 },
                 "qualifying_foreign_income": {
+                  "description": "Optional legacy hint. Foreign income and eligibility are collected separately; computation derives this flag.",
                   "type": "boolean"
                 },
                 "local_taxable_below_first_band": {
+                  "description": "Optional legacy hint. Do not ask the user to calculate a tax-band position; computation derives this from amounts.",
                   "type": "boolean"
                 },
                 "amendment_assessment_or_appeal": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Is this an amendment to a filed return, an assessment dispute or an appeal?"
                 },
                 "preparing_for_clients": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Are you preparing this estimate for a client rather than yourself?"
                 }
               },
               "required": [
@@ -659,9 +673,6 @@
                 "business_profit_needs_computation",
                 "losses",
                 "multiple_foreign_tax_countries",
-                "foreign_credit_exceeds_cap",
-                "qualifying_foreign_income",
-                "local_taxable_below_first_band",
                 "amendment_assessment_or_appeal",
                 "preparing_for_clients"
               ],
@@ -828,6 +839,15 @@
               "type": "string",
               "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
             },
+            "basis_source": {
+              "type": "string",
+              "enum": [
+                "external_gross_tax",
+                "session_annual_gross_tax",
+                "annual_net_balance"
+              ],
+              "description": "Explicit source of gross_tax_basis. external_gross_tax remains unverified. session_annual_gross_tax opts in to checking the current YA 2025/26 preview for Method 1 only; it never copies a figure automatically. annual_net_balance is refused."
+            },
             "basis_prepared_under_method_confirmed": {
               "type": "boolean"
             },
@@ -870,6 +890,7 @@
             "scope",
             "basis",
             "gross_tax_basis",
+            "basis_source",
             "basis_prepared_under_method_confirmed",
             "foreign_credit_in_basis",
             "prior_instalments_paid",
@@ -1057,7 +1078,7 @@
       },
       {
         "name": "lk_set_facts",
-        "description": "Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. Collect deductions separately. Every amount must be user-confirmed and eligible. Do not enter final dividend WHT as ait_wht_credit. Collect foreign aggregates and eligibility in the foreign object, never in local income. Foreign amounts must already be converted to LKR. Foreign tax paid must be eligible income tax on that same income from one confirmed source in one country; do not include Sri Lankan APIT or pool sources. other_income_or_claims is true for non-qualifying or otherwise unsupported foreign income, unsupported dividends, loan-funded solar claims, rent expense deductions or any other unsupported income or claim. Scope answers are required unless an already confirmed exclusion stops intake. Confirm explicit false answers when requested. Use lk_next_questions to determine relevant foreign eligibility booleans; never invent answers for inapplicable facts. Scope foreign hints cannot override flags derived from computation amounts.",
+        "description": "Set only user-confirmed facts, with LKR amounts as decimal strings. Never send identifiers or arbitrary text. Confirm zero amounts; do not guess missing answers. business_net is local net profit computed outside this tool. Collect deductions separately. Every amount must be user-confirmed and eligible. Do not enter final dividend WHT as ait_wht_credit. Collect foreign aggregates and eligibility in the foreign object, never in local income. Foreign amounts must already be converted to LKR. Foreign tax paid must be eligible income tax on that same income from one confirmed source in one country; do not include Sri Lankan APIT or pool sources. other_income_or_claims is true for non-qualifying or otherwise unsupported foreign income, unsupported dividends, loan-funded solar claims, rent expense deductions or any other unsupported income or claim. Requested scope answers are required unless an already confirmed exclusion stops intake; legacy calculation-dependent hints are optional and never requested. Confirm explicit false answers when requested. Use lk_next_questions to determine relevant foreign eligibility booleans; never invent answers for inapplicable facts. Scope foreign hints cannot override flags derived from computation amounts.",
         "inputSchema": {
           "type": "object",
           "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -1066,46 +1087,60 @@
               "type": "object",
               "properties": {
                 "resident_full_year": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Were you resident in Sri Lanka throughout this year of assessment?"
                 },
                 "residency_special_case": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Does your residency need special review, such as a move into or out of Sri Lanka during the year?"
                 },
                 "investment_asset_gains": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you have gains from selling investment assets that need a capital-gains calculation?"
                 },
                 "partnership_or_trust": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you have income allocated from a partnership or trust?"
                 },
                 "restricted_business": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you have business income subject to special rates, such as betting, gaming, liquor or tobacco?"
                 },
                 "terminal_benefits_or_arrears": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Did you receive retirement or termination benefits, or salary arrears?"
                 },
                 "business_profit_needs_computation": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you need help calculating business net profit from receipts and expenses? This tool accepts only a net profit prepared outside it."
                 },
                 "losses": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you need to claim or carry forward a business or other tax loss?"
                 },
                 "multiple_foreign_tax_countries": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Does your foreign income tax credit claim involve more than one country?"
                 },
                 "foreign_credit_exceeds_cap": {
+                  "description": "Optional legacy hint. Do not ask the user to calculate a credit ceiling; computation derives this from amounts.",
                   "type": "boolean"
                 },
                 "qualifying_foreign_income": {
+                  "description": "Optional legacy hint. Foreign income and eligibility are collected separately; computation derives this flag.",
                   "type": "boolean"
                 },
                 "local_taxable_below_first_band": {
+                  "description": "Optional legacy hint. Do not ask the user to calculate a tax-band position; computation derives this from amounts.",
                   "type": "boolean"
                 },
                 "amendment_assessment_or_appeal": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Is this an amendment to a filed return, an assessment dispute or an appeal?"
                 },
                 "preparing_for_clients": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Are you preparing this estimate for a client rather than yourself?"
                 }
               },
               "additionalProperties": false
@@ -1114,14 +1149,17 @@
               "type": "object",
               "properties": {
                 "employment": {
+                  "description": "Total local gross taxable employment income for this year, including taxable bonuses and benefits, before employee deductions or APIT. Do not use take-home pay or add superseded certificates. Exclude foreign salary entered separately.",
                   "type": "string",
                   "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
                 },
                 "business_net": {
+                  "description": "Local taxable business net profit prepared outside this tool, not revenue or bank deposits. Do not include foreign services entered separately. Losses and account preparation are unsupported.",
                   "type": "string",
                   "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
                 },
                 "interest": {
+                  "description": "Gross taxable local interest for this year before advance withholding, across all included sources. Do not use net interest credited. Enter eligible withholding separately as ait_wht_credit.",
                   "type": "string",
                   "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
                 },
@@ -1141,21 +1179,23 @@
                   "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
                 },
                 "apit_credit": {
-                  "description": "Sri Lankan APIT actually paid, including Table 08; exclude foreign income tax.",
+                  "description": "Sri Lankan APIT actually paid for this year, including Table 08; exclude foreign income tax and duplicate certificates.",
                   "type": "string",
                   "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
                 },
                 "ait_wht_credit": {
-                  "description": "Sri Lankan non-final advance credits only; exclude foreign income tax and final dividend WHT.",
+                  "description": "Sri Lankan non-final advance credits for this year only; exclude foreign income tax and final dividend WHT.",
                   "type": "string",
                   "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
                 },
                 "instalments_paid": {
+                  "description": "Actual income-tax instalments paid for this year from payment records. Exclude projected payments and payments for another year.",
                   "type": "string",
                   "pattern": "^(0|[1-9]\\d{0,14})(\\.\\d{1,2})?$"
                 },
                 "other_income_or_claims": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "Do you have any other income or claim outside the supported categories, including unsupported or exempt income, rent expenses, other dividends or loan-funded solar claims? Do not omit genuine income to bypass a refusal."
                 }
               },
               "additionalProperties": false
@@ -1347,7 +1387,7 @@
               "role": "user",
               "content": {
                 "type": "text",
-                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me understand the filing guidance available here. Read lktax://supported-scenarios and lktax://known-issues. Explain that the server cannot determine whether I must register, activate a tax type or file. Do not infer an exemption from employment type, income, withholding or zero tax payable, and do not collect facts to apply remembered thresholds. Refer me to current official IRD guidance or a qualified adviser. A supported tax estimate, if I separately request it, still requires the full consent and scope workflow."
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, using its plain-language questions. Confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Never ask the user to calculate legacy scope hints for tax-band position or credit ceilings; computation derives them. Use confirmed_facts from lk_next_questions to review already entered aggregate values without resetting the session. Missing values remain absent. Before computing, reconcile the year, gross rather than take-home or net income, duplicate documents and revised certificates with the user; no records are verified by the server. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts or optional legacy hints, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an explicitly selected gross-tax basis source and reconciled credits. Never copy annual facts or results into another year automatically. With explicit user selection, Method 1 can match a supplied gross-tax amount to the current prior-year preview; this is not evidence or final-return verification. External gross-tax sources remain unverified. Never use an annual net balance as gross tax.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me understand the filing guidance available here. Read lktax://supported-scenarios and lktax://known-issues. Explain that the server cannot determine whether I must register, activate a tax type or file. Do not infer an exemption from employment type, income, withholding or zero tax payable, and do not collect facts to apply remembered thresholds. Refer me to current official IRD guidance or a qualified adviser. A supported tax estimate, if I separately request it, still requires the full consent and scope workflow."
               }
             }
           ],
@@ -1355,7 +1395,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.10"
+              "version": "2026.25.0-preview.11"
             }
           }
         }
@@ -1371,7 +1411,7 @@
               "role": "user",
               "content": {
                 "type": "text",
-                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me understand my current tax estimate. Confirm the session and consent state without silently starting a new session. If the estimate is incomplete, use lk_next_questions and obtain only the missing confirmed facts before computing. Ask which returned annual line I want explained, call lk_explain with that published line name, and explain its formula, inputs, sources and rule version. lk_explain recomputes current annual facts. Instalment explanations use the trace returned by lk_plan_instalments instead. Preserve all assumptions and warnings; never reconstruct a result from memory."
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, using its plain-language questions. Confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Never ask the user to calculate legacy scope hints for tax-band position or credit ceilings; computation derives them. Use confirmed_facts from lk_next_questions to review already entered aggregate values without resetting the session. Missing values remain absent. Before computing, reconcile the year, gross rather than take-home or net income, duplicate documents and revised certificates with the user; no records are verified by the server. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts or optional legacy hints, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an explicitly selected gross-tax basis source and reconciled credits. Never copy annual facts or results into another year automatically. With explicit user selection, Method 1 can match a supplied gross-tax amount to the current prior-year preview; this is not evidence or final-return verification. External gross-tax sources remain unverified. Never use an annual net balance as gross tax.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me understand my current tax estimate. Confirm the session and consent state without silently starting a new session. If the estimate is incomplete, use lk_next_questions and obtain only the missing confirmed facts before computing. Ask which returned annual line I want explained, call lk_explain with that published line name, and explain its formula, inputs, sources and rule version. lk_explain recomputes current annual facts. Instalment explanations use the trace returned by lk_plan_instalments instead. Preserve all assumptions and warnings; never reconstruct a result from memory."
               }
             }
           ],
@@ -1379,7 +1419,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.10"
+              "version": "2026.25.0-preview.11"
             }
           }
         }
@@ -1395,7 +1435,7 @@
               "role": "user",
               "content": {
                 "type": "text",
-                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me prepare a supported annual tax estimate. Explain the preview limits first. After the consent workflow, follow lk_next_questions and lk_set_facts, check scope, and call lk_compute_return only when the required facts are complete. Use lk_explain for returned lines and lk_review_return for supported cage references and unresolved review gaps. To prepare a manual-entry worksheet, call lk_get_checklist, show each statement verbatim, call lk_acknowledge_checklist only with statements I explicitly confirm, then call lk_generate_worksheet and present its text verbatim. Never fill unset cages or confirm on my behalf; changing any fact requires a new acknowledgement. Read lktax://checklist/documents as a manual evidence checklist; do not request uploads or identifiers. Do not claim that this prepares or submits a complete return."
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, using its plain-language questions. Confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Never ask the user to calculate legacy scope hints for tax-band position or credit ceilings; computation derives them. Use confirmed_facts from lk_next_questions to review already entered aggregate values without resetting the session. Missing values remain absent. Before computing, reconcile the year, gross rather than take-home or net income, duplicate documents and revised certificates with the user; no records are verified by the server. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts or optional legacy hints, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an explicitly selected gross-tax basis source and reconciled credits. Never copy annual facts or results into another year automatically. With explicit user selection, Method 1 can match a supplied gross-tax amount to the current prior-year preview; this is not evidence or final-return verification. External gross-tax sources remain unverified. Never use an annual net balance as gross tax.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me prepare a supported annual tax estimate. Explain the preview limits first. After the consent workflow, follow lk_next_questions and lk_set_facts, check scope, and call lk_compute_return only when the required facts are complete. Use lk_explain for returned lines and lk_review_return for supported cage references and unresolved review gaps. To prepare a manual-entry worksheet, call lk_get_checklist, show each statement verbatim, call lk_acknowledge_checklist only with statements I explicitly confirm, then call lk_generate_worksheet and present its text verbatim. Never fill unset cages or confirm on my behalf; changing any fact requires a new acknowledgement. Read lktax://checklist/documents as a manual evidence checklist; do not request uploads or identifiers. Do not claim that this prepares or submits a complete return."
               }
             }
           ],
@@ -1403,7 +1443,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.10"
+              "version": "2026.25.0-preview.11"
             }
           }
         }
@@ -1419,7 +1459,7 @@
               "role": "user",
               "content": {
                 "type": "text",
-                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an independently prepared gross-tax basis and reconciled credits. Never copy annual facts or results into another year automatically.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me plan a supported quarterly instalment. After the consent workflow, read lktax://rules/instalments/2026-27 and the lk_plan_instalments schema. Confirm current-year scope separately, the quarter, method eligibility, the independently prepared gross-tax basis and the non-overlapping credit components. Do not calculate the gross-tax basis yourself or reuse an annual net balance as gross tax. Never invent notice submission or revision history. Call lk_plan_instalments and show its display_summary and administrative requirements verbatim. Schedule dates do not establish payments; zero payable does not establish an exemption."
+                "text": "Development preview, not IRD-approved, not tax advice and not filing-ready. Read lktax://supported-scenarios and lktax://known-issues before offering help.\n\nBefore collecting tax facts, show lk_get_disclaimer verbatim and obtain explicit agreement to its current version. Start a fresh lk_session only after explaining that it discards existing facts and consent; never reset an existing session silently. Then use lk_accept_disclaimer only after the user agrees.\n\nNever collect names, NIC, TIN, employer names, bank or account details, raw documents or credentials. The server has no document ingestion or export tools. Amounts and tool results reach the host and possibly its provider.\n\nAsk only for missing facts reported by lk_next_questions, using its plain-language questions. Confirm every requested zero and boolean, and use lk_set_facts only for user-confirmed facts. Never ask the user to calculate legacy scope hints for tax-band position or credit ceilings; computation derives them. Use confirmed_facts from lk_next_questions to review already entered aggregate values without resetting the session. Missing values remain absent. Before computing, reconcile the year, gross rather than take-home or net income, duplicate documents and revised certificates with the user; no records are verified by the server. Follow the dependency-aware interview: skip only booleans explicitly marked not_applicable_facts or optional legacy hints, never infer an absent amount as zero, and stop gathering facts for blocked or out_of_scope status. Show blocking_guidance and obtain professional review; only change a fact after a genuine user-confirmed correction. Readiness states describe intake, not provisional tax amounts or filing readiness. Use lk_check_scope and stop for out-of-scope cases. Partial status requires reading the reasons; it does not guarantee computation support.\n\nAnnual calculations support only the published annual rules year. Instalment planning has its own year and requires separate current-year scope, confirmed method eligibility, an explicitly selected gross-tax basis source and reconciled credits. Never copy annual facts or results into another year automatically. With explicit user selection, Method 1 can match a supplied gross-tax amount to the current prior-year preview; this is not evidence or final-return verification. External gross-tax sources remain unverified. Never use an annual net balance as gross tax.\n\nLet deterministic tools perform every tax calculation. Present display_summary verbatim with all warnings and interpretation alternatives. Never add, multiply, round or invent a tax amount, choose an interpretation for the user, or bypass isError by estimating it yourself. Ask for genuinely missing facts or refer unresolved cases for professional review.\n\nUse lk_review_return after a supported estimate to inspect cited cage references and manual review gaps. Leave null cage amounts unset; never turn reference amounts into refund claims, carry-forward entitlements, gross remittances or credit splits. Review is not an export or checklist approval. Filing-obligation decisions, filing outputs, payments and submission are unavailable. Zero payable is not a no-return-required decision. Never access RAMIS or ask for its credentials. Use lk_session wipe only on the user request; it discards facts and consent.\n\nHelp me plan a supported quarterly instalment. After the consent workflow, read lktax://rules/instalments/2026-27 and the lk_plan_instalments schema. Confirm current-year scope separately, the quarter, method eligibility, the independently prepared gross-tax basis and the non-overlapping credit components. Do not calculate the gross-tax basis yourself or reuse an annual net balance as gross tax. Never invent notice submission or revision history. Call lk_plan_instalments and show its display_summary and administrative requirements verbatim. Schedule dates do not establish payments; zero payable does not establish an exemption."
               }
             }
           ],
@@ -1427,7 +1467,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.10"
+              "version": "2026.25.0-preview.11"
             }
           }
         }

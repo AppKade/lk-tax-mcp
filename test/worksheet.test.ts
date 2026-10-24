@@ -66,9 +66,9 @@ test('checklist inherits consent, scope and financial refusals from the review',
 });
 
 test('conditional checklist items follow the credits and flags actually present', () => {
-  assert.deepEqual(ids(reviewReturn(input)), ['preview_limits_understood', 'scope_and_issues_read', 'review_gaps_read', 'credits_reconciled']);
+  assert.deepEqual(ids(reviewReturn(input)), ['preview_limits_understood', 'scope_and_issues_read', 'review_gaps_read', 'evidence_reconciled', 'credits_reconciled']);
   const bare = reviewReturn({ ...input, income: { ...income, apit_credit: '0', ait_wht_credit: '0' } });
-  assert.deepEqual(ids(bare), ['preview_limits_understood', 'scope_and_issues_read', 'review_gaps_read']);
+  assert.deepEqual(ids(bare), ['preview_limits_understood', 'scope_and_issues_read', 'review_gaps_read', 'evidence_reconciled']);
   const foreign = reviewReturn({ ...input, income: { ...income, employment: '0', interest: '0', apit_credit: '0', ait_wht_credit: '0' },
     foreign: { ...noForeign, service_net_lkr: '3600000', received_in_foreign_currency: true, remitted_via_licensed_bank: true, services_used_outside_lk: true, fx_conversion_confirmed: true } });
   assert.ok(ids(foreign).includes('calculation_flags_read'));

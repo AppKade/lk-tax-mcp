@@ -80,6 +80,7 @@ export function reviewReturn(input: z.infer<typeof returnSchema>) {
     { code: 'EXEMPT_DISCLOSURES_UNCOLLECTED', targets: ['return:210'], detail: 'A complete exempt/excluded-income disclosure was not collected.' },
     { code: 'REMITTANCE_DISCLOSURES_UNCOLLECTED', targets: ['return:210A'], detail: 'Gross remittance categories and receipt totals were not collected. Net service income is not a substitute.' },
     { code: 'COMPLETE_RETURN_UNAVAILABLE', targets: [], detail: 'Assets, liabilities, declarations, supporting detail, official filing rounding and practitioner approval remain outside this review. This is not an export checklist acknowledgement.' },
+    ...calculation.input_warnings.map(w => ({ code: w.code, targets: ['schedule_9:912'], detail: w.message })),
     ...(cents(income.apit_credit) > 0n ? [{ code: 'APIT_BREAKDOWN_REQUIRED', targets: ['schedule_9:903A-903C', 'schedule_9:904A-904C'], detail: 'The APIT aggregate does not identify primary/secondary certificates or Table 08/self-paid allocations. No split or credit cage is invented.' }] : []),
     ...(cents(income.ait_wht_credit) > 0n || cents(income.instalments_paid) > 0n ? [{ code: 'ADVANCE_CREDIT_DETAILS_REQUIRED', targets: ['schedule_7A:710', 'schedule_9:908', 'schedule_9:911', 'schedule_9B:927-934'], detail: 'Advance credits and instalments need source, timing, withholding-agent/withholdee and payment-row reconciliation. Only the supported aggregate total is shown.' }] : []),
     ...(cents(deductions.solar_available) > 0n ? [{ code: 'SOLAR_HISTORY_REQUIRED', targets: ['schedule_5C:511', 'schedule_5C:513'], detail: 'Available unused expenditure does not establish total historical acquisition expenditure.' }] : []),
@@ -93,6 +94,7 @@ export function reviewReturn(input: z.infer<typeof returnSchema>) {
   return { status: 'review_only', estimate: true, filing_ready: false, export_available: false, needs_professional_review: true,
     mapping_version: cageMap.version, mapping_evidence_status: cageMap.evidence_status, mapping_review_status: cageMap.review_status,
     mapping_complete: false, cages, checks, coverage, review_gaps: gaps, flags: calculation.flags, alternatives: calculation.alternatives,
+    input_warnings: calculation.input_warnings,
     return_format: { suggestion, eligibility_confirmed: false, note: 'Guide printed page 2 permits employment-and-interest-only electronic filers to use the simplified option. This is a conservative hint, not a filing obligation or portal eligibility decision.', source: cageMap.sources.guide.url },
     display_summary: `${calculation.display_summary} Return review only. Cage mapping version ${cageMap.version} is unreviewed. Unresolved refund, disclosure and supporting-detail fields remain unset. Review every gap and engine alternative. No filing output, submission or refund approval is produced.` };
 }

@@ -20,8 +20,11 @@ export function buildChecklist(review: Review) {
     { id: 'preview_limits_understood', statement: 'I understand this is an unreviewed development preview estimate. It is not IRD-approved, not tax advice and not filing-ready, and official rounding is unverified. I will check every figure against the official return and portal.' },
     { id: 'scope_and_issues_read', statement: 'I have read the supported scenarios and known issues, and none of my circumstances is excluded or unsupported.' },
     { id: 'review_gaps_read', statement: 'I have read every unresolved review gap listed and will complete those fields manually from my own records. The worksheet leaves them unset.' },
+    { id: 'evidence_reconciled', statement: 'I have checked the income and credit totals against my records for this year of assessment, used gross income where requested, excluded duplicate and wrong-year documents, and replaced superseded certificates rather than adding them. These records are not verified by this tool.' },
     ...(gaps.has('APIT_BREAKDOWN_REQUIRED') || gaps.has('ADVANCE_CREDIT_DETAILS_REQUIRED') ? [
       { id: 'credits_reconciled', statement: 'I have reconciled APIT, AIT/WHT and instalment credits against my certificates and payment records, without overlap or final withholding.' }] : []),
+    ...(review.input_warnings.length ? [
+      { id: 'credit_anomalies_reconciled', statement: 'I have reviewed every credit anomaly warning and reconciled the income, year, certificates and payments with a qualified adviser before relying on these figures. A potential overpayment is not an approved refund.' }] : []),
     ...(review.flags.length ? [
       { id: 'calculation_flags_read', statement: 'I have read every calculation flag and interpretation alternative. The worksheet does not choose between interpretations.' }] : []),
   ];

@@ -29,7 +29,9 @@ export const instalmentSchema = z.strictObject({
       lower_taxable_income_expected: z.boolean(), ...adjustedBasis }),
     z.strictObject({ method: z.literal('2_iv'), first_year_new_taxpayer: z.boolean() }),
   ]),
-  gross_tax_basis: amount, basis_prepared_under_method_confirmed: z.boolean(), foreign_credit_in_basis: z.boolean(),
+  gross_tax_basis: amount,
+  basis_source: z.enum(['external_gross_tax', 'session_annual_gross_tax', 'annual_net_balance']).describe('Explicit source of gross_tax_basis. external_gross_tax remains unverified. session_annual_gross_tax opts in to checking the current YA 2025/26 preview for Method 1 only; it never copies a figure automatically. annual_net_balance is refused.'),
+  basis_prepared_under_method_confirmed: z.boolean(), foreign_credit_in_basis: z.boolean(),
   prior_instalments_paid: amount,
   apit_already_deducted: amount, apit_expected_remaining: amount,
   ait_wht_already_deducted: amount, ait_wht_expected_remaining: amount,
@@ -44,7 +46,7 @@ export function instalmentAmount(a: bigint, c: bigint, b: bigint) {
   // Conservative cent ceiling is a preview assumption, not verified payment-system rounding.
   return (remaining + b - 1n) / b;
 }
-export function planInstalments(input: unknown) {
+export function planInstalments(input: unknown, sessionAnnualTax?: string) {
   const parsed = instalmentSchema.safeParse(input);
   if (!parsed.success) throw new Error('INVALID_INSTALMENT_FACTS');
   const f = parsed.data;
@@ -55,6 +57,9 @@ export function planInstalments(input: unknown) {
   if (!f.credits_reconciled_without_overlap) throw new Error('INSTALMENT_CREDIT_REVIEW');
   const basis = f.basis;
   const a = cents(f.gross_tax_basis);
+  if (f.basis_source === 'annual_net_balance' || (f.basis_source === 'session_annual_gross_tax' &&
+      (basis.method !== '1' || sessionAnnualTax === undefined || a !== cents(sessionAnnualTax))))
+    throw new Error('INSTALMENT_BASIS_REVIEW');
   if ((basis.method === '1' && !basis.prior_taxable_income_exists) ||
       (basis.method === '2_i' && (!basis.no_prior_taxable_income || !basis.no_current_assessable_income_expected || a !== 0n)) ||
       (basis.method === '2_ii' && (!basis.no_prior_taxable_income || !basis.current_assessable_income_expected)) ||
@@ -103,13 +108,16 @@ export function planInstalments(input: unknown) {
     inputs: { A: money(a), C: money(c), B: b.toString() }, version: instalmentRules.version,
     sources: [instalmentRules.source], locator: 'Sections 1-2 and 3(1)-(2), printed pages 1-10' }));
   const notes = [
-    'A is supplied and confirmed externally under the selected method. This tool does not estimate YA 2026/27 annual tax or validate the underlying accounts.',
+    f.basis_source === 'session_annual_gross_tax' ?
+      'A was explicitly selected and matched to the current YA 2025/26 preview gross tax for Method 1. This checks the line and amount, not final-return accuracy, underlying evidence or practitioner approval.' :
+      'A is supplied and confirmed externally under the selected method. Its source amount is not verified. This tool does not estimate YA 2026/27 annual tax or validate the underlying accounts.',
     'C uses actual earlier instalments plus reconciled full-year eligible withholding split between already deducted and expected remaining. Future instalment payments are excluded.',
     'Cent ceiling is an unreviewed preview assumption. Confirm official payment rounding before paying. No refund, penalty, interest or filing-obligation decision is made.',
     'Credit schedules generally fall due at month end. Section 3(2) exempts certain employees; zero payable alone does not establish that exception. Confirm eligibility separately.',
   ];
   if (setRevisionRequired) notes.push('Recalculate on the YA 2025/26 return for the second instalment. Submit Attachment 1 and Attachment 1 (Revised); only one SET-to-return revision is permitted.');
   return { method: basis.method, scope, quarter: f.quarter, remaining_instalments: Number(b), figures, trace,
+    basis_validation: { source: f.basis_source, matched_session_gross_tax: f.basis_source === 'session_annual_gross_tax', evidence_verified: false },
     estimate: true, filing_ready: false, payment_due_date: instalmentRules.payment_dates[f.quarter - 1],
     schedule: instalmentRules.payment_dates.map((due_date, i) => ({ quarter: i + 1, due_date })),
     credit_schedule: { status: payable === 0n && apitPaid + apitExpected + aitPaid + aitExpected > 0n ? 'review_employment_exception' : 'required',

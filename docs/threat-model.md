@@ -15,6 +15,8 @@ The sensitive assets are user-confirmed amounts, eligibility answers, derived ta
 
 Each server process has a separate in-memory session. A new session, restart or wipe drops facts, consent and checklist references. Garbage collection does not establish physical erasure; OS swap, crash dumps and host logs remain outside this guarantee. There is no encrypted persistent store, remote tenant isolation or multi-user service.
 
+The 2026-10-24 intake follow-up returns a detached `confirmed_facts` snapshot through the existing consent-gated progress tool. It contains only the typed aggregates actually entered; this makes the already permitted amounts easier for the host to inspect and increases no identifier, file or network capability. Credit anomaly acknowledgements and source-reconciliation statements are host assertions, not independent evidence checks. Identical normalized writes preserve a checklist acknowledgement; substantive fact changes, re-consent, restart and wipe still clear it. Instalment Method 1 may explicitly match a supplied basis to recomputed prior-year session gross tax, without writing planner facts or automatically selecting a source. External amounts and final-return accuracy remain unverified.
+
 ## Capabilities and current mitigations
 
 The application exposes computation, explanation, static guidance and local session mutations. Starting or wiping a session is destructive to its memory state and has the corresponding tool annotation. A worksheet is text returned to the host; it is not a file write, submission or refund entitlement. Static source URLs are evidence labels, not runtime fetch targets. Node loads package code and static JSON from disk, but there is no user-directed filesystem tool.

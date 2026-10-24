@@ -4,12 +4,15 @@ import { amountSchema, selectRules } from './rules.ts';
 import { cents, money, min, nonnegative } from './money.ts';
 import { checkScope, scopeSchema } from './scope.ts';
 export const incomeSchema = z.strictObject({
-  employment: amountSchema, business_net: amountSchema, interest: amountSchema,
+  employment: amountSchema.describe('Total local gross taxable employment income for this year, including taxable bonuses and benefits, before employee deductions or APIT. Do not use take-home pay or add superseded certificates. Exclude foreign salary entered separately.'),
+  business_net: amountSchema.describe('Local taxable business net profit prepared outside this tool, not revenue or bank deposits. Do not include foreign services entered separately. Losses and account preparation are unsupported.'),
+  interest: amountSchema.describe('Gross taxable local interest for this year before advance withholding, across all included sources. Do not use net interest credited. Enter eligible withholding separately as ait_wht_credit.'),
   rent: amountSchema.describe('Gross local investment rent, with no repair or other expense deduction claimed.'),
   final_wht_dividends_gross: amountSchema.describe('Resident-company dividends with final withholding already deducted; otherwise mark other_income_or_claims true.'),
   final_wht_dividends_deducted: amountSchema.describe('Actual final WHT deducted on these dividends. Informational only, never an advance tax credit.'),
-  apit_credit: amountSchema.describe('Sri Lankan APIT actually paid, including Table 08; exclude foreign income tax.'), ait_wht_credit: amountSchema.describe('Sri Lankan non-final advance credits only; exclude foreign income tax and final dividend WHT.'), instalments_paid: amountSchema,
-  other_income_or_claims: z.boolean(),
+  apit_credit: amountSchema.describe('Sri Lankan APIT actually paid for this year, including Table 08; exclude foreign income tax and duplicate certificates.'), ait_wht_credit: amountSchema.describe('Sri Lankan non-final advance credits for this year only; exclude foreign income tax and final dividend WHT.'),
+  instalments_paid: amountSchema.describe('Actual income-tax instalments paid for this year from payment records. Exclude projected payments and payments for another year.'),
+  other_income_or_claims: z.boolean().describe('Do you have any other income or claim outside the supported categories, including unsupported or exempt income, rent expenses, other dividends or loan-funded solar claims? Do not omit genuine income to bypass a refusal.'),
 });
 export const deductionsSchema = z.strictObject({
   solar_available: amountSchema.describe('Confirmed eligible expenditure remaining after all prior relief claims for panels on own premises connected to the national grid. Loan-funded claims are not supported.'),
@@ -89,6 +92,14 @@ export function computeReturn(input: z.infer<typeof returnSchema>) {
   const foreignCredit = min(foreignAmounts.paid, min(foreignTax, averageCreditLimit));
   const domesticCredits = cents(income.apit_credit) + cents(income.ait_wht_credit) + cents(income.instalments_paid);
   const credits = domesticCredits + foreignCredit;
+  // Evidence warnings, not tax rules or legal credit caps. Arithmetic remains unchanged.
+  const inputWarnings: { code: string; message: string }[] = [];
+  if (cents(income.apit_credit) > cents(income.employment) + cents(foreign.employment_lkr))
+    inputWarnings.push({ code: 'APIT_EXCEEDS_REPORTED_EMPLOYMENT', message: 'APIT exceeds all reported local and foreign employment income. Check for a mistyped amount, duplicated certificate, missing employment or wrong year. This is an evidence warning, not a legal credit cap.' });
+  if (cents(income.ait_wht_credit) > assessable)
+    inputWarnings.push({ code: 'AIT_WHT_EXCEEDS_REPORTED_INCOME', message: 'Advance AIT/WHT exceeds all reported assessable income. Reconcile source amounts, year and final versus advance withholding before relying on the estimate. This is not a legal credit cap.' });
+  if (assessable === 0n && domesticCredits > 0n)
+    inputWarnings.push({ code: 'CREDITS_WITHOUT_REPORTED_INCOME', message: 'Domestic credits were entered with no reported assessable income. Check income, year and payment records; an overpayment is not a validated refund claim.' });
   const firstBand = cents(r.progressive_bands.bands[0].width!);
   const interpretationReview = foreignTaxable > 0n && localTaxable < firstBand;
   checked = checkScope({ ...scope, qualifying_foreign_income: foreignAmounts.total > 0n,
@@ -168,9 +179,9 @@ export function computeReturn(input: z.infer<typeof returnSchema>) {
     ? ` Interpretation review required. Flat-cap comparison: tax LKR ${money(flatTotal)}, foreign credit LKR ${money(flatCredit)}, balance payable LKR ${money(nonnegative(flatTotal - flatCredits))}, potential overpayment LKR ${money(nonnegative(flatCredits - flatTotal))}. Both use the assumed local-first deduction allocation; it is not an optimal-allocation guarantee.` : '';
   return {
     status: 'complete' as const, estimate: true, filing_ready: false,
-    needs_professional_review: true, scope: checked, figures, trace, flags, alternatives,
+    needs_professional_review: true, scope: checked, figures, trace, flags, alternatives, input_warnings: inputWarnings,
     allocation_policy: { policy: r.foreign_allocation.policy, status: r.foreign_allocation.status, rule_id: r.foreign_allocation.id, sources: r.foreign_allocation.sources },
     foreign_eligibility: { received_in_foreign_currency: foreign.received_in_foreign_currency, remitted_via_licensed_bank: foreign.remitted_via_licensed_bank, foreign_employer_confirmed: foreign.foreign_employer_confirmed, services_used_outside_lk: foreign.services_used_outside_lk, fx_conversion_confirmed: foreign.fx_conversion_confirmed, credit_eligibility_confirmed: foreign.credit_eligibility_confirmed, single_source_confirmed: foreign.single_source_confirmed },
-    display_summary: `Preview estimate for YA ${ya}. Tax: LKR ${figures.tax}. Credits: LKR ${figures.credits}. Balance payable: LKR ${figures.balance_payable}. Potential overpayment: LKR ${figures.potential_overpayment}. Verify before filing. Not IRD-approved; not tax advice.${foreignSummary}${alternativeSummary}`,
+    display_summary: `Preview estimate for YA ${ya}. Tax: LKR ${figures.tax}. Credits: LKR ${figures.credits}. Balance payable: LKR ${figures.balance_payable}. Potential overpayment: LKR ${figures.potential_overpayment}. Verify before filing. Not IRD-approved; not tax advice.${foreignSummary}${alternativeSummary}${inputWarnings.map(w => ` Input review ${w.code}: ${w.message}`).join('')}`,
   };
 }

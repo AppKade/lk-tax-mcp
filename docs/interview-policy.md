@@ -1,8 +1,14 @@
 # Interview dependency policy
 
-Policy `2025.26.intake.1` applies to the implemented YA 2025/26 annual interview. It changes question selection, not tax rates or legal eligibility rules. The existing calculation pipeline and all its financial refusals remain authoritative.
+Policy `2025.26.intake.2` applies to the implemented YA 2025/26 annual interview. It changes question selection, not tax rates or legal eligibility rules. The existing calculation pipeline and all its financial refusals remain authoritative.
 
 The writable dictionary is generated from the accepted scope, income, foreign and deduction schemas and published at `lktax://facts/2025-26`. Derived readiness cannot be set through `lk_set_facts`. The order is scope, income, foreign and deductions. Only missing writable facts of the active dependency are returned as the next questions; confirmed facts are not re-asked.
+
+Progress includes plain-language `questions` and a detached `confirmed_facts` snapshot. Missing values stay absent; only actually entered aggregate values are returned. The caller cannot mutate session facts through the snapshot. This is an existing-session review feature, not persisted drafts or evidence verification.
+
+The three legacy scope hints `foreign_credit_exceeds_cap`, `qualifying_foreign_income` and `local_taxable_below_first_band` remain accepted for compatibility but are optional and never requested. They are not defaulted or saved as answers. Computation derives the final flags from actual confirmed amounts. All eleven other scope fields remain explicit, as do every required monetary zero and relevant eligibility confirmation.
+
+Before computation, the host reviews year, gross versus net income, duplicate documents and replacement certificates with the user. The pre-worksheet checklist requires a matching evidence-reconciliation statement. The server still has no document ingestion or verification capability.
 
 | Readiness status | Meaning |
 |---|---|

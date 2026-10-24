@@ -36,11 +36,12 @@ export function resolveForeign(f: Partial<ForeignFacts>): ForeignFacts {
 const groups = { scope: scopeSchema, income: incomeSchema, foreign: foreignSchema, deductions: deductionsSchema };
 export const factDictionary = Object.entries(groups).flatMap(([group, schema]) => Object.entries(schema.shape).map(([key, field]) => ({
   path: `${group}.${key}`, kind: 'writable' as const,
+  required_by_schema: !field.isOptional(),
   type: group === 'scope' || (group === 'income' && key === 'other_income_or_claims') || (group === 'foreign' && !foreignAmounts.includes(key as typeof foreignAmounts[number])) ? 'boolean' : 'lkr_decimal_string',
   description: field.description ?? 'Explicitly confirmed fact; missing is not false or zero.',
 })));
 export const interviewPolicy = {
-  version: '2025.26.intake.1',
+  version: '2025.26.intake.2',
   states: {
     complete: 'All currently required inputs are confirmed, or confirmed facts establish a blocking result. Inspect the boolean value.',
     incomplete: 'The active dependency set is known but contains unanswered writable facts.',
@@ -55,6 +56,7 @@ export const interviewPolicy = {
     'Positive foreign tax requires credit eligibility and single-source confirmations.',
     'Unneeded booleans are not collected or stored; zero amounts are never inferred.',
   ],
+  scope_hints: 'Legacy calculation-dependent hints are optional and never requested. Computation derives foreign income, first-band position and credit ceilings from confirmed amounts.',
 };
 type Evaluation = {
   id: string; kind: 'derived'; status: 'complete' | 'placeholder' | 'incomplete'; value: boolean | null;
@@ -74,7 +76,7 @@ export function evaluateInterview(facts: InterviewFacts) {
   const requirements = foreignRequirements(facts.foreign ?? {});
   const evaluations = Object.entries(groups).map(([group, schema]) => {
     const values = facts[group as keyof InterviewFacts] as Record<string, unknown> | undefined;
-    const keys = group === 'foreign' ? requirements.required : Object.keys(schema.shape);
+    const keys = group === 'foreign' ? requirements.required : Object.entries(schema.shape).filter(([, field]) => !field.isOptional()).map(([key]) => key);
     const paths = keys.map(k => `${group}.${k}`);
     return node(`${group}_ready`, paths, keys.filter(k => values?.[k] === undefined).map(k => `${group}.${k}`), group === 'foreign' && requirements.status === 'placeholder');
   });
@@ -99,6 +101,10 @@ export function evaluateInterview(facts: InterviewFacts) {
     status: scopeBlock ? 'out_of_scope' as const : blockingError ? 'blocked' as const : active ? 'incomplete' as const : 'complete' as const,
     calculation_performed: false, filing_ready: false, interview_policy_version: interviewPolicy.version,
     missing_facts: blockingError ? [] : active?.missing_facts ?? [],
+    questions: (blockingError ? [] : active?.missing_facts ?? []).map(path => {
+      const fact = factDictionary.find(f => f.path === path)!;
+      return { path, type: fact.type, question: fact.description };
+    }),
     stage: blockingError ? 'blocked' : active?.id.replace('_ready', '') ?? 'ready',
     blocking_error: blockingError ?? null,
     not_applicable_facts: requirements.not_applicable,
