@@ -167,3 +167,11 @@ Payment groundwork: `npm run payments:check` validates the [development payment 
 `lk_local_capabilities` reports optional configuration without exposing paths. `lk_documents` reads a confirmed relative file under the local document root, proposes whitelisted amounts, and enforces source/year/duplicate/revision review before applying a digest-bound category total. Text PDFs, image-only PDFs, PNG/JPEG and a documented salary CSV are supported; unknown labels and degraded OCR need manual confirmation or correction. Extracted text never becomes instructions or leaves the extractor.
 
 `lk_normalize_amount` proposes canonical copied-money values without changing facts. `lk_draft` uses a private local key file and AES-256-GCM for explicit save/restore/delete slots; restore expiry does not automatically erase ciphertext. Consent and worksheet approval are never restored. `lk_preparation` tracks case-specific external preparation steps without claiming official filing readiness. Setup, limits, examples and the actual document/OCR/restart integration gate are in [docs/local-workflow.md](docs/local-workflow.md).
+
+## First-time use
+
+Once connected, ask: "Help me estimate my tax using my salary and bank records." The assistant checks which features are available, explains the supported period and asks a few ordinary questions at a time. You do not need to write tool commands or understand tax-form codes. Manual entry works without document or draft setup; read the requested totals from your own records and do not share identifiers or credentials.
+
+Imported documents have readable labels and review questions. If a letter was assigned the wrong category, ask to correct that document; unrelated records remain intact. Pending document decisions and totals now appear as the next step rather than a misleading ready state. Unknown amounts remain unknown until confirmed. If saving is not configured, keep the session open and review your entered totals for secure preservation before closing or changing setup.
+
+See the [manual first-time walkthrough](docs/first-time-walkthrough.md) for observed failures, corrections and test limits.

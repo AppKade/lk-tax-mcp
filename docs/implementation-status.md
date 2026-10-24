@@ -206,3 +206,7 @@ Validation: all 108 tests, TypeScript, runtime capability lint, rules governance
 - Added nonmutating copied-money normalization and case-specific external-preparation status. All tax figures and legal release limits are unchanged.
 - Added actual compiled-MCP text-PDF, PNG/image-only-PDF OCR with confirmed corrections, revision/duplicate/year/instruction, worksheet, encrypted process-restart and provenance integration coverage. CI installs local tools for that gate.
 - Complete official schedules, assets/liabilities output, legal interpretation resolution, official rounding and qualified practitioner sign-off remain external release gates. See [local-workflow.md](local-workflow.md).
+
+## Manual first-time-user follow-up, preview.13 (2026-10-24)
+
+An adaptive walkthrough of the running MCP found incorrect category recovery returning the old category, ready intake ignoring pending document review, technical disabled-feature guidance and an unsafe restart suggestion for unsaved work. The fixes add single-document reclassification with fingerprint and replacement-chain checks, persisted managed-category history, combined document/intake readiness, readable review labels and warnings, safe session continuation and explicit manual fallback. Existing-session metadata is limited to booleans; consent and file-read gates remain intact. Tax arithmetic and rule JSON are unchanged. See [first-time-walkthrough.md](first-time-walkthrough.md).

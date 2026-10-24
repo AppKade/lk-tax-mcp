@@ -20,6 +20,7 @@ export const partialFactsSchema = z.strictObject({
 type Facts = z.infer<typeof partialFactsSchema>;
 export const documentActionSchema = z.discriminatedUnion('action', [
   z.strictObject({ action: z.literal('review_file'), file: z.string().min(1).max(240), kind: evidenceKind, user_confirmed: z.boolean() }),
+  z.strictObject({ action: z.literal('reclassify'), id: z.string().regex(/^doc_[a-f0-9]{16}$/), file: z.string().min(1).max(240), kind: evidenceKind, user_confirmed: z.boolean() }),
   z.strictObject({ action: z.literal('list') }),
   z.strictObject({ action: z.literal('confirm'), id: z.string().regex(/^doc_[a-f0-9]{16}$/), include: z.boolean(), values: evidenceValues.optional(),
     year: z.literal('2025/26').optional(), replaces: z.string().regex(/^doc_[a-f0-9]{16}$/).optional(),
@@ -86,7 +87,12 @@ export class TaxSession {
   nextQuestions() {
     this.requireConsent();
     const progress = evaluateInterview(this.facts);
-    return { ...progress, confirmed_facts: structuredClone(this.facts), persistence: 'memory_only',
+    const evidenceProgress = this.evidence.progress(this.facts.income ?? {});
+    const reviewDocuments = !progress.blocking_error && progress.stage !== 'scope' && evidenceProgress.calculation_blocked;
+    return { ...progress, ...(reviewDocuments ? { status: 'incomplete' as const, stage: 'documents', missing_facts: [], questions: [], guidance: evidenceProgress.message } : {}),
+      evidence_progress: evidenceProgress, calculation_ready: progress.status === 'complete' && !evidenceProgress.calculation_blocked,
+      readiness_note: 'The evaluations describe financial intake. calculation_ready also checks document reconciliation; calculation still validates financial rules and never establishes filing readiness.',
+      confirmed_facts: structuredClone(this.facts), persistence: 'memory_only',
       facts_note: 'These are the aggregate facts actually entered, not verified evidence. Missing values stay absent. Optional legacy scope hints do not establish computed tax flags. Review year, gross amounts, duplicates and revisions before calculation.',
       ...(progress.blocking_error ? { blocking_guidance: errors[progress.blocking_error] } : {}) };
   }
@@ -156,7 +162,20 @@ export class TaxSession {
     if (annual.flags.length || annual.input_warnings.length) throw new Error('INSTALMENT_BASIS_REVIEW');
     return planInstalments(parsed.data, annual.figures.tax);
   }
-  localCapabilities() { return localCapabilities(); }
+  localCapabilities() {
+    const capabilities = localCapabilities();
+    return { ...capabilities, session: { active: this.active, consent_required: this.acceptedVersion !== DISCLAIMER_VERSION,
+      has_answers: Object.values(this.facts).some(group => Object.keys(group).length > 0), has_documents: this.evidence.list().documents.length > 0 },
+      getting_started: {
+        introduction: 'I can help you prepare a tax estimate. I will ask a few questions, help you find the right amounts in your salary and bank records, and explain the result.',
+        assessment_period: { year: rules.ya, from: rules.effective_from, to: rules.effective_to },
+        manual_entry_available: true,
+        documents: capabilities.documents_enabled ? 'Local document review is available. Choose a file only after agreeing to the terms and authorizing that read.' : 'You can read the totals from your documents instead. Local document reading is not set up; no upload or technical setup is needed for manual entry.',
+        saving: capabilities.encrypted_drafts_enabled ? 'Encrypted saving is available only when you explicitly request it.' : 'Saving is not set up. Keep this session open because a restart loses unsaved answers. You can ask to review your entered totals and keep your own secure copy before closing.',
+        next_step: !this.active ? 'Explain the estimate limits, show the terms and ask for agreement before starting a fresh session.' : this.acceptedVersion !== DISCLAIMER_VERSION ? 'Show the current terms and ask for agreement; do not reset the existing session.' : 'Continue the current session with the next missing questions. Do not start over unless asked.',
+        limit: 'This is a development estimate, not an official filing or a decision that you do not need to file.',
+      } };
+  }
   normalizeAmount(value: string) {
     this.requireConsent(); return { canonical_amount: normalizeAmount(value), user_confirmation_required: true, facts_changed: false };
   }
@@ -177,12 +196,14 @@ export class TaxSession {
     }
     let result: Record<string, unknown>;
     if (input.action === 'review_file') result = this.evidence.add(readDocument(input.file, input.kind));
+    else if (input.action === 'reclassify') result = this.evidence.reclassify(input.id, readDocument(input.file, input.kind));
     else if (input.action === 'confirm') result = this.evidence.decide(input.id, input.include, input.values, input.year, input.replaces, input.duplicate_resolution, input.user_confirmed);
     else { this.evidence.clear(); result = { cleared: true, income_totals_preserved: true }; }
     this.acknowledged = undefined; this.manualPreparation = []; return result;
   }
   draft(input: z.infer<typeof draftActionSchema>) {
     this.requireConsent(); if (!input.user_confirmed) throw new Error('DRAFT_CONFIRMATION');
+    if (input.action !== 'delete' && !localCapabilities().encrypted_drafts_enabled) throw new Error('DRAFT_FEATURE_DISABLED');
     if (input.action === 'save') return saveDraft(input.slot, { ya: rules.ya, ruleset_version: rules.version, facts: this.facts, evidence: this.evidence.snapshot() }, input.retention_days, input.overwrite);
     if (input.action === 'delete') return deleteDraft(input.slot);
     const parsed = z.strictObject({ ya: z.literal('2025/26'), ruleset_version: z.literal(rules.version), facts: partialFactsSchema, evidence: z.unknown() }).safeParse(loadDraft(input.slot));
@@ -211,8 +232,11 @@ export class TaxSession {
   }
 }
 const errors: Record<string, string> = {
+  DRAFT_FEATURE_DISABLED: 'Encrypted drafts are not set up, so this request did not save or restore a draft. Keep this session open: restarting loses unsaved answers. Ask to review the entered totals and keep your own secure copy before closing or arranging local setup. Never share keys or ciphertext in chat.',
+  EVIDENCE_SOURCE_CHANGED: 'This file is different from the selected document. Review it as a new document and explicitly resolve any replacement; no existing record was changed.',
+  EVIDENCE_CATEGORY: 'Choose the corrected document category. For a correction within the same category, confirm the corrected amounts instead; the document record was not reset.',
   AMOUNT_FORMAT: 'Use an unambiguous nonnegative LKR amount with at most two decimal places. Optional LKR/Rs prefix and correctly grouped commas are accepted by lk_normalize_amount only. No signs, exponent notation or blank values. Confirm the canonical result before setting a fact.',
-  LOCAL_FEATURE_DISABLED: 'This optional local feature is disabled. Configure the document root or encrypted-draft root and key file locally, then restart. Never send keys or raw documents through chat.',
+  LOCAL_FEATURE_DISABLED: 'This optional local feature is not set up. You can still enter confirmed totals from your documents manually. Keep the current session open; restarting loses unsaved answers. Review and securely preserve the entered totals before arranging setup. Never share keys or raw documents in chat.',
   LOCAL_CONFIGURATION: 'Check the configured local directories and private 32-byte draft key file on your device. Never put the key or configuration contents in chat.',
   LOCAL_FILE_REFUSED: 'Select a regular file within the configured document directory. Absolute paths, traversal, symbolic links, oversized files and files outside the directory are refused.',
   DOCUMENT_FORMAT: 'Use a supported PDF, PNG, JPEG or the documented salary CSV format. Other layouts need manual aggregate entry; do not paste raw text or identifiers.',
