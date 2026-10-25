@@ -54,6 +54,7 @@ export function computeReturn(input: z.infer<typeof returnSchema>) {
   const r = selectRules(ya);
   let checked = checkScope(scope);
   if (checked.status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
+  if (scope.business_profit_needs_computation) throw new Error('BUSINESS_PROFIT_REQUIRED');
   if (scope.multiple_foreign_tax_countries || scope.preparing_for_clients || income.other_income_or_claims)
     throw new Error('FEATURE_NOT_IMPLEMENTED');
   const dividendGross = cents(income.final_wht_dividends_gross);

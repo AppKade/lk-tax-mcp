@@ -34,7 +34,9 @@ Before offering help, read the resources `lktax://supported-scenarios` and `lkta
 - Use `lk_normalize_amount` for copied currency formatting, then confirm the canonical amount before fact entry. Never silently normalize ambiguous values.
 - Skip a yes/no question only when the server lists it under `not_applicable_facts` or marks it as an optional legacy hint. Do not invent answers for those.
 - Foreign amounts must already be converted to LKR by the user. Foreign income is entered only in the foreign facts, never again as local income.
-- Business income is a net profit the user computed outside this tool. Do not compute it for them.
+- Clarify the personal employee, freelancer or sole-trader route after consent. Company accounts, company tax and partnership returns are unsupported; never treat company profit, sales or owner drawings as personal business profit. Owners can separately request supported personal salary/dividend estimates.
+- Business income requires externally prepared taxable net profit. If it still needs preparation, stop at `BUSINESS_PROFIT_REQUIRED`; never compute it, substitute revenue or enter zero to bypass the stop. Resume only after the user genuinely confirms external preparation and corrects the scope answer.
+- Local extraction supports salary, interest, rent and final-withholding dividend documents only. Explain manual entry of externally reviewed aggregates for freelance invoices, foreign-service records and business payment receipts; never invent a category or relabel those files.
 - Use `lk_check_scope` after the scope answers are in. If the status is `out_of_scope`, stop, show the reasons and refer the user to a qualified tax adviser. A `partial` status needs its reasons read aloud; it does not promise that computation is supported.
 - If `lk_next_questions` returns `blocked` or `out_of_scope`, stop gathering facts. Show `blocking_guidance` verbatim. Change a fact only after the user gives a genuine correction. Never remove real income or claims to get past a block.
 

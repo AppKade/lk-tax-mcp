@@ -108,6 +108,7 @@ export class TaxSession {
     this.requireConsent();
     const known = checkKnownScope(this.facts.scope ?? {});
     if (known.status === 'out_of_scope') throw new Error('OUT_OF_SCOPE');
+    if (this.facts.scope?.business_profit_needs_computation) throw new Error('BUSINESS_PROFIT_REQUIRED');
     if (this.facts.scope?.multiple_foreign_tax_countries || this.facts.scope?.preparing_for_clients || this.facts.income?.other_income_or_claims)
       throw new Error('FEATURE_NOT_IMPLEMENTED');
     const foreignBlock = knownForeignBlock(this.facts.foreign ?? {});
@@ -170,6 +171,14 @@ export class TaxSession {
         introduction: 'I can help you prepare a tax estimate. I will ask a few questions, help you find the right amounts in your salary and bank records, and explain the result.',
         assessment_period: { year: rules.ya, from: rules.effective_from, to: rules.effective_to },
         manual_entry_available: true,
+        choose_your_route: {
+          question: 'Is this for your personal salary, freelance work or sole-trader business, or for a separate company or partnership?',
+          employee: 'Use your annual taxable-pay and employment-tax certificates. Include every job and distinguish replacement certificates from additional employers.',
+          freelancer: 'First obtain taxable net profit prepared outside this tool. Invoices, receipts, fees and bank deposits are not net profit. Overseas work needs separate income and eligibility questions, with amounts already converted to LKR.',
+          sole_trader: 'Use externally prepared taxable net profit for your individual business, not sales, accounting profit or personal drawings. Business accounts and losses cannot be prepared here.',
+          company_or_partnership: 'Company accounts, company tax and partnership returns are unsupported. Do not enter a company profit or owner drawings as personal business profit. A separate personal estimate may cover supported salary or dividends paid to you.',
+        },
+        document_categories: 'Local extraction supports salary, bank-interest, rent and final-withholding dividend records only. Business accounts, freelance invoices, foreign-service statements and business payment receipts need external review and manual entry of confirmed supported totals. Do not relabel them as salary or interest.',
         documents: capabilities.documents_enabled ? 'Local document review is available. Choose a file only after agreeing to the terms and authorizing that read.' : 'You can read the totals from your documents instead. Local document reading is not set up; no upload or technical setup is needed for manual entry.',
         saving: capabilities.encrypted_drafts_enabled ? 'Encrypted saving is available only when you explicitly request it.' : 'Saving is not set up. Keep this session open because a restart loses unsaved answers. You can ask to review your entered totals and keep your own secure copy before closing.',
         next_step: !this.active ? 'Explain the estimate limits, show the terms and ask for agreement before starting a fresh session.' : this.acceptedVersion !== DISCLAIMER_VERSION ? 'Show the current terms and ask for agreement; do not reset the existing session.' : 'Continue the current session with the next missing questions. Do not start over unless asked.',
@@ -269,6 +278,7 @@ const errors: Record<string, string> = {
   CONSENT_VERSION_MISMATCH: 'Fetch the current disclaimer and obtain explicit user agreement to that version.',
   INVALID_FACTS: 'Use only published fact names, booleans and nonnegative decimal LKR strings with at most two decimal places. Do not send identifiers.',
   MISSING_SCOPE_FACTS: 'Use lk_next_questions and complete every requested required scope fact before computation; optional calculation-dependent legacy hints need no answer.',
+  BUSINESS_PROFIT_REQUIRED: 'You still need a taxable business net profit prepared outside this tool. Pause the estimate and obtain a prepared profit figure; invoices, receipts, revenue, bank deposits, accounting profit and personal drawings are not substitutes. Do not enter zero or calculate profit here to bypass this stop. Resume only after you confirm the externally prepared amount and genuinely correct the outstanding-profit answer.',
   MISSING_INCOME_FACTS: 'Use lk_next_questions and complete the missing income facts. Confirm zero values with the user.',
   MISSING_FOREIGN_FACTS: 'Use lk_next_questions and confirm all foreign amounts, including zeros, and the eligibility facts currently required by those amounts. Missing amounts are never zero; inapplicable booleans need no answer.',
   FOREIGN_ELIGIBILITY_REVIEW: 'This foreign income is not confirmed as qualifying for the supported concession or its LKR conversion is unconfirmed. Computation is refused. Do not relabel it as local income or guess eligibility; obtain professional review.',

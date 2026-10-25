@@ -1,6 +1,6 @@
 {
   "name": "@appkade/lk-tax-mcp",
-  "version": "2026.25.0-preview.13",
+  "version": "2026.25.0-preview.14",
   "private": true,
   "description": "Local Sri Lankan individual income tax assistance over MCP",
   "type": "module",
