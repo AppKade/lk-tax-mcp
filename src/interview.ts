@@ -71,6 +71,7 @@ export function evaluateInterview(facts: InterviewFacts) {
   const knownScope = checkKnownScope(facts.scope ?? {});
   const scopeBlock = knownScope.status === 'out_of_scope';
   const blockingError = scopeBlock ? 'OUT_OF_SCOPE' :
+    facts.scope?.business_profit_needs_computation ? 'BUSINESS_PROFIT_REQUIRED' :
     facts.scope?.multiple_foreign_tax_countries || facts.scope?.preparing_for_clients || facts.income?.other_income_or_claims ? 'FEATURE_NOT_IMPLEMENTED' :
     knownForeignBlock(facts.foreign ?? {});
   const requirements = foreignRequirements(facts.foreign ?? {});
@@ -80,7 +81,7 @@ export function evaluateInterview(facts: InterviewFacts) {
     const paths = keys.map(k => `${group}.${k}`);
     return node(`${group}_ready`, paths, keys.filter(k => values?.[k] === undefined).map(k => `${group}.${k}`), group === 'foreign' && requirements.status === 'placeholder');
   });
-  const blockingNode = scopeBlock || facts.scope?.multiple_foreign_tax_countries || facts.scope?.preparing_for_clients ? 'scope_ready' :
+  const blockingNode = scopeBlock || facts.scope?.business_profit_needs_computation || facts.scope?.multiple_foreign_tax_countries || facts.scope?.preparing_for_clients ? 'scope_ready' :
     facts.income?.other_income_or_claims ? 'income_ready' : 'foreign_ready';
   if (blockingError) {
     const blocked = evaluations.find(n => n.id === blockingNode)!;

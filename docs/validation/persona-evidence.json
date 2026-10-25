@@ -1,0 +1,3817 @@
+{
+  "date": "2026-10-25",
+  "baseline_commit": "85c3cb1bc918132358af89f1571db6b1d4581cf1",
+  "method": "Manually selected requests to the actual compiled stdio server. Synthetic role-play, not independent human or installed-host UI testing. Requests are recorded in execution order; corrections within a route reuse that session. Unsupported document kinds were deliberate boundary probes. Observations omit repeated envelope metadata and raw resource bodies.",
+  "synthetic_pdf_contents": {
+    "employee-a.pdf": [
+      "SALARY CERTIFICATE - SYNTHETIC TEST ONLY",
+      "Year of assessment: 2025/26",
+      "Gross employment income: LKR 1,200,000.00",
+      "APIT deducted: LKR 0.00",
+      "Employment: April through September"
+    ],
+    "employee-b.pdf": [
+      "SALARY CERTIFICATE - SYNTHETIC TEST ONLY",
+      "Year of assessment: 2025/26",
+      "Gross employment income: LKR 1,800,000.00",
+      "APIT deducted: LKR 108,000.00",
+      "Employment: October through March"
+    ],
+    "freelance-invoices.pdf": [
+      "FREELANCER ANNUAL RECORD - SYNTHETIC TEST ONLY",
+      "Year of assessment: 2025/26",
+      "Invoices issued: LKR 3,600,000.00",
+      "Client receipts: LKR 3,240,000.00",
+      "Platform fees: LKR 180,000.00",
+      "Equipment purchase: LKR 240,000.00",
+      "WHT deducted: LKR 180,000.00",
+      "This is not a prepared taxable profit statement."
+    ],
+    "sole-trader.pdf": [
+      "SOLE TRADER PROFIT SUMMARY - SYNTHETIC TEST ONLY",
+      "Year of assessment: 2025/26",
+      "Sales revenue: LKR 12,000,000.00",
+      "Accounting profit: LKR 2,800,000.00",
+      "Tax adjusted net profit: LKR 3,000,000.00",
+      "Personal drawings: LKR 1,200,000.00",
+      "Tax instalments paid: LKR 150,000.00",
+      "Prepared externally for this synthetic scenario."
+    ],
+    "foreign-services.pdf": [
+      "FOREIGN SERVICE SUMMARY - SYNTHETIC TEST ONLY",
+      "Year of assessment: 2025/26",
+      "Net service income converted to LKR: 6,000,000.00",
+      "Foreign income tax paid: LKR 0.00",
+      "Services used outside Sri Lanka.",
+      "Receipts in foreign currency via a licensed bank.",
+      "Conversion and net profit prepared externally."
+    ],
+    "company.pdf": [
+      "PRIVATE LIMITED COMPANY - SYNTHETIC TEST ONLY",
+      "Year of assessment: 2025/26",
+      "Company sales: LKR 24,000,000.00",
+      "Company taxable profit: LKR 6,000,000.00",
+      "Owner drawings: LKR 1,200,000.00",
+      "This document is company accounts, not personal income."
+    ]
+  },
+  "phases": [
+    {
+      "phase": "before-preview.13",
+      "raw_transcript_sha256": "19d60f45bd45b5d1b1adfd9fa7207836b52c27bd1b55f5945786749a8b6101c8",
+      "requests": [
+        {
+          "request": 1,
+          "method": "initialize",
+          "input": {
+            "protocolVersion": "2025-11-25",
+            "capabilities": {},
+            "clientInfo": {
+              "name": "persona-walkthrough",
+              "version": "1"
+            }
+          },
+          "observed": {
+            "protocol_result_keys": [
+              "protocolVersion",
+              "capabilities",
+              "serverInfo",
+              "instructions"
+            ]
+          }
+        },
+        {
+          "request": 2,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_local_capabilities",
+            "arguments": {}
+          },
+          "observed": {
+            "getting_started": {
+              "introduction": "I can help you prepare a tax estimate. I will ask a few questions, help you find the right amounts in your salary and bank records, and explain the result.",
+              "assessment_period": {
+                "year": "2025/26",
+                "from": "2025-04-01",
+                "to": "2026-03-31"
+              },
+              "manual_entry_available": true,
+              "documents": "Local document review is available. Choose a file only after agreeing to the terms and authorizing that read.",
+              "saving": "Saving is not set up. Keep this session open because a restart loses unsaved answers. You can ask to review your entered totals and keep your own secure copy before closing.",
+              "next_step": "Explain the estimate limits, show the terms and ask for agreement before starting a fresh session.",
+              "limit": "This is a development estimate, not an official filing or a decision that you do not need to file."
+            },
+            "session": {
+              "active": false,
+              "consent_required": true,
+              "has_answers": false,
+              "has_documents": false
+            }
+          }
+        },
+        {
+          "request": 3,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 4,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_get_disclaimer",
+            "arguments": {}
+          },
+          "observed": {
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 5,
+          "method": "prompts/list",
+          "input": {},
+          "observed": {
+            "protocol_result_keys": [
+              "prompts"
+            ]
+          }
+        },
+        {
+          "request": 6,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 7,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "resident_full_year": true,
+                "residency_special_case": false,
+                "investment_asset_gains": false
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "scope",
+            "questions": [
+              {
+                "path": "scope.partnership_or_trust",
+                "type": "boolean",
+                "question": "Do you have income allocated from a partnership or trust?"
+              },
+              {
+                "path": "scope.restricted_business",
+                "type": "boolean",
+                "question": "Do you have business income subject to special rates, such as betting, gaming, liquor or tobacco?"
+              },
+              {
+                "path": "scope.terminal_benefits_or_arrears",
+                "type": "boolean",
+                "question": "Did you receive retirement or termination benefits, or salary arrears?"
+              },
+              {
+                "path": "scope.business_profit_needs_computation",
+                "type": "boolean",
+                "question": "Do you need help calculating business net profit from receipts and expenses? This tool accepts only a net profit prepared outside it."
+              },
+              {
+                "path": "scope.losses",
+                "type": "boolean",
+                "question": "Do you need to claim or carry forward a business or other tax loss?"
+              },
+              {
+                "path": "scope.multiple_foreign_tax_countries",
+                "type": "boolean",
+                "question": "Does your foreign income tax credit claim involve more than one country?"
+              },
+              {
+                "path": "scope.amendment_assessment_or_appeal",
+                "type": "boolean",
+                "question": "Is this an amendment to a filed return, an assessment dispute or an appeal?"
+              },
+              {
+                "path": "scope.preparing_for_clients",
+                "type": "boolean",
+                "question": "Are you preparing this estimate for a client rather than yourself?"
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": []
+          }
+        },
+        {
+          "request": 8,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "partnership_or_trust": false,
+                "restricted_business": false,
+                "terminal_benefits_or_arrears": false,
+                "business_profit_needs_computation": false,
+                "losses": false,
+                "multiple_foreign_tax_countries": false,
+                "amendment_assessment_or_appeal": false,
+                "preparing_for_clients": false
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "income",
+            "questions": [
+              {
+                "path": "income.employment",
+                "type": "lkr_decimal_string",
+                "question": "Your total local employment pay for this tax year before tax and employee deductions, including taxable bonuses and benefits. Use the annual taxable-employment certificate, not take-home pay. Exclude foreign salary entered separately and do not add an old certificate to its replacement."
+              },
+              {
+                "path": "income.business_net",
+                "type": "lkr_decimal_string",
+                "question": "Local taxable business net profit prepared outside this tool, not revenue or bank deposits. Do not include foreign services entered separately. Losses and account preparation are unsupported."
+              },
+              {
+                "path": "income.interest",
+                "type": "lkr_decimal_string",
+                "question": "Total taxable local bank interest for this year before the bank withheld tax. Use gross interest, not the net amount credited. We ask about the tax withheld separately."
+              },
+              {
+                "path": "income.rent",
+                "type": "lkr_decimal_string",
+                "question": "Total local rental income before any expenses. Tell the assistant if you want to claim repairs or other rental expenses, which this preview cannot calculate."
+              },
+              {
+                "path": "income.final_wht_dividends_gross",
+                "type": "lkr_decimal_string",
+                "question": "Total resident-company dividends before final tax already withheld. If final tax was not already deducted, tell the assistant so it can check whether the case is supported."
+              },
+              {
+                "path": "income.final_wht_dividends_deducted",
+                "type": "lkr_decimal_string",
+                "question": "Actual final WHT deducted on these dividends. Informational only, never an advance tax credit."
+              },
+              {
+                "path": "income.apit_credit",
+                "type": "lkr_decimal_string",
+                "question": "Tax already deducted or paid on your employment for this year, shown as APIT/PAYE on the employer certificate, including any separately paid Table 08 tax. Do not infer it from take-home pay or other employee deductions. If the tax amount is not stated, say it is unknown rather than zero. Exclude foreign income tax and duplicate certificates."
+              },
+              {
+                "path": "income.ait_wht_credit",
+                "type": "lkr_decimal_string",
+                "question": "Eligible advance tax already withheld by your bank or another local payer for this year, shown as AIT/WHT on certificates. Exclude final dividend tax, foreign income tax and duplicate certificates. If it is not stated, say it is unknown rather than zero."
+              },
+              {
+                "path": "income.instalments_paid",
+                "type": "lkr_decimal_string",
+                "question": "Actual income-tax instalments paid for this year from payment records. Exclude projected payments and payments for another year."
+              },
+              {
+                "path": "income.other_income_or_claims",
+                "type": "boolean",
+                "question": "Do you have any other income or claim outside the supported categories, including unsupported or exempt income, rent expenses, other dividends or loan-funded solar claims? Do not omit genuine income to bypass a refusal."
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": []
+          }
+        },
+        {
+          "request": 9,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "employment": "1440000",
+                "apit_credit": "0",
+                "business_net": "0",
+                "interest": "0",
+                "rent": "0",
+                "final_wht_dividends_gross": "0",
+                "final_wht_dividends_deducted": "0",
+                "ait_wht_credit": "0",
+                "instalments_paid": "0",
+                "other_income_or_claims": false
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "foreign",
+            "questions": [
+              {
+                "path": "foreign.employment_lkr",
+                "type": "lkr_decimal_string",
+                "question": "Annual foreign-employer salary already converted to LKR; do not include it again in local employment."
+              },
+              {
+                "path": "foreign.service_net_lkr",
+                "type": "lkr_decimal_string",
+                "question": "Annual net foreign service business income already computed and converted to LKR; exclude it from local business_net."
+              },
+              {
+                "path": "foreign.foreign_tax_paid",
+                "type": "lkr_decimal_string",
+                "question": "Eligible foreign income tax actually paid on this same qualifying income in ONE country. Exclude foreign VAT and Sri Lankan APIT."
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": []
+          }
+        },
+        {
+          "request": 10,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "0",
+                "foreign_tax_paid": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "deductions",
+            "questions": [
+              {
+                "path": "deductions.solar_available",
+                "type": "lkr_decimal_string",
+                "question": "Confirmed eligible expenditure remaining after all prior relief claims for panels on own premises connected to the national grid. Loan-funded claims are not supported."
+              },
+              {
+                "path": "deductions.approved_charity_cash",
+                "type": "lkr_decimal_string",
+                "question": "Cash donations to approved charitable institutions only; exclude in-kind donations."
+              },
+              {
+                "path": "deductions.government_donations",
+                "type": "lkr_decimal_string",
+                "question": "Eligible current-year donations to Government or qualifying specified institutions, including in-kind donations."
+              },
+              {
+                "path": "deductions.government_donations_brought_forward",
+                "type": "lkr_decimal_string",
+                "question": "Only an eligible and independently verified Government-donation carry-forward under Annexure 3(f); legacy qualifying-payment balances are unsupported."
+              },
+              {
+                "path": "deductions.samurdhi_shop_contributions",
+                "type": "lkr_decimal_string",
+                "question": "Confirmed eligible contributions to a shop for a female Samurdhi beneficiary, recommended and confirmed by the department."
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 11,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "deductions": {
+                "solar_available": "0",
+                "approved_charity_cash": "0",
+                "government_donations": "0",
+                "government_donations_brought_forward": "0",
+                "samurdhi_shop_contributions": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 12,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "1440000.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "0.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "0.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "1440000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1440000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1440000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "0.00",
+              "tax": "0.00",
+              "credits": "0.00",
+              "balance_payable": "0.00",
+              "potential_overpayment": "0.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "in_scope",
+              "reasons": [],
+              "needs_professional_review": false
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 13,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_preparation",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "preparation_only",
+            "filing_ready": false,
+            "official_filing_supported": false
+          }
+        },
+        {
+          "request": 14,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 15,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 16,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "review_file",
+              "file": "employee-a.pdf",
+              "kind": "employment",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "documents": [
+              {
+                "id": "doc_2967f91c1b4ce8e7",
+                "sha256": "2967f91c1b4ce8e740db515dd38f25abee846dbc060535de9dd4111318aae58f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1200000.00",
+                  "apit_credit": "0.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1200000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "0.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "pending",
+                "display_label": "Salary document 1",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1200000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "0.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              }
+            ]
+          }
+        },
+        {
+          "request": 17,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "review_file",
+              "file": "employee-b.pdf",
+              "kind": "employment",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "documents": [
+              {
+                "id": "doc_2967f91c1b4ce8e7",
+                "sha256": "2967f91c1b4ce8e740db515dd38f25abee846dbc060535de9dd4111318aae58f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1200000.00",
+                  "apit_credit": "0.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1200000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "0.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "pending",
+                "display_label": "Salary document 1",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1200000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "0.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              },
+              {
+                "id": "doc_7dd3ba4de7f7acb4",
+                "sha256": "7dd3ba4de7f7acb4f6b9c21cd3e90744d61f639a7ca6d196725bd15037e2af1f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1800000.00",
+                  "apit_credit": "108000.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1800000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "108000.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "pending",
+                "display_label": "Salary document 2",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1800000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "108000.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              }
+            ]
+          }
+        },
+        {
+          "request": 18,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "confirm",
+              "id": "doc_2967f91c1b4ce8e7",
+              "include": true,
+              "year": "2025/26",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "error": {
+              "code": "EVIDENCE_CONFIRMATION",
+              "message": "Explicitly confirm every included amount, the year and source completeness from your local records. Extractions are candidates only; exclusions and file reads also require confirmation."
+            }
+          }
+        },
+        {
+          "request": 19,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "confirm",
+              "id": "doc_7dd3ba4de7f7acb4",
+              "include": true,
+              "year": "2025/26",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "error": {
+              "code": "EVIDENCE_CONFIRMATION",
+              "message": "Explicitly confirm every included amount, the year and source completeness from your local records. Extractions are candidates only; exclusions and file reads also require confirmation."
+            }
+          }
+        },
+        {
+          "request": 20,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "preview_apply"
+            }
+          },
+          "observed": {
+            "error": {
+              "code": "EVIDENCE_PENDING",
+              "message": "Resolve every imported document as included or excluded before applying or calculating. Confirm gross amounts and replace superseded sources."
+            }
+          }
+        },
+        {
+          "request": 21,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "confirm",
+              "id": "doc_2967f91c1b4ce8e7",
+              "include": true,
+              "values": {
+                "employment": "1200000",
+                "apit_credit": "0"
+              },
+              "year": "2025/26",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "documents": [
+              {
+                "id": "doc_2967f91c1b4ce8e7",
+                "sha256": "2967f91c1b4ce8e740db515dd38f25abee846dbc060535de9dd4111318aae58f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1200000.00",
+                  "apit_credit": "0.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1200000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "0.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "included",
+                "confirmed_year": "2025/26",
+                "display_label": "Salary document 1",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1200000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "0.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              },
+              {
+                "id": "doc_7dd3ba4de7f7acb4",
+                "sha256": "7dd3ba4de7f7acb4f6b9c21cd3e90744d61f639a7ca6d196725bd15037e2af1f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1800000.00",
+                  "apit_credit": "108000.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1800000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "108000.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "pending",
+                "display_label": "Salary document 2",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1800000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "108000.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              }
+            ]
+          }
+        },
+        {
+          "request": 22,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "confirm",
+              "id": "doc_7dd3ba4de7f7acb4",
+              "include": true,
+              "values": {
+                "employment": "1800000",
+                "apit_credit": "108000"
+              },
+              "year": "2025/26",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "documents": [
+              {
+                "id": "doc_2967f91c1b4ce8e7",
+                "sha256": "2967f91c1b4ce8e740db515dd38f25abee846dbc060535de9dd4111318aae58f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1200000.00",
+                  "apit_credit": "0.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1200000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "0.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "included",
+                "confirmed_year": "2025/26",
+                "display_label": "Salary document 1",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1200000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "0.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              },
+              {
+                "id": "doc_7dd3ba4de7f7acb4",
+                "sha256": "7dd3ba4de7f7acb4f6b9c21cd3e90744d61f639a7ca6d196725bd15037e2af1f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1800000.00",
+                  "apit_credit": "108000.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1800000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "108000.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "included",
+                "confirmed_year": "2025/26",
+                "display_label": "Salary document 2",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1800000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "108000.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              }
+            ]
+          }
+        },
+        {
+          "request": 23,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "preview_apply"
+            }
+          },
+          "observed": {
+            "totals": {
+              "employment": "3000000.00",
+              "apit_credit": "108000.00"
+            },
+            "digest": "bc3c0e0b79ab99e20f218bf23ffe08d6ccd12e2d7ae64e5ed82591e42c784faf"
+          }
+        },
+        {
+          "request": 24,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "apply",
+              "digest": "bc3c0e0b79ab99e20f218bf23ffe08d6ccd12e2d7ae64e5ed82591e42c784faf",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "documents": [
+              {
+                "id": "doc_2967f91c1b4ce8e7",
+                "sha256": "2967f91c1b4ce8e740db515dd38f25abee846dbc060535de9dd4111318aae58f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1200000.00",
+                  "apit_credit": "0.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1200000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "0.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "included",
+                "confirmed_year": "2025/26",
+                "display_label": "Salary document 1",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1200000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "0.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              },
+              {
+                "id": "doc_7dd3ba4de7f7acb4",
+                "sha256": "7dd3ba4de7f7acb4f6b9c21cd3e90744d61f639a7ca6d196725bd15037e2af1f",
+                "kind": "employment",
+                "years": [
+                  "2025/26"
+                ],
+                "pages": 1,
+                "method": "text",
+                "values": {
+                  "employment": "1800000.00",
+                  "apit_credit": "108000.00"
+                },
+                "candidates": [
+                  {
+                    "field": "employment",
+                    "value": "1800000.00",
+                    "page": 1
+                  },
+                  {
+                    "field": "apit_credit",
+                    "value": "108000.00",
+                    "page": 1
+                  }
+                ],
+                "warnings": [],
+                "status": "included",
+                "confirmed_year": "2025/26",
+                "display_label": "Salary document 2",
+                "review_questions": [
+                  {
+                    "field": "employment",
+                    "label": "Pay before tax and employee deductions",
+                    "candidate": "1800000.00",
+                    "confirmation_required": true
+                  },
+                  {
+                    "field": "apit_credit",
+                    "label": "Tax already deducted or paid on employment (APIT)",
+                    "candidate": "108000.00",
+                    "confirmation_required": true
+                  }
+                ],
+                "review_notes": [],
+                "missing_fields": [],
+                "possible_duplicate_of": []
+              }
+            ]
+          }
+        },
+        {
+          "request": 25,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "resident_full_year": true,
+                "residency_special_case": false,
+                "investment_asset_gains": false,
+                "partnership_or_trust": false,
+                "restricted_business": false,
+                "terminal_benefits_or_arrears": false,
+                "business_profit_needs_computation": false,
+                "losses": false,
+                "multiple_foreign_tax_countries": false,
+                "amendment_assessment_or_appeal": false,
+                "preparing_for_clients": false
+              },
+              "income": {
+                "business_net": "0",
+                "interest": "0",
+                "rent": "0",
+                "final_wht_dividends_gross": "0",
+                "final_wht_dividends_deducted": "0",
+                "ait_wht_credit": "0",
+                "instalments_paid": "0",
+                "other_income_or_claims": false
+              },
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "0",
+                "foreign_tax_paid": "0"
+              },
+              "deductions": {
+                "solar_available": "0",
+                "approved_charity_cash": "0",
+                "government_donations": "0",
+                "government_donations_brought_forward": "0",
+                "samurdhi_shop_contributions": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 26,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "3000000.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "1200000.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "96000.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "3000000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "1200000.00",
+              "tax": "96000.00",
+              "credits": "108000.00",
+              "balance_payable": "0.00",
+              "potential_overpayment": "12000.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "in_scope",
+              "reasons": [],
+              "needs_professional_review": false
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 27,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "terminal_benefits_or_arrears": true
+              }
+            }
+          },
+          "observed": {
+            "status": "out_of_scope",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "OUT_OF_SCOPE",
+            "blocking_guidance": "Computation refused by the submitted scope facts. Check the scope exclusions for this calculation and consult a qualified tax adviser.",
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 28,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "OUT_OF_SCOPE",
+              "message": "Computation refused by the submitted scope facts. Check the scope exclusions for this calculation and consult a qualified tax adviser."
+            }
+          }
+        },
+        {
+          "request": 29,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 30,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 31,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "resident_full_year": true,
+                "residency_special_case": false,
+                "investment_asset_gains": false,
+                "partnership_or_trust": false,
+                "restricted_business": false,
+                "terminal_benefits_or_arrears": false,
+                "business_profit_needs_computation": true,
+                "losses": false,
+                "multiple_foreign_tax_countries": false,
+                "amendment_assessment_or_appeal": false,
+                "preparing_for_clients": false
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "income",
+            "questions": [
+              {
+                "path": "income.employment",
+                "type": "lkr_decimal_string",
+                "question": "Your total local employment pay for this tax year before tax and employee deductions, including taxable bonuses and benefits. Use the annual taxable-employment certificate, not take-home pay. Exclude foreign salary entered separately and do not add an old certificate to its replacement."
+              },
+              {
+                "path": "income.business_net",
+                "type": "lkr_decimal_string",
+                "question": "Local taxable business net profit prepared outside this tool, not revenue or bank deposits. Do not include foreign services entered separately. Losses and account preparation are unsupported."
+              },
+              {
+                "path": "income.interest",
+                "type": "lkr_decimal_string",
+                "question": "Total taxable local bank interest for this year before the bank withheld tax. Use gross interest, not the net amount credited. We ask about the tax withheld separately."
+              },
+              {
+                "path": "income.rent",
+                "type": "lkr_decimal_string",
+                "question": "Total local rental income before any expenses. Tell the assistant if you want to claim repairs or other rental expenses, which this preview cannot calculate."
+              },
+              {
+                "path": "income.final_wht_dividends_gross",
+                "type": "lkr_decimal_string",
+                "question": "Total resident-company dividends before final tax already withheld. If final tax was not already deducted, tell the assistant so it can check whether the case is supported."
+              },
+              {
+                "path": "income.final_wht_dividends_deducted",
+                "type": "lkr_decimal_string",
+                "question": "Actual final WHT deducted on these dividends. Informational only, never an advance tax credit."
+              },
+              {
+                "path": "income.apit_credit",
+                "type": "lkr_decimal_string",
+                "question": "Tax already deducted or paid on your employment for this year, shown as APIT/PAYE on the employer certificate, including any separately paid Table 08 tax. Do not infer it from take-home pay or other employee deductions. If the tax amount is not stated, say it is unknown rather than zero. Exclude foreign income tax and duplicate certificates."
+              },
+              {
+                "path": "income.ait_wht_credit",
+                "type": "lkr_decimal_string",
+                "question": "Eligible advance tax already withheld by your bank or another local payer for this year, shown as AIT/WHT on certificates. Exclude final dividend tax, foreign income tax and duplicate certificates. If it is not stated, say it is unknown rather than zero."
+              },
+              {
+                "path": "income.instalments_paid",
+                "type": "lkr_decimal_string",
+                "question": "Actual income-tax instalments paid for this year from payment records. Exclude projected payments and payments for another year."
+              },
+              {
+                "path": "income.other_income_or_claims",
+                "type": "boolean",
+                "question": "Do you have any other income or claim outside the supported categories, including unsupported or exempt income, rent expenses, other dividends or loan-funded solar claims? Do not omit genuine income to bypass a refusal."
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": []
+          }
+        },
+        {
+          "request": 32,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_check_scope",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "partial"
+          }
+        },
+        {
+          "request": 33,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "review_file",
+              "file": "freelance-invoices.pdf",
+              "kind": "business",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "schema_error": [
+              {
+                "type": "text",
+                "text": "Input validation error: Invalid arguments for tool lk_documents: Invalid tool arguments. Use the published schema; do not send identifiers."
+              }
+            ]
+          }
+        },
+        {
+          "request": 34,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "employment": "0",
+                "business_net": "0",
+                "interest": "0",
+                "rent": "0",
+                "final_wht_dividends_gross": "0",
+                "final_wht_dividends_deducted": "0",
+                "apit_credit": "0",
+                "ait_wht_credit": "0",
+                "instalments_paid": "0",
+                "other_income_or_claims": false
+              },
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "0",
+                "foreign_tax_paid": "0"
+              },
+              "deductions": {
+                "solar_available": "0",
+                "approved_charity_cash": "0",
+                "government_donations": "0",
+                "government_donations_brought_forward": "0",
+                "samurdhi_shop_contributions": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 35,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "0.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "0.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "0.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "0.00",
+              "rent_relief": "0.00",
+              "personal_relief": "0.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "0.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "0.00",
+              "tax": "0.00",
+              "credits": "0.00",
+              "balance_payable": "0.00",
+              "potential_overpayment": "0.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "partial",
+              "reasons": [
+                {
+                  "code": "SC-06",
+                  "severity": "partial",
+                  "message": "Supply net profit calculated outside this tool; business accounts are not computed."
+                }
+              ],
+              "needs_professional_review": true
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 36,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_next_questions",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 37,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "business_profit_needs_computation": false
+              },
+              "income": {
+                "business_net": "2400000",
+                "ait_wht_credit": "120000"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 38,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "2400000.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "600000.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "36000.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "2400000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "600000.00",
+              "tax": "36000.00",
+              "credits": "120000.00",
+              "balance_payable": "0.00",
+              "potential_overpayment": "84000.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "in_scope",
+              "reasons": [],
+              "needs_professional_review": false
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 39,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_review_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "review_only",
+            "flags": [],
+            "alternatives": [],
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true,
+            "return_format": {
+              "suggestion": "standard",
+              "eligibility_confirmed": false,
+              "note": "Guide printed page 2 permits employment-and-interest-only electronic filers to use the simplified option. This is a conservative hint, not a filing obligation or portal eligibility decision.",
+              "source": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf"
+            },
+            "review_gaps": [
+              {
+                "code": "REFUND_CLAIM_UNVERIFIED",
+                "targets": [
+                  "return:200"
+                ],
+                "detail": "Potential overpayment is not a validated refund entitlement; the claim cage remains unset."
+              },
+              {
+                "code": "EXEMPT_DISCLOSURES_UNCOLLECTED",
+                "targets": [
+                  "return:210"
+                ],
+                "detail": "A complete exempt/excluded-income disclosure was not collected."
+              },
+              {
+                "code": "REMITTANCE_DISCLOSURES_UNCOLLECTED",
+                "targets": [
+                  "return:210A"
+                ],
+                "detail": "Gross remittance categories and receipt totals were not collected. Net service income is not a substitute."
+              },
+              {
+                "code": "COMPLETE_RETURN_UNAVAILABLE",
+                "targets": [],
+                "detail": "Assets, liabilities, declarations, supporting detail, official filing rounding and practitioner approval remain outside this review. This is not an export checklist acknowledgement."
+              },
+              {
+                "code": "ADVANCE_CREDIT_DETAILS_REQUIRED",
+                "targets": [
+                  "schedule_7A:710",
+                  "schedule_9:908",
+                  "schedule_9:911",
+                  "schedule_9B:927-934"
+                ],
+                "detail": "Advance credits and instalments need source, timing, withholding-agent/withholdee and payment-row reconciliation. Only the supported aggregate total is shown."
+              }
+            ],
+            "checks": [
+              {
+                "id": "main_income",
+                "status": "passed",
+                "formula": "50 = 10 + 20 + 30 + 40",
+                "left": "2400000.00",
+                "right": "2400000.00"
+              },
+              {
+                "id": "main_reliefs",
+                "status": "passed",
+                "formula": "90 = 60 + 70 + 80",
+                "left": "1800000.00",
+                "right": "1800000.00"
+              },
+              {
+                "id": "main_deductions",
+                "status": "passed",
+                "formula": "110 = 90 + 100",
+                "left": "1800000.00",
+                "right": "1800000.00"
+              },
+              {
+                "id": "main_taxable",
+                "status": "passed",
+                "formula": "50 = 110 + 120",
+                "left": "2400000.00",
+                "right": "2400000.00"
+              },
+              {
+                "id": "schedule8_taxable",
+                "status": "passed",
+                "formula": "801 = 808.1 + 809A.1 + 809B.1 + 809C.1 within supported scope",
+                "left": "600000.00",
+                "right": "600000.00"
+              },
+              {
+                "id": "taxable_transfer",
+                "status": "passed",
+                "formula": "return 120 = schedule 8 801",
+                "left": "600000.00",
+                "right": "600000.00"
+              },
+              {
+                "id": "schedule8_tax",
+                "status": "passed",
+                "formula": "810 = 808.3 + 809A.3 + 809B.3 + 809C.3",
+                "left": "36000.00",
+                "right": "36000.00"
+              },
+              {
+                "id": "tax_transfer",
+                "status": "passed",
+                "formula": "return 150 = schedule 8 810",
+                "left": "36000.00",
+                "right": "36000.00"
+              },
+              {
+                "id": "main_tax",
+                "status": "passed",
+                "formula": "170 = 130 + 140 + 150 + 160",
+                "left": "36000.00",
+                "right": "36000.00"
+              },
+              {
+                "id": "main_credits",
+                "status": "passed",
+                "formula": "return 180 = schedule 9 912; details still require reconciliation",
+                "left": "120000.00",
+                "right": "120000.00"
+              },
+              {
+                "id": "main_balance",
+                "status": "passed",
+                "formula": "190 = max(0, 170 - 180)",
+                "left": "0.00",
+                "right": "0.00"
+              }
+            ]
+          }
+        },
+        {
+          "request": 40,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "business_net": "0",
+                "ait_wht_credit": "0"
+              },
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "6000000",
+                "foreign_tax_paid": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "foreign",
+            "questions": [
+              {
+                "path": "foreign.received_in_foreign_currency",
+                "type": "boolean",
+                "question": "Explicitly confirmed fact; missing is not false or zero."
+              },
+              {
+                "path": "foreign.remitted_via_licensed_bank",
+                "type": "boolean",
+                "question": "Explicitly confirmed fact; missing is not false or zero."
+              },
+              {
+                "path": "foreign.fx_conversion_confirmed",
+                "type": "boolean",
+                "question": "Explicitly confirmed fact; missing is not false or zero."
+              },
+              {
+                "path": "foreign.services_used_outside_lk",
+                "type": "boolean",
+                "question": "Explicitly confirmed fact; missing is not false or zero."
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 41,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "review_file",
+              "file": "foreign-services.pdf",
+              "kind": "foreign_services",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "schema_error": [
+              {
+                "type": "text",
+                "text": "Input validation error: Invalid arguments for tool lk_documents: Invalid tool arguments. Use the published schema; do not send identifiers."
+              }
+            ]
+          }
+        },
+        {
+          "request": 42,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "foreign": {
+                "received_in_foreign_currency": true,
+                "remitted_via_licensed_bank": true,
+                "services_used_outside_lk": true,
+                "fx_conversion_confirmed": true
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 43,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "0.00",
+              "foreign_assessable_income": "6000000.00",
+              "local_taxable_income": "0.00",
+              "foreign_taxable_income": "4200000.00",
+              "foreign_deductions": "1800000.00",
+              "tax_progressive": "0.00",
+              "tax_foreign": "540000.00",
+              "foreign_credit_average_limit": "771428.57",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "6000000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "4200000.00",
+              "tax": "540000.00",
+              "credits": "0.00",
+              "balance_payable": "540000.00",
+              "potential_overpayment": "0.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [
+              "INTERP_15PCT",
+              "ASSUMED_FOREIGN_ALLOCATION"
+            ],
+            "alternatives": [
+              {
+                "interpretation": "flat_foreign_cap",
+                "rule_id": "FOREIGN-STACKING-2025",
+                "version": "2025.26.3",
+                "sources": [
+                  {
+                    "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+                    "locator": "Annexure 7 gives a lower first foreign band; shared-band stacking in mixed-income cases is a preview interpretation"
+                  }
+                ],
+                "formula": "Same local-first income allocation; foreign taxable income * cap rate; recompute capped credit and balance. Comparative interpretation, not a confirmed rule.",
+                "figures": {
+                  "tax_progressive": "0.00",
+                  "tax_foreign": "630000.00",
+                  "tax": "630000.00",
+                  "foreign_credit_average_limit": "900000.00",
+                  "foreign_tax_credit": "0.00",
+                  "foreign_tax_uncredited": "0.00",
+                  "credits": "0.00",
+                  "balance_payable": "630000.00",
+                  "potential_overpayment": "0.00"
+                }
+              }
+            ],
+            "scope": {
+              "status": "partial",
+              "reasons": [
+                {
+                  "code": "SC-08",
+                  "severity": "partial",
+                  "message": "Foreign-income stacking has unresolved interpretations."
+                }
+              ],
+              "needs_professional_review": true
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 44,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "foreign": {
+                "remitted_via_licensed_bank": false
+              }
+            }
+          },
+          "observed": {
+            "status": "blocked",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "FOREIGN_ELIGIBILITY_REVIEW",
+            "blocking_guidance": "This foreign income is not confirmed as qualifying for the supported concession or its LKR conversion is unconfirmed. Computation is refused. Do not relabel it as local income or guess eligibility; obtain professional review.",
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 45,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "FOREIGN_ELIGIBILITY_REVIEW",
+              "message": "This foreign income is not confirmed as qualifying for the supported concession or its LKR conversion is unconfirmed. Computation is refused. Do not relabel it as local income or guess eligibility; obtain professional review."
+            }
+          }
+        },
+        {
+          "request": 46,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "foreign": {
+                "remitted_via_licensed_bank": true,
+                "foreign_tax_paid": "300000"
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "foreign",
+            "questions": [
+              {
+                "path": "foreign.credit_eligibility_confirmed",
+                "type": "boolean",
+                "question": "Eligible income tax on the same YA income, paid within the statutory time limit or a permitted extension, with evidence."
+              },
+              {
+                "path": "foreign.single_source_confirmed",
+                "type": "boolean",
+                "question": "The claimed foreign tax and ALL foreign income in this credit calculation belong to one source and one country; no pooling across jobs/businesses."
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 47,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "foreign": {
+                "credit_eligibility_confirmed": true,
+                "single_source_confirmed": true
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 48,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "0.00",
+              "foreign_assessable_income": "6000000.00",
+              "local_taxable_income": "0.00",
+              "foreign_taxable_income": "4200000.00",
+              "foreign_deductions": "1800000.00",
+              "tax_progressive": "0.00",
+              "tax_foreign": "540000.00",
+              "foreign_credit_average_limit": "771428.57",
+              "foreign_tax_credit": "300000.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "6000000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "4200000.00",
+              "tax": "540000.00",
+              "credits": "300000.00",
+              "balance_payable": "240000.00",
+              "potential_overpayment": "0.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [
+              "INTERP_15PCT",
+              "ASSUMED_FOREIGN_ALLOCATION"
+            ],
+            "alternatives": [
+              {
+                "interpretation": "flat_foreign_cap",
+                "rule_id": "FOREIGN-STACKING-2025",
+                "version": "2025.26.3",
+                "sources": [
+                  {
+                    "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+                    "locator": "Annexure 7 gives a lower first foreign band; shared-band stacking in mixed-income cases is a preview interpretation"
+                  }
+                ],
+                "formula": "Same local-first income allocation; foreign taxable income * cap rate; recompute capped credit and balance. Comparative interpretation, not a confirmed rule.",
+                "figures": {
+                  "tax_progressive": "0.00",
+                  "tax_foreign": "630000.00",
+                  "tax": "630000.00",
+                  "foreign_credit_average_limit": "900000.00",
+                  "foreign_tax_credit": "300000.00",
+                  "foreign_tax_uncredited": "0.00",
+                  "credits": "300000.00",
+                  "balance_payable": "330000.00",
+                  "potential_overpayment": "0.00"
+                }
+              }
+            ],
+            "scope": {
+              "status": "partial",
+              "reasons": [
+                {
+                  "code": "SC-08",
+                  "severity": "partial",
+                  "message": "Foreign-income stacking has unresolved interpretations."
+                }
+              ],
+              "needs_professional_review": true
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 49,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "multiple_foreign_tax_countries": true
+              }
+            }
+          },
+          "observed": {
+            "status": "blocked",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "FEATURE_NOT_IMPLEMENTED",
+            "blocking_guidance": "This scenario is not implemented in this development slice. Do not estimate it yourself. Consult a qualified tax adviser.",
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 50,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "FEATURE_NOT_IMPLEMENTED",
+              "message": "This scenario is not implemented in this development slice. Do not estimate it yourself. Consult a qualified tax adviser."
+            }
+          }
+        },
+        {
+          "request": 51,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 52,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 53,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "review_file",
+              "file": "sole-trader.pdf",
+              "kind": "business",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "schema_error": [
+              {
+                "type": "text",
+                "text": "Input validation error: Invalid arguments for tool lk_documents: Invalid tool arguments. Use the published schema; do not send identifiers."
+              }
+            ]
+          }
+        },
+        {
+          "request": 54,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "resident_full_year": true,
+                "residency_special_case": false,
+                "investment_asset_gains": false,
+                "partnership_or_trust": false,
+                "restricted_business": false,
+                "terminal_benefits_or_arrears": false,
+                "business_profit_needs_computation": false,
+                "losses": false,
+                "multiple_foreign_tax_countries": false,
+                "amendment_assessment_or_appeal": false,
+                "preparing_for_clients": false
+              },
+              "income": {
+                "employment": "0",
+                "business_net": "3000000",
+                "interest": "0",
+                "rent": "0",
+                "final_wht_dividends_gross": "0",
+                "final_wht_dividends_deducted": "0",
+                "apit_credit": "0",
+                "ait_wht_credit": "0",
+                "instalments_paid": "150000",
+                "other_income_or_claims": false
+              },
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "0",
+                "foreign_tax_paid": "0"
+              },
+              "deductions": {
+                "solar_available": "0",
+                "approved_charity_cash": "0",
+                "government_donations": "0",
+                "government_donations_brought_forward": "0",
+                "samurdhi_shop_contributions": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 55,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "3000000.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "1200000.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "96000.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "3000000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "1200000.00",
+              "tax": "96000.00",
+              "credits": "150000.00",
+              "balance_payable": "0.00",
+              "potential_overpayment": "54000.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "in_scope",
+              "reasons": [],
+              "needs_professional_review": false
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 56,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_review_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "review_only",
+            "flags": [],
+            "alternatives": [],
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true,
+            "return_format": {
+              "suggestion": "standard",
+              "eligibility_confirmed": false,
+              "note": "Guide printed page 2 permits employment-and-interest-only electronic filers to use the simplified option. This is a conservative hint, not a filing obligation or portal eligibility decision.",
+              "source": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf"
+            },
+            "review_gaps": [
+              {
+                "code": "REFUND_CLAIM_UNVERIFIED",
+                "targets": [
+                  "return:200"
+                ],
+                "detail": "Potential overpayment is not a validated refund entitlement; the claim cage remains unset."
+              },
+              {
+                "code": "EXEMPT_DISCLOSURES_UNCOLLECTED",
+                "targets": [
+                  "return:210"
+                ],
+                "detail": "A complete exempt/excluded-income disclosure was not collected."
+              },
+              {
+                "code": "REMITTANCE_DISCLOSURES_UNCOLLECTED",
+                "targets": [
+                  "return:210A"
+                ],
+                "detail": "Gross remittance categories and receipt totals were not collected. Net service income is not a substitute."
+              },
+              {
+                "code": "COMPLETE_RETURN_UNAVAILABLE",
+                "targets": [],
+                "detail": "Assets, liabilities, declarations, supporting detail, official filing rounding and practitioner approval remain outside this review. This is not an export checklist acknowledgement."
+              },
+              {
+                "code": "ADVANCE_CREDIT_DETAILS_REQUIRED",
+                "targets": [
+                  "schedule_7A:710",
+                  "schedule_9:908",
+                  "schedule_9:911",
+                  "schedule_9B:927-934"
+                ],
+                "detail": "Advance credits and instalments need source, timing, withholding-agent/withholdee and payment-row reconciliation. Only the supported aggregate total is shown."
+              }
+            ],
+            "checks": [
+              {
+                "id": "main_income",
+                "status": "passed",
+                "formula": "50 = 10 + 20 + 30 + 40",
+                "left": "3000000.00",
+                "right": "3000000.00"
+              },
+              {
+                "id": "main_reliefs",
+                "status": "passed",
+                "formula": "90 = 60 + 70 + 80",
+                "left": "1800000.00",
+                "right": "1800000.00"
+              },
+              {
+                "id": "main_deductions",
+                "status": "passed",
+                "formula": "110 = 90 + 100",
+                "left": "1800000.00",
+                "right": "1800000.00"
+              },
+              {
+                "id": "main_taxable",
+                "status": "passed",
+                "formula": "50 = 110 + 120",
+                "left": "3000000.00",
+                "right": "3000000.00"
+              },
+              {
+                "id": "schedule8_taxable",
+                "status": "passed",
+                "formula": "801 = 808.1 + 809A.1 + 809B.1 + 809C.1 within supported scope",
+                "left": "1200000.00",
+                "right": "1200000.00"
+              },
+              {
+                "id": "taxable_transfer",
+                "status": "passed",
+                "formula": "return 120 = schedule 8 801",
+                "left": "1200000.00",
+                "right": "1200000.00"
+              },
+              {
+                "id": "schedule8_tax",
+                "status": "passed",
+                "formula": "810 = 808.3 + 809A.3 + 809B.3 + 809C.3",
+                "left": "96000.00",
+                "right": "96000.00"
+              },
+              {
+                "id": "tax_transfer",
+                "status": "passed",
+                "formula": "return 150 = schedule 8 810",
+                "left": "96000.00",
+                "right": "96000.00"
+              },
+              {
+                "id": "main_tax",
+                "status": "passed",
+                "formula": "170 = 130 + 140 + 150 + 160",
+                "left": "96000.00",
+                "right": "96000.00"
+              },
+              {
+                "id": "main_credits",
+                "status": "passed",
+                "formula": "return 180 = schedule 9 912; details still require reconciliation",
+                "left": "150000.00",
+                "right": "150000.00"
+              },
+              {
+                "id": "main_balance",
+                "status": "passed",
+                "formula": "190 = max(0, 170 - 180)",
+                "left": "0.00",
+                "right": "0.00"
+              }
+            ]
+          }
+        },
+        {
+          "request": 57,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "employment": "2400000",
+                "business_net": "1200000",
+                "apit_credit": "36000",
+                "instalments_paid": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 58,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "3600000.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "1800000.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "222000.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "3600000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "1800000.00",
+              "tax": "222000.00",
+              "credits": "36000.00",
+              "balance_payable": "186000.00",
+              "potential_overpayment": "0.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "in_scope",
+              "reasons": [],
+              "needs_professional_review": false
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 59,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "losses": true
+              }
+            }
+          },
+          "observed": {
+            "status": "out_of_scope",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "OUT_OF_SCOPE",
+            "blocking_guidance": "Computation refused by the submitted scope facts. Check the scope exclusions for this calculation and consult a qualified tax adviser.",
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 60,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "OUT_OF_SCOPE",
+              "message": "Computation refused by the submitted scope facts. Check the scope exclusions for this calculation and consult a qualified tax adviser."
+            }
+          }
+        },
+        {
+          "request": 61,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 62,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 63,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "partnership_or_trust": true
+              }
+            }
+          },
+          "observed": {
+            "status": "out_of_scope",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "OUT_OF_SCOPE",
+            "blocking_guidance": "Computation refused by the submitted scope facts. Check the scope exclusions for this calculation and consult a qualified tax adviser.",
+            "filing_ready": false,
+            "not_applicable_facts": []
+          }
+        },
+        {
+          "request": 64,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "OUT_OF_SCOPE",
+              "message": "Computation refused by the submitted scope facts. Check the scope exclusions for this calculation and consult a qualified tax adviser."
+            }
+          }
+        },
+        {
+          "request": 65,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 66,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 67,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_documents",
+            "arguments": {
+              "action": "review_file",
+              "file": "company.pdf",
+              "kind": "company",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "schema_error": [
+              {
+                "type": "text",
+                "text": "Input validation error: Invalid arguments for tool lk_documents: Invalid tool arguments. Use the published schema; do not send identifiers."
+              }
+            ]
+          }
+        },
+        {
+          "request": 68,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_local_capabilities",
+            "arguments": {}
+          },
+          "observed": {
+            "getting_started": {
+              "introduction": "I can help you prepare a tax estimate. I will ask a few questions, help you find the right amounts in your salary and bank records, and explain the result.",
+              "assessment_period": {
+                "year": "2025/26",
+                "from": "2025-04-01",
+                "to": "2026-03-31"
+              },
+              "manual_entry_available": true,
+              "documents": "Local document review is available. Choose a file only after agreeing to the terms and authorizing that read.",
+              "saving": "Saving is not set up. Keep this session open because a restart loses unsaved answers. You can ask to review your entered totals and keep your own secure copy before closing.",
+              "next_step": "Continue the current session with the next missing questions. Do not start over unless asked.",
+              "limit": "This is a development estimate, not an official filing or a decision that you do not need to file."
+            },
+            "session": {
+              "active": true,
+              "consent_required": false,
+              "has_answers": false,
+              "has_documents": false
+            }
+          }
+        },
+        {
+          "request": 69,
+          "method": "resources/read",
+          "input": {
+            "uri": "lktax://supported-scenarios"
+          },
+          "observed": {
+            "protocol_result_keys": [
+              "contents"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "phase": "after-preview.14",
+      "raw_transcript_sha256": "1677c7913fe88864912a22361fe5f668be2c0d657dc5973a7c2f18f9456d8a3d",
+      "requests": [
+        {
+          "request": 1,
+          "method": "initialize",
+          "input": {
+            "protocolVersion": "2025-11-25",
+            "capabilities": {},
+            "clientInfo": {
+              "name": "persona-walkthrough",
+              "version": "1"
+            }
+          },
+          "observed": {
+            "protocol_result_keys": [
+              "protocolVersion",
+              "capabilities",
+              "serverInfo",
+              "instructions"
+            ]
+          }
+        },
+        {
+          "request": 2,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_local_capabilities",
+            "arguments": {}
+          },
+          "observed": {
+            "getting_started": {
+              "introduction": "I can help you prepare a tax estimate. I will ask a few questions, help you find the right amounts in your salary and bank records, and explain the result.",
+              "assessment_period": {
+                "year": "2025/26",
+                "from": "2025-04-01",
+                "to": "2026-03-31"
+              },
+              "manual_entry_available": true,
+              "choose_your_route": {
+                "question": "Is this for your personal salary, freelance work or sole-trader business, or for a separate company or partnership?",
+                "employee": "Use your annual taxable-pay and employment-tax certificates. Include every job and distinguish replacement certificates from additional employers.",
+                "freelancer": "First obtain taxable net profit prepared outside this tool. Invoices, receipts, fees and bank deposits are not net profit. Overseas work needs separate income and eligibility questions, with amounts already converted to LKR.",
+                "sole_trader": "Use externally prepared taxable net profit for your individual business, not sales, accounting profit or personal drawings. Business accounts and losses cannot be prepared here.",
+                "company_or_partnership": "Company accounts, company tax and partnership returns are unsupported. Do not enter a company profit or owner drawings as personal business profit. A separate personal estimate may cover supported salary or dividends paid to you."
+              },
+              "document_categories": "Local extraction supports salary, bank-interest, rent and final-withholding dividend records only. Business accounts, freelance invoices, foreign-service statements and business payment receipts need external review and manual entry of confirmed supported totals. Do not relabel them as salary or interest.",
+              "documents": "Local document review is available. Choose a file only after agreeing to the terms and authorizing that read.",
+              "saving": "Saving is not set up. Keep this session open because a restart loses unsaved answers. You can ask to review your entered totals and keep your own secure copy before closing.",
+              "next_step": "Explain the estimate limits, show the terms and ask for agreement before starting a fresh session.",
+              "limit": "This is a development estimate, not an official filing or a decision that you do not need to file."
+            },
+            "session": {
+              "active": false,
+              "consent_required": true,
+              "has_answers": false,
+              "has_documents": false
+            }
+          }
+        },
+        {
+          "request": 3,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 4,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_get_disclaimer",
+            "arguments": {}
+          },
+          "observed": {
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 5,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 6,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "business_profit_needs_computation": true
+              }
+            }
+          },
+          "observed": {
+            "status": "blocked",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "BUSINESS_PROFIT_REQUIRED",
+            "blocking_guidance": "You still need a taxable business net profit prepared outside this tool. Pause the estimate and obtain a prepared profit figure; invoices, receipts, revenue, bank deposits, accounting profit and personal drawings are not substitutes. Do not enter zero or calculate profit here to bypass this stop. Resume only after you confirm the externally prepared amount and genuinely correct the outstanding-profit answer.",
+            "filing_ready": false,
+            "not_applicable_facts": []
+          }
+        },
+        {
+          "request": 7,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "BUSINESS_PROFIT_REQUIRED",
+              "message": "You still need a taxable business net profit prepared outside this tool. Pause the estimate and obtain a prepared profit figure; invoices, receipts, revenue, bank deposits, accounting profit and personal drawings are not substitutes. Do not enter zero or calculate profit here to bypass this stop. Resume only after you confirm the externally prepared amount and genuinely correct the outstanding-profit answer."
+            }
+          }
+        },
+        {
+          "request": 8,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "resident_full_year": true,
+                "residency_special_case": false,
+                "investment_asset_gains": false,
+                "partnership_or_trust": false,
+                "restricted_business": false,
+                "terminal_benefits_or_arrears": false,
+                "business_profit_needs_computation": true,
+                "losses": false,
+                "multiple_foreign_tax_countries": false,
+                "amendment_assessment_or_appeal": false,
+                "preparing_for_clients": false
+              },
+              "income": {
+                "employment": "0",
+                "business_net": "0",
+                "interest": "0",
+                "rent": "0",
+                "final_wht_dividends_gross": "0",
+                "final_wht_dividends_deducted": "0",
+                "apit_credit": "0",
+                "ait_wht_credit": "0",
+                "instalments_paid": "0",
+                "other_income_or_claims": false
+              },
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "0",
+                "foreign_tax_paid": "0"
+              },
+              "deductions": {
+                "solar_available": "0",
+                "approved_charity_cash": "0",
+                "government_donations": "0",
+                "government_donations_brought_forward": "0",
+                "samurdhi_shop_contributions": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "blocked",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "BUSINESS_PROFIT_REQUIRED",
+            "blocking_guidance": "You still need a taxable business net profit prepared outside this tool. Pause the estimate and obtain a prepared profit figure; invoices, receipts, revenue, bank deposits, accounting profit and personal drawings are not substitutes. Do not enter zero or calculate profit here to bypass this stop. Resume only after you confirm the externally prepared amount and genuinely correct the outstanding-profit answer.",
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 9,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "BUSINESS_PROFIT_REQUIRED",
+              "message": "You still need a taxable business net profit prepared outside this tool. Pause the estimate and obtain a prepared profit figure; invoices, receipts, revenue, bank deposits, accounting profit and personal drawings are not substitutes. Do not enter zero or calculate profit here to bypass this stop. Resume only after you confirm the externally prepared amount and genuinely correct the outstanding-profit answer."
+            }
+          }
+        },
+        {
+          "request": 10,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "business_net": "2400000",
+                "ait_wht_credit": "120000"
+              }
+            }
+          },
+          "observed": {
+            "status": "blocked",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "BUSINESS_PROFIT_REQUIRED",
+            "blocking_guidance": "You still need a taxable business net profit prepared outside this tool. Pause the estimate and obtain a prepared profit figure; invoices, receipts, revenue, bank deposits, accounting profit and personal drawings are not substitutes. Do not enter zero or calculate profit here to bypass this stop. Resume only after you confirm the externally prepared amount and genuinely correct the outstanding-profit answer.",
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 11,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "BUSINESS_PROFIT_REQUIRED",
+              "message": "You still need a taxable business net profit prepared outside this tool. Pause the estimate and obtain a prepared profit figure; invoices, receipts, revenue, bank deposits, accounting profit and personal drawings are not substitutes. Do not enter zero or calculate profit here to bypass this stop. Resume only after you confirm the externally prepared amount and genuinely correct the outstanding-profit answer."
+            }
+          }
+        },
+        {
+          "request": 12,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "business_profit_needs_computation": false
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 13,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "2400000.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "600000.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "36000.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "2400000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "600000.00",
+              "tax": "36000.00",
+              "credits": "120000.00",
+              "balance_payable": "0.00",
+              "potential_overpayment": "84000.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "in_scope",
+              "reasons": [],
+              "needs_professional_review": false
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 14,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "business_net": "0",
+                "ait_wht_credit": "0"
+              },
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "6000000",
+                "foreign_tax_paid": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "incomplete",
+            "stage": "foreign",
+            "questions": [
+              {
+                "path": "foreign.received_in_foreign_currency",
+                "type": "boolean",
+                "question": "Was this foreign income received in a foreign currency? Say if you are unsure; do not infer this just because the customer is overseas."
+              },
+              {
+                "path": "foreign.remitted_via_licensed_bank",
+                "type": "boolean",
+                "question": "Was this income remitted to Sri Lanka through a licensed bank? Check the receipt records; an overseas invoice alone does not confirm this."
+              },
+              {
+                "path": "foreign.fx_conversion_confirmed",
+                "type": "boolean",
+                "question": "Have all foreign amounts already been converted to LKR using an independently checked conversion for the relevant records? This tool does not convert currencies."
+              },
+              {
+                "path": "foreign.services_used_outside_lk",
+                "type": "boolean",
+                "question": "Were the services used outside Sri Lanka? An overseas customer alone does not establish where the services were used."
+              }
+            ],
+            "calculation_ready": false,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 15,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "foreign": {
+                "received_in_foreign_currency": true,
+                "remitted_via_licensed_bank": true,
+                "services_used_outside_lk": true,
+                "fx_conversion_confirmed": true
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 16,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "0.00",
+              "foreign_assessable_income": "6000000.00",
+              "local_taxable_income": "0.00",
+              "foreign_taxable_income": "4200000.00",
+              "foreign_deductions": "1800000.00",
+              "tax_progressive": "0.00",
+              "tax_foreign": "540000.00",
+              "foreign_credit_average_limit": "771428.57",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "6000000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "4200000.00",
+              "tax": "540000.00",
+              "credits": "0.00",
+              "balance_payable": "540000.00",
+              "potential_overpayment": "0.00",
+              "final_wht_dividends_gross": "0.00",
+              "final_wht_dividends_deducted": "0.00"
+            },
+            "flags": [
+              "INTERP_15PCT",
+              "ASSUMED_FOREIGN_ALLOCATION"
+            ],
+            "alternatives": [
+              {
+                "interpretation": "flat_foreign_cap",
+                "rule_id": "FOREIGN-STACKING-2025",
+                "version": "2025.26.3",
+                "sources": [
+                  {
+                    "url": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf",
+                    "locator": "Annexure 7 gives a lower first foreign band; shared-band stacking in mixed-income cases is a preview interpretation"
+                  }
+                ],
+                "formula": "Same local-first income allocation; foreign taxable income * cap rate; recompute capped credit and balance. Comparative interpretation, not a confirmed rule.",
+                "figures": {
+                  "tax_progressive": "0.00",
+                  "tax_foreign": "630000.00",
+                  "tax": "630000.00",
+                  "foreign_credit_average_limit": "900000.00",
+                  "foreign_tax_credit": "0.00",
+                  "foreign_tax_uncredited": "0.00",
+                  "credits": "0.00",
+                  "balance_payable": "630000.00",
+                  "potential_overpayment": "0.00"
+                }
+              }
+            ],
+            "scope": {
+              "status": "partial",
+              "reasons": [
+                {
+                  "code": "SC-08",
+                  "severity": "partial",
+                  "message": "Foreign-income stacking has unresolved interpretations."
+                }
+              ],
+              "needs_professional_review": true
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 17,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "foreign": {
+                "remitted_via_licensed_bank": false
+              }
+            }
+          },
+          "observed": {
+            "status": "blocked",
+            "stage": "blocked",
+            "questions": [],
+            "calculation_ready": false,
+            "blocking_error": "FOREIGN_ELIGIBILITY_REVIEW",
+            "blocking_guidance": "This foreign income is not confirmed as qualifying for the supported concession or its LKR conversion is unconfirmed. Computation is refused. Do not relabel it as local income or guess eligibility; obtain professional review.",
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.foreign_employer_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 18,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "FOREIGN_ELIGIBILITY_REVIEW",
+              "message": "This foreign income is not confirmed as qualifying for the supported concession or its LKR conversion is unconfirmed. Computation is refused. Do not relabel it as local income or guess eligibility; obtain professional review."
+            }
+          }
+        },
+        {
+          "request": 19,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_session",
+            "arguments": {
+              "action": "start"
+            }
+          },
+          "observed": {
+            "started": true
+          }
+        },
+        {
+          "request": 20,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_accept_disclaimer",
+            "arguments": {
+              "version": "2026-10-24.2",
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "accepted": true,
+            "version": "2026-10-24.2"
+          }
+        },
+        {
+          "request": 21,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "scope": {
+                "resident_full_year": true,
+                "residency_special_case": false,
+                "investment_asset_gains": false,
+                "partnership_or_trust": false,
+                "restricted_business": false,
+                "terminal_benefits_or_arrears": false,
+                "business_profit_needs_computation": false,
+                "losses": false,
+                "multiple_foreign_tax_countries": false,
+                "amendment_assessment_or_appeal": false,
+                "preparing_for_clients": false
+              },
+              "income": {
+                "employment": "2400000",
+                "business_net": "0",
+                "interest": "0",
+                "rent": "0",
+                "final_wht_dividends_gross": "1000000",
+                "final_wht_dividends_deducted": "150000",
+                "apit_credit": "36000",
+                "ait_wht_credit": "0",
+                "instalments_paid": "0",
+                "other_income_or_claims": false
+              },
+              "foreign": {
+                "employment_lkr": "0",
+                "service_net_lkr": "0",
+                "foreign_tax_paid": "0"
+              },
+              "deductions": {
+                "solar_available": "0",
+                "approved_charity_cash": "0",
+                "government_donations": "0",
+                "government_donations_brought_forward": "0",
+                "samurdhi_shop_contributions": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 22,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "complete",
+            "figures": {
+              "local_assessable_income": "2400000.00",
+              "foreign_assessable_income": "0.00",
+              "local_taxable_income": "600000.00",
+              "foreign_taxable_income": "0.00",
+              "foreign_deductions": "0.00",
+              "tax_progressive": "36000.00",
+              "tax_foreign": "0.00",
+              "foreign_credit_average_limit": "0.00",
+              "foreign_tax_credit": "0.00",
+              "foreign_tax_uncredited": "0.00",
+              "assessable_income": "2400000.00",
+              "rent_relief": "0.00",
+              "personal_relief": "1800000.00",
+              "solar_relief": "0.00",
+              "solar_unused_balance": "0.00",
+              "government_donation_deduction": "0.00",
+              "government_donations_carry_forward": "0.00",
+              "samurdhi_deduction": "0.00",
+              "samurdhi_unclaimed": "0.00",
+              "charity_deduction": "0.00",
+              "charity_unclaimed": "0.00",
+              "total_reliefs": "1800000.00",
+              "qualifying_payments": "0.00",
+              "taxable_income": "600000.00",
+              "tax": "36000.00",
+              "credits": "36000.00",
+              "balance_payable": "0.00",
+              "potential_overpayment": "0.00",
+              "final_wht_dividends_gross": "1000000.00",
+              "final_wht_dividends_deducted": "150000.00"
+            },
+            "flags": [],
+            "alternatives": [],
+            "scope": {
+              "status": "in_scope",
+              "reasons": [],
+              "needs_professional_review": false
+            },
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true
+          }
+        },
+        {
+          "request": 23,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_review_return",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "review_only",
+            "flags": [],
+            "alternatives": [],
+            "input_warnings": [],
+            "filing_ready": false,
+            "estimate": true,
+            "return_format": {
+              "suggestion": "standard",
+              "eligibility_confirmed": false,
+              "note": "Guide printed page 2 permits employment-and-interest-only electronic filers to use the simplified option. This is a conservative hint, not a filing obligation or portal eligibility decision.",
+              "source": "https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf"
+            },
+            "review_gaps": [
+              {
+                "code": "REFUND_CLAIM_UNVERIFIED",
+                "targets": [
+                  "return:200"
+                ],
+                "detail": "Potential overpayment is not a validated refund entitlement; the claim cage remains unset."
+              },
+              {
+                "code": "EXEMPT_DISCLOSURES_UNCOLLECTED",
+                "targets": [
+                  "return:210"
+                ],
+                "detail": "A complete exempt/excluded-income disclosure was not collected."
+              },
+              {
+                "code": "REMITTANCE_DISCLOSURES_UNCOLLECTED",
+                "targets": [
+                  "return:210A"
+                ],
+                "detail": "Gross remittance categories and receipt totals were not collected. Net service income is not a substitute."
+              },
+              {
+                "code": "COMPLETE_RETURN_UNAVAILABLE",
+                "targets": [],
+                "detail": "Assets, liabilities, declarations, supporting detail, official filing rounding and practitioner approval remain outside this review. This is not an export checklist acknowledgement."
+              },
+              {
+                "code": "APIT_BREAKDOWN_REQUIRED",
+                "targets": [
+                  "schedule_9:903A-903C",
+                  "schedule_9:904A-904C"
+                ],
+                "detail": "The APIT aggregate does not identify primary/secondary certificates or Table 08/self-paid allocations. No split or credit cage is invented."
+              },
+              {
+                "code": "DIVIDEND_DETAILS_REQUIRED",
+                "targets": [
+                  "schedule_6A:601-606"
+                ],
+                "detail": "The final-WHT total is informational; certificate-level details remain manual. Never put it in unpaid final withholding or advance credits."
+              }
+            ],
+            "checks": [
+              {
+                "id": "main_income",
+                "status": "passed",
+                "formula": "50 = 10 + 20 + 30 + 40",
+                "left": "2400000.00",
+                "right": "2400000.00"
+              },
+              {
+                "id": "main_reliefs",
+                "status": "passed",
+                "formula": "90 = 60 + 70 + 80",
+                "left": "1800000.00",
+                "right": "1800000.00"
+              },
+              {
+                "id": "main_deductions",
+                "status": "passed",
+                "formula": "110 = 90 + 100",
+                "left": "1800000.00",
+                "right": "1800000.00"
+              },
+              {
+                "id": "main_taxable",
+                "status": "passed",
+                "formula": "50 = 110 + 120",
+                "left": "2400000.00",
+                "right": "2400000.00"
+              },
+              {
+                "id": "schedule8_taxable",
+                "status": "passed",
+                "formula": "801 = 808.1 + 809A.1 + 809B.1 + 809C.1 within supported scope",
+                "left": "600000.00",
+                "right": "600000.00"
+              },
+              {
+                "id": "taxable_transfer",
+                "status": "passed",
+                "formula": "return 120 = schedule 8 801",
+                "left": "600000.00",
+                "right": "600000.00"
+              },
+              {
+                "id": "schedule8_tax",
+                "status": "passed",
+                "formula": "810 = 808.3 + 809A.3 + 809B.3 + 809C.3",
+                "left": "36000.00",
+                "right": "36000.00"
+              },
+              {
+                "id": "tax_transfer",
+                "status": "passed",
+                "formula": "return 150 = schedule 8 810",
+                "left": "36000.00",
+                "right": "36000.00"
+              },
+              {
+                "id": "main_tax",
+                "status": "passed",
+                "formula": "170 = 130 + 140 + 150 + 160",
+                "left": "36000.00",
+                "right": "36000.00"
+              },
+              {
+                "id": "main_credits",
+                "status": "passed",
+                "formula": "return 180 = schedule 9 912; details still require reconciliation",
+                "left": "36000.00",
+                "right": "36000.00"
+              },
+              {
+                "id": "main_balance",
+                "status": "passed",
+                "formula": "190 = max(0, 170 - 180)",
+                "left": "0.00",
+                "right": "0.00"
+              }
+            ]
+          }
+        },
+        {
+          "request": 24,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "final_wht_dividends_deducted": "0"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 25,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_compute_return",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "DIVIDEND_WHT_REVIEW",
+              "message": "The actual final withholding on resident-company dividends does not match the supported rate. Reconcile the certificate with a qualified adviser; do not claim final WHT as an advance tax credit."
+            }
+          }
+        },
+        {
+          "request": 26,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_set_facts",
+            "arguments": {
+              "income": {
+                "final_wht_dividends_deducted": "150000"
+              }
+            }
+          },
+          "observed": {
+            "status": "complete",
+            "stage": "ready",
+            "questions": [],
+            "calculation_ready": true,
+            "blocking_error": null,
+            "filing_ready": false,
+            "not_applicable_facts": [
+              "foreign.received_in_foreign_currency",
+              "foreign.remitted_via_licensed_bank",
+              "foreign.foreign_employer_confirmed",
+              "foreign.services_used_outside_lk",
+              "foreign.fx_conversion_confirmed",
+              "foreign.credit_eligibility_confirmed",
+              "foreign.single_source_confirmed"
+            ]
+          }
+        },
+        {
+          "request": 27,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_generate_worksheet",
+            "arguments": {}
+          },
+          "observed": {
+            "error": {
+              "code": "CHECKLIST_REQUIRED",
+              "message": "Call lk_get_checklist, show each statement to the user verbatim and call lk_acknowledge_checklist only with statements the user explicitly confirms. Any change to facts requires a new acknowledgement."
+            }
+          }
+        },
+        {
+          "request": 28,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_get_checklist",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "checklist_only",
+            "digest": "e72c22606c454101a96acfe2d0b226f5198fbfb921882168867a3bba00a267f0",
+            "items": [
+              {
+                "id": "preview_limits_understood",
+                "statement": "I understand this is an unreviewed development preview estimate. It is not IRD-approved, not tax advice and not filing-ready, and official rounding is unverified. I will check every figure against the official return and portal."
+              },
+              {
+                "id": "scope_and_issues_read",
+                "statement": "I have read the supported scenarios and known issues, and none of my circumstances is excluded or unsupported."
+              },
+              {
+                "id": "review_gaps_read",
+                "statement": "I have read every unresolved review gap listed and will complete those fields manually from my own records. The worksheet leaves them unset."
+              },
+              {
+                "id": "evidence_reconciled",
+                "statement": "I have checked the income and credit totals against my records for this year of assessment, used gross income where requested, excluded duplicate and wrong-year documents, and replaced superseded certificates rather than adding them. These records are not verified by this tool."
+              },
+              {
+                "id": "credits_reconciled",
+                "statement": "I have reconciled APIT, AIT/WHT and instalment credits against my certificates and payment records, without overlap or final withholding."
+              }
+            ],
+            "acknowledged": false
+          }
+        },
+        {
+          "request": 29,
+          "method": "resources/read",
+          "input": {
+            "uri": "lktax://known-issues"
+          },
+          "observed": {
+            "protocol_result_keys": [
+              "contents"
+            ]
+          }
+        },
+        {
+          "request": 30,
+          "method": "resources/read",
+          "input": {
+            "uri": "lktax://supported-scenarios"
+          },
+          "observed": {
+            "protocol_result_keys": [
+              "contents"
+            ]
+          }
+        },
+        {
+          "request": 31,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_acknowledge_checklist",
+            "arguments": {
+              "digest": "e72c22606c454101a96acfe2d0b226f5198fbfb921882168867a3bba00a267f0",
+              "items": [
+                "preview_limits_understood",
+                "scope_and_issues_read",
+                "review_gaps_read",
+                "evidence_reconciled",
+                "credits_reconciled"
+              ],
+              "user_confirmed": true
+            }
+          },
+          "observed": {
+            "digest": "e72c22606c454101a96acfe2d0b226f5198fbfb921882168867a3bba00a267f0",
+            "items": [
+              "preview_limits_understood",
+              "scope_and_issues_read",
+              "review_gaps_read",
+              "evidence_reconciled",
+              "credits_reconciled"
+            ],
+            "acknowledged": true
+          }
+        },
+        {
+          "request": 32,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_generate_worksheet",
+            "arguments": {}
+          },
+          "observed": {
+            "filing_ready": false,
+            "estimate": true,
+            "export_type": "worksheet_text",
+            "file_written": false
+          }
+        },
+        {
+          "request": 33,
+          "method": "tools/call",
+          "input": {
+            "name": "lk_preparation",
+            "arguments": {}
+          },
+          "observed": {
+            "status": "preparation_only",
+            "filing_ready": false,
+            "official_filing_supported": false
+          }
+        }
+      ]
+    }
+  ]
+}

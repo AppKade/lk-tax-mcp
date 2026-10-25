@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-10-24. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
+Updated: 2026-10-25. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
 
 Real-user validation follow-up, preview.11: plain-language intake, optional derived scope hints, current confirmed-fact snapshots, credit anomaly warnings with a specific worksheet acknowledgement, evidence-reconciliation checklist, no-op edit preservation and explicit instalment basis-source selection. Method 1 can opt in to matching the supplied basis to current prior-year preview gross tax; external evidence is still unverified. No tax-rule JSON or arithmetic changed. See [user-validation coverage and remaining gaps](user-validation.md).
 
@@ -22,6 +22,10 @@ Real-user validation follow-up, preview.11: plain-language intake, optional deri
 | T10.2, T10.4 | Band boundaries, monotonicity, adversarial stdio regressions and pinned Inspector CLI in both eras | Full properties, installed-host and model-driven behaviour evaluation |
 
 No full backlog task above is marked complete when its original acceptance criteria remain unmet.
+
+## Persona validation
+
+Preview.14 adds employee, freelancer and sole-trader routes, explicit company/partnership and document-category limits, readable foreign eligibility questions and a deterministic stop while business profit still needs external preparation. This does not add bookkeeping, company tax or new tax rules. See [multi-level persona walkthrough](persona-walkthrough.md) for observed outcomes, corrections and remaining limits.
 
 ## Evidence correction
 

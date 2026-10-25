@@ -1,0 +1,49 @@
+# Multi-level user persona walkthrough
+
+25 October 2026, Asia/Colombo. Baseline: merged main `85c3cb1bc918132358af89f1571db6b1d4581cf1` (preview.13). Affected paths repeated on preview.14.
+
+The exercise covered 15 user situations at three levels: a simple personal estimate, multiple sources or corrections, and incomplete or unsupported circumstances. It used six newly generated synthetic PDFs, 102 manually selected protocol requests against the actual compiled stdio server, and independent decimal checks of five local-income results. No real taxpayer information was used. See [request observations and synthetic document contents](validation/persona-evidence.json).
+
+This is an agent-driven simulation of novice users, not an independent human usability study or a test of the installed ChatGPT/desktop user interface. The assistant translates everyday statements into protocol requests. Users must never be asked to supply JSON, know field names or select internal tool ids. Some boundary probes intentionally submitted unsupported document categories; those were rejected before file reading. They are not successful document-import journeys.
+
+## Persona outcomes
+
+All amounts below are LKR outputs of the existing unreviewed preview, not tax advice or a verification of current law. A potential overpayment is not an approved refund. Every successful estimate remained filing-ready false.
+
+| Level | User situation and ordinary request | Actual result | Evidence requests |
+|---|---|---|---|
+| 1 | Primary employee: "I earn 120,000 a month. I have no other income or claims. Where do I start?" | After explicit annual-total and zero confirmations, income 1,440,000; estimated tax and balance zero. Preparation still says official filing is unavailable. Zero tax does not establish a filing exemption. | Before 2-13 |
+| 2 | Employee changes job midyear: "I have two salary certificates. Do I use the latest?" | Two distinct half-year PDFs reviewed and confirmed. Salary totals 3,000,000; APIT 108,000. Tax 96,000; potential overpayment 12,000. Neither certificate silently replaces the other. An initial confirmation without explicit values was refused and then corrected. | Before 14-26 |
+| 3 | Employee with termination benefits: "There was also a leaving payment." | Immediately out of scope, no further interview questions and no stale salary estimate. | Before 27-28 |
+| 3 | New local freelancer: "Here are invoices, fees and a laptop receipt. Work out what I owe." | Business-document category is unsupported. Found a defect: outstanding profit preparation did not block intake or calculation, even with contradictory zero profit. Fixed: BUSINESS_PROFIT_REQUIRED now stops intake and every annual output until external preparation is genuinely confirmed. | Before 29-36; after 6-12 |
+| 1 | Prepared local freelancer: "My externally prepared taxable net profit is 2,400,000; certified advance withholding is 120,000." | Correct manual aggregate route. Tax 36,000; potential overpayment 84,000. Credit details still require external review. A prepared number alone cannot silently clear the outstanding-preparation flag. | Before 37-39; after 10-13 |
+| 2 | Overseas freelancer: "My net service income is already converted to 6,000,000 LKR." | Only relevant eligibility confirmations requested. Found unreadable generic questions, now replaced with actual questions about foreign currency, licensed-bank remittance, conversion and service use. Estimate tax 540,000 with interpretation flags and a separate 630,000 comparison, not a selected legal interpretation. Foreign-service PDF extraction remains unsupported. | Before 40-43; after 14-16 |
+| 3 | Overseas freelancer cannot confirm licensed-bank remittance | Immediate FOREIGN_ELIGIBILITY_REVIEW; no assumed eligibility or relabelling as local income. | Before 44-45; after 17-18 |
+| 2 | Overseas freelancer with eligible tax on one source in one country | Requires explicit credit and single-source confirmations. With the synthetic eligible tax of 300,000, preview balance is 240,000. All interpretation warnings remain. | Before 46-48 |
+| 3 | Overseas freelancer with tax credits spanning multiple countries | Stops with FEATURE_NOT_IMPLEMENTED; no pooled claim or invented allocation. | Before 49-50 |
+| 1 | Sole-trader owner: "My accounts show sales, accounting profit, taxable profit, drawings and paid instalments. Which figure?" | Business PDF extraction unsupported. Manual entry uses externally prepared taxable profit 3,000,000, not 12,000,000 sales, 2,800,000 accounting profit or 1,200,000 drawings. Tax 96,000; instalment credit 150,000; potential overpayment 54,000. Review consistency checks pass. | Before 51-56 |
+| 2 | Employee plus side business | Salary 2,400,000 plus prepared business profit 1,200,000 counted once. Tax 222,000, APIT 36,000, balance 186,000. | Before 57-58 |
+| 3 | Business owner with a loss claim | OUT_OF_SCOPE and calculation refused; no negative-to-zero conversion or loss silently omitted. | Before 59-60 |
+| 3 | Partnership member | A single confirmed partnership fact stops intake and calculation before other facts are collected. | Before 61-64 |
+| 3 | Limited-company owner: "Use my company's accounts to do the tax." | Company document category refused; no company tax produced. Found missing beginner routing. Discovery and host instructions now explicitly distinguish company accounts and company tax from an individual estimate and prohibit substituting company profit or drawings. This is a host guidance boundary, not an entity-classification engine. | Before 65-69; after 2 |
+| 2 | Company owner asking separately about personal salary and final-withholding dividends | Personal salary 2,400,000 and dividends 1,000,000 with actual final withholding 150,000. Salary tax 36,000 and APIT 36,000, balance zero. Dividend withholding is informational and not added to advance credits. Setting it to zero causes DIVIDEND_WHT_REVIEW. After genuine correction, worksheet requires the checklist and remains an estimate with official filing unavailable. | After 19-33 |
+
+The exercise used deliberate corrections and related case variants within sessions, with explicit resets between unrelated routes. It did not impersonate 15 separate real taxpayers. PDF fixtures were rendered and visually inspected. Business, foreign-service and company PDFs were used to test the unsupported-category boundary; their figures were supplied manually only where the persona explicitly had externally prepared, eligible aggregates.
+
+## Fixed gaps
+
+1. **High: unfinished business profit could still produce an estimate.** Readiness, the session's common annual-input gate and the direct engine now refuse BUSINESS_PROFIT_REQUIRED. This protects compute, review, checklist, worksheet and preparation, including an unfinished case with a zero business amount or a later prepared number. Loss exclusions retain priority. A genuine confirmed external preparation and scope correction permits resumption.
+2. **Medium: foreign eligibility questions had generic placeholder text.** Five boolean descriptions now give readable, specific questions and explain what cannot be inferred from an overseas customer or invoice. No eligibility criteria, rate, rule data or arithmetic changed.
+3. **Medium: beginner guidance emphasized salary/bank records and did not route business owners.** Discovery, host instructions and the bundled skill now distinguish employees, freelancers, sole traders and company/partnership requests. They identify unsupported document categories and explain the manual route without inventing an extraction category or misclassifying a document.
+
+## Validation and remaining work
+
+Six added regression tests bring the suite to **135 passing tests**. They cover the preparation stop at incomplete and complete intake, every annual output and direct engine calls, genuine recovery, loss priority, local persona totals, readable foreign questions, route discovery, and both protocol versions. The separate native PDF/OCR/encrypted-restart gate and installed-package journeys also pass. Rule governance, runtime capability, type checking, contract checks and skill validation pass. The public interface version is preview.14; rule JSON and calculation arithmetic are unchanged.
+
+Five local-income results were checked with a separate Python Decimal implementation of the repository's current preview bands, rather than by calling its engine twice. That is an arithmetic cross-check, not independent legal or practitioner validation. Foreign results retain the existing interpretation limits and were not given new legal sign-off.
+
+Remaining product gaps are explicit: business bookkeeping and taxable-profit preparation; local extraction and reconciliation of freelance, foreign-service and business-payment records; corporate calculations; losses; partnerships; FX conversion; multi-country credit calculations; detailed employer/APIT and payment breakdowns; complete official filing and submission. Company/personal separation still depends on the assistant following instructions and the user's classification. Schemas cannot establish the real nature of a manually entered amount.
+
+`calculation_ready` checks intake and document reconciliation, not every financial validation. For example, an inconsistent final dividend-withholding amount can finish intake but still be refused by computation. The existing readiness note explains this. It is not a claim of a validated tax result.
+
+Actual installed-host presentation, question pacing, setup without developer help, multilingual records and independent nontechnical human sessions remain untested. These results support the named protocol journeys and fixes; they do not establish that the MCP is ready for every employee, freelancer or business owner.

@@ -175,3 +175,7 @@ Once connected, ask: "Help me estimate my tax using my salary and bank records."
 Imported documents have readable labels and review questions. If a letter was assigned the wrong category, ask to correct that document; unrelated records remain intact. Pending document decisions and totals now appear as the next step rather than a misleading ready state. Unknown amounts remain unknown until confirmed. If saving is not configured, keep the session open and review your entered totals for secure preservation before closing or changing setup.
 
 See the [manual first-time walkthrough](docs/first-time-walkthrough.md) for observed failures, corrections and test limits.
+
+## Employee, freelancer and business-owner journeys
+
+Start with the personal employee, freelancer or sole-trader route. Business income requires externally prepared taxable net profit; unfinished preparation stops the estimate. Company accounts, company tax and partnership returns are unsupported. Owners may separately estimate supported personal salary/dividends. Local extraction does not support business accounts, freelance invoices, foreign-service statements or business payment receipts; use externally reviewed manual aggregates for supported cases. See the [multi-level walkthrough](docs/persona-walkthrough.md) for the tested cases and remaining limits.
