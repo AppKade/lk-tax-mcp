@@ -2,6 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { mkdtempSync, realpathSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import pkg from '../package.json' with { type: 'json' };
 
 const cli = fileURLToPath(new URL('../src/cli.ts', import.meta.url));
@@ -21,7 +24,17 @@ test('CLI help and version exit without starting a tax session or leaking config
 test('CLI config uses exact executable paths and does not include optional environment grants', () => {
   const r = run(['--print-config']);
   assert.equal(r.status, 0); assert.equal(r.stderr, '');
-  assert.deepEqual(JSON.parse(r.stdout), { mcpServers: { 'lk-tax': { command: process.execPath, args: [cli] } } });
+  assert.deepEqual(JSON.parse(r.stdout), { mcpServers: { 'lk-tax': { command: process.execPath, args: [realpathSync(cli)] } } });
+});
+test('CLI configuration from a symlinked directory points to the real executable', () => {
+  const temporary = mkdtempSync(join(tmpdir(), 'lk-tax-cli-path-'));
+  try {
+    const alias = join(temporary, 'linked checkout');
+    symlinkSync(fileURLToPath(new URL('../', import.meta.url)), alias, process.platform === 'win32' ? 'junction' : 'dir');
+    const r = spawnSync(process.execPath, [join(alias, 'src/cli.ts'), '--print-config'], { encoding: 'utf8', timeout: 5000 });
+    assert.equal(r.error, undefined); assert.equal(r.status, 0); assert.equal(r.stderr, '');
+    assert.deepEqual(JSON.parse(r.stdout), { mcpServers: { 'lk-tax': { command: process.execPath, args: [realpathSync(cli)] } } });
+  } finally { rmSync(temporary, { recursive: true, force: true }); }
 });
 test('unsupported and extra arguments fail with fixed errors, never echoed private input', () => {
   for (const args of [['SyntheticPrivateMarker'], ['--help', 'SyntheticPrivateMarker'], ['--version', '--print-config'], ['--unknown']]) {

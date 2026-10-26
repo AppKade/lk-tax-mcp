@@ -12,7 +12,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const reportPath = fileURLToPath(new URL('../artifacts/verification.json', import.meta.url));
 // A failed run must not leave an earlier passing summary looking current.
 rmSync(reportPath, { force: true });
-const checks = ['check', 'security:check', 'payments:check', 'test', 'rules:check', 'contract:check', 'package:check',
+const checks = ['check', 'security:check', 'audit:production', 'payments:check', 'test', 'rules:check', 'contract:check', 'package:check',
   ...(full ? ['test:inspector'] : [])];
 const passed: string[] = [];
 for (const check of checks) {

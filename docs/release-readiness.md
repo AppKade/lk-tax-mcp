@@ -27,7 +27,7 @@ npm ci --ignore-scripts
 npm run verify
 ```
 
-This runs types, runtime capability checks, payment-evidence checks, tests, immutable-rule checks, MCP contract checks and isolated installed-package verification. Package verification builds the runtime, checks the exact tarball contents and license, compares production dependency inventories, checks CLI help/version/config and exercises both protocol modes from the installed executable.
+This runs types, runtime capability checks, a production dependency advisory audit, payment-evidence checks, tests, immutable-rule checks, MCP contract checks and isolated installed-package verification. Package verification builds the runtime, checks the exact tarball contents and license, compares production dependency inventories, checks CLI help/version/config and exercises both protocol modes from the installed executable.
 
 For the full Linux document and Inspector evaluation, first install Poppler and Tesseract as described in local-workflow.md, then:
 
@@ -38,7 +38,7 @@ npm run verify:full
 
 The full command adds actual PDF, PNG/image-only PDF OCR, revision/duplicate/year/injected-text checks, source reconciliation, worksheet generation, encrypted restart/restore/delete and stale-provenance refusal against the isolated installed package in both protocol modes. It also runs the pinned real Inspector CLI. Windows/macOS native document tools require separate validation. No LLM or installed desktop UI is certified by these scripts.
 
-A successful run writes `artifacts/verification.json`; it identifies standard versus full coverage and the tested platform/version. A new run removes an old success report before starting and stops at its first failure. `artifacts/package/validation.json` records the tarball digest, exact files, SBOM/lockfile digests and whether installed document tests ran. These are local engineering reports, not signed provenance or tax approval.
+A successful run writes `artifacts/verification.json`; it identifies standard versus full coverage and the tested platform/version. The advisory audit and isolated dependency installation require the configured npm registry; an unavailable audit does not count as a pass. A clean advisory result only describes known reports at check time, not a vulnerability-free guarantee. A new run removes an old success report before starting and stops at its first failure. `artifacts/package/validation.json` records the tarball digest, exact files, SBOM/lockfile digests and whether installed document tests ran. These are local engineering reports, not signed provenance or tax approval.
 
 CI independently runs the standard tests under Node 22/24, package checks on Linux/Windows/macOS and the actual installed document workflow on Linux. Check the workflow results for the exact commit you intend to use.
 

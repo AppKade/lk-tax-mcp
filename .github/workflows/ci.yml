@@ -31,6 +31,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run check
       - run: npm run security:check
+      - run: npm run audit:production
       - run: npm run payments:check
       - run: npm test
       - run: npm run rules:check

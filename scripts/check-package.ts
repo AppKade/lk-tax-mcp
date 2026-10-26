@@ -74,7 +74,7 @@ try {
   assert.equal(invoke(['--version']).trim(), pkg.version);
   assert.match(invoke(['--help']), /not an interactive terminal tax interview/);
   const config = JSON.parse(invoke(['--print-config']));
-  assert.deepEqual(config, { mcpServers: { 'lk-tax': { command: process.execPath, args: [executable] } } });
+  assert.deepEqual(config, { mcpServers: { 'lk-tax': { command: process.execPath, args: [realpathSync(executable)] } } });
 
   for (const modern of [false, true]) {
     // npm exec uses the installed bin/shim, with registry fallback disabled during the workflow.
