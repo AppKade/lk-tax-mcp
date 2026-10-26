@@ -28,8 +28,14 @@ test('runtime process exception permits only the entry point shutdown hooks', ()
     assert.deepEqual(check(code, 'src/cli.ts'), []);
     assert.ok(check(code).length);
   }
-  for (const code of [`process.on('uncaughtException', handler)`, `process.exit(0)`, `process['on']('SIGINT', handler)`, `process.stdout.write('facts')`])
+  for (const code of [`process.on('uncaughtException', handler)`, `process.exit(0)`, `process['on']('SIGINT', handler)`, `process.env.TOKEN`, `const output = process.stdout`])
     assert.ok(check(code, 'src/cli.ts').length);
+  for (const code of [`process.argv.slice(2)`, `process.execPath`, `process.stdout.write('help')`, `process.stderr.write('fixed error')`, `process.exitCode = 2`]) {
+    assert.deepEqual(check(code, 'src/cli.ts'), []);
+    assert.ok(check(code).length);
+  }
+  assert.deepEqual(check(`import { fileURLToPath } from 'node:url'`, 'src/cli.ts'), []);
+  assert.ok(check(`import { pathToFileURL } from 'node:url'`, 'src/cli.ts').length);
   assert.ok(check(`import { createHash, webcrypto } from 'node:crypto'`).length);
 });
 

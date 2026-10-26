@@ -20,19 +20,23 @@ assert.ok(npm, 'Run with npm run package:check');
 const temporary = mkdtempSync(join(tmpdir(), 'lk-tax-package-'));
 const consumer = join(temporary, 'isolated consumer'); // Exercise spaces in installed paths on every platform.
 const output = join(root, 'artifacts/package');
+rmSync(join(output, 'validation.json'), { force: true });
 const env = { ...process.env, NODE_PATH: undefined, NODE_OPTIONS: undefined,
   npm_config_loglevel: 'error', npm_config_update_notifier: 'false', npm_config_audit: 'false', npm_config_fund: 'false' };
 function npmRun(args: string[], cwd: string) {
   return execFileSync(process.execPath, [npm!, ...args], { cwd, env, encoding: 'utf8', timeout: 120000, maxBuffer: 4 * 1024 * 1024 });
 }
 const sort = (items: { name: string }[]) => [...items].sort((a, b) => a.name.localeCompare(b.name, 'en'));
+const documentChecks = process.argv.slice(2);
+assert.ok(documentChecks.length === 0 || (documentChecks.length === 1 && documentChecks[0] === '--documents'), 'Supported option: --documents');
+const verifyDocuments = documentChecks.length === 1;
 try {
   assert.equal(pkg.private, true, 'This milestone prepares a private preview; publishing needs a separate reviewed change');
   execFileSync(process.execPath, [join(root, 'scripts/build.ts')], { cwd: root, stdio: 'inherit' });
   rmSync(output, { recursive: true, force: true }); mkdirSync(output, { recursive: true });
   const [packed] = JSON.parse(npmRun(['pack', '--ignore-scripts', '--json', '--pack-destination', output], root));
   assert.equal(packed.name, pkg.name); assert.equal(packed.version, pkg.version);
-  const expected = ['package.json', 'README.md', 'SECURITY.md', 'docs/installation.md', 'docs/local-workflow.md', 'skills/lk-tax/SKILL.md',
+  const expected = ['package.json', 'LICENSE', 'README.md', 'SECURITY.md', 'docs/installation.md', 'docs/local-workflow.md', 'docs/release-readiness.md', 'skills/lk-tax/SKILL.md',
     'rules/2025-26.json', 'rules/instalments-2026-27.json', 'rules/cages-2025-26.json',
     ...readdirSync(join(root, 'src')).filter(p => p.endsWith('.ts')).map(p => `dist/${p.replace(/\.ts$/, '.js')}`)].sort();
   assert.deepEqual(packed.files.map((f: { path: string }) => f.path).sort(), expected,
@@ -53,6 +57,7 @@ try {
   const metadata = JSON.parse(readFileSync(join(installed, 'package.json'), 'utf8'));
   assert.deepEqual(metadata.bin, { 'lk-tax-mcp': 'dist/cli.js' });
   assert.equal(metadata.version, pkg.version); assert.equal(metadata.private, true);
+  assert.equal(metadata.license, 'MIT');
   const executable = join(installed, metadata.bin['lk-tax-mcp']);
   assert.ok(readFileSync(executable, 'utf8').startsWith('#!/usr/bin/env node\n'));
   assert.ok(!existsSync(join(installed, 'src')));
@@ -64,6 +69,12 @@ try {
   assert.ok(existsSync(shim), 'npm must create the executable shim');
   if (process.platform !== 'win32') assert.equal(realpathSync(shim), realpathSync(executable));
   else assert.ok(readFileSync(shim, 'utf8').replaceAll('\\', '/').includes('@appkade/lk-tax-mcp/dist/cli.js'));
+
+  const invoke = (args: string[]) => execFileSync(process.execPath, [executable, ...args], { cwd: consumer, env, encoding: 'utf8', timeout: 10000 });
+  assert.equal(invoke(['--version']).trim(), pkg.version);
+  assert.match(invoke(['--help']), /not an interactive terminal tax interview/);
+  const config = JSON.parse(invoke(['--print-config']));
+  assert.deepEqual(config, { mcpServers: { 'lk-tax': { command: process.execPath, args: [executable] } } });
 
   for (const modern of [false, true]) {
     // npm exec uses the installed bin/shim, with registry fallback disabled during the workflow.
@@ -115,10 +126,16 @@ try {
     } finally { await host.close(); }
     process.stdout.write(`Installed npm executable passed ${modern ? 'modern' : 'legacy'} stdio journey\n`);
   }
+  if (verifyDocuments) for (const era of ['legacy', 'modern']) {
+    execFileSync(process.execPath, [join(root, 'scripts/check-document-flow.ts'), executable, era],
+      { cwd: root, env, stdio: 'inherit', timeout: 180000 });
+    process.stdout.write(`Installed package passed ${era} PDF/OCR and encrypted-draft journey\n`);
+  }
   const report = { name: pkg.name, version: pkg.version, private: true, published: false, filing_ready: false,
     platform: process.platform, node: process.version, filename: packed.filename,
     sha256: createHash('sha256').update(readFileSync(tarball)).digest('hex'), integrity: packed.integrity,
     contract_sha256: snapshot.sha256, production_components: productionComponents,
+    checks: { cli: true, legacy_stdio: true, modern_stdio: true, installed_documents_and_drafts: verifyDocuments },
     sbom: { filename: 'production.cdx.json', format: productionBom.bomFormat, spec_version: productionBom.specVersion,
       sha256: createHash('sha256').update(bomText).digest('hex') },
     lockfile_sha256: createHash('sha256').update(readFileSync(join(root, 'package-lock.json'))).digest('hex'), files: expected };

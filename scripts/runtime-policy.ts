@@ -21,6 +21,11 @@ export function checkRuntimeSource(path: string, text: string, sourcePaths: Set<
     if (!specifier) return;
     if (!ts.isStringLiteral(specifier)) { findings.add('Nonliteral module'); return; }
     const name = specifier.text;
+    if (path === 'src/cli.ts' && name === 'node:url' && ts.isImportDeclaration(node)) {
+      const bindings = node.importClause?.namedBindings;
+      if (!node.importClause?.name && bindings && ts.isNamedImports(bindings) && bindings.elements.length === 1 &&
+          (bindings.elements[0].propertyName ?? bindings.elements[0].name).text === 'fileURLToPath') return;
+    }
     if (path === 'src/local-files.ts' && ts.isImportDeclaration(node) && localImports[name]) {
       const bindings = node.importClause?.namedBindings;
       if (!node.importClause?.name && bindings && ts.isNamedImports(bindings) &&
@@ -47,6 +52,12 @@ export function checkRuntimeSource(path: string, text: string, sourcePaths: Set<
         (access.name.text === 'platform' || (access.name.text === 'env' && ts.isPropertyAccessExpression(call) && call.expression === access &&
           ['LK_TAX_DOCUMENT_ROOT', 'LK_TAX_DRAFT_ROOT', 'LK_TAX_DRAFT_KEY_FILE'].includes(call.name.text)));
       if (localSetting) return;
+      // Fixed CLI help/config output is separate from the JSON-RPC stream. Never allow environment access here.
+      const cliAccess = path === 'src/cli.ts' && ts.isPropertyAccessExpression(access) && access.expression === node &&
+        (['argv', 'execPath', 'exitCode'].includes(access.name.text) ||
+          (['stdout', 'stderr'].includes(access.name.text) && ts.isPropertyAccessExpression(call) && call.expression === access &&
+            call.name.text === 'write' && ts.isCallExpression(call.parent) && call.parent.expression === call));
+      if (cliAccess) return;
       if (!(path === 'src/cli.ts' && ts.isPropertyAccessExpression(access) && access.expression === node && access.name.text === 'on' &&
         ts.isCallExpression(call) && call.expression === access && call.arguments.length === 2 && ts.isStringLiteral(call.arguments[0]) &&
         ['SIGINT', 'SIGTERM'].includes(call.arguments[0].text))) findings.add('Process access outside approved shutdown hooks');

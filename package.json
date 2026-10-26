@@ -1,6 +1,6 @@
 {
   "name": "@appkade/lk-tax-mcp",
-  "version": "2026.25.0-preview.14",
+  "version": "2026.25.0-preview.15",
   "private": true,
   "description": "Local Sri Lankan individual income tax assistance over MCP",
   "type": "module",
@@ -23,7 +23,9 @@
     "prepack": "npm run build",
     "package:check": "node scripts/check-package.ts",
     "security:check": "node scripts/check-runtime.ts",
-    "payments:check": "node scripts/check-payment-reference.ts"
+    "payments:check": "node scripts/check-payment-reference.ts",
+    "verify": "node scripts/verify.ts",
+    "verify:full": "node scripts/verify.ts --full"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",
@@ -44,10 +46,12 @@
     "skills/lk-tax/SKILL.md",
     "SECURITY.md",
     "docs/installation.md",
-    "docs/local-workflow.md"
+    "docs/local-workflow.md",
+    "docs/release-readiness.md"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AppKade/lk-tax-mcp.git"
-  }
+  },
+  "license": "MIT"
 }

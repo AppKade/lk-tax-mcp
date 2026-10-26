@@ -4,6 +4,9 @@ The project has deterministic computation tests, raw stdio protocol tests and an
 
 ## Run the checks
 
+`npm run verify` combines standard checks with isolated package validation. `npm run verify:full` adds installed PDF/OCR/encrypted-draft journeys in both protocol modes and the pinned Inspector. Install the native tools and Inspector dependencies first; see [release readiness](release-readiness.md). A fresh success report identifies the selected coverage without certifying legal or model behaviour.
+
+
 ```sh
 npm ci --ignore-scripts
 npm run check
