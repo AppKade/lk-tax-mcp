@@ -1,8 +1,8 @@
 # Implementation status
 
-Updated: 2026-10-25. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
+Updated: 2026-10-26. Foundation, local-reliefs, qualifying foreign-income and instalment milestones implemented; P0 remains incomplete. The original requirements and CSV remain the planning baseline.
 
-Real-user validation follow-up, preview.11: plain-language intake, optional derived scope hints, current confirmed-fact snapshots, credit anomaly warnings with a specific worksheet acknowledgement, evidence-reconciliation checklist, no-op edit preservation and explicit instalment basis-source selection. Method 1 can opt in to matching the supplied basis to current prior-year preview gross tax; external evidence is still unverified. No tax-rule JSON or arithmetic changed. See [user-validation coverage and remaining gaps](user-validation.md).
+Historical intake milestone, preview.11: plain-language intake, optional derived scope hints, current confirmed-fact snapshots, credit anomaly warnings with a specific worksheet acknowledgement, evidence-reconciliation checklist, no-op edit preservation and explicit instalment basis-source selection. Method 1 can opt in to matching the supplied basis to current prior-year preview gross tax; external evidence is still unverified. No tax-rule JSON or arithmetic changed. See [user-validation coverage and remaining gaps](user-validation.md).
 
 | Backlog | Delivered in this slice | Remaining acceptance criteria |
 |---|---|---|
@@ -33,14 +33,14 @@ Primary IRD guide, Annexure 7, printed page 37 explicitly lists a lower first ba
 
 Source: https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Asmt_IIT_004_2025_2026_E.pdf
 
-## Deliberate first-slice limits
+## Historical first-slice limits (later milestones supersede delivered features)
 
 - Annual returns only for YA 2025/26; separate instalment planning only for YA 2026/27. No copied annual rules.
 - Local employment, local user-computed business net profit, interest and gross investment rent; supported local deductions and final-WHT resident-company dividends; qualifying foreign salary/services and eligible single-source, single-country foreign income tax credit. Unimplemented scenarios still block calculation.
 - Credits are user-confirmed aggregates, not reconciled evidence. Potential overpayment is not a validated refund claim.
 - Tax fractions accumulate exactly; each tax bucket is rounded to cents, half up, then summed. Do not present this as verified RAMIS whole-rupee rounding.
 - In-memory state only. Consent is re-required after restart, wipe or new session; no cleartext session storage exists.
-- No Schedule 7, file output, payment output, document parsing, FX, encrypted draft, public npm release or signed extension yet. The Agent Skill and private npm package are prepared; later milestones below describe their validation limits.
+- The initial slice had no local document adapter or encrypted drafts; preview.12 added those opt-in capabilities, documented in local-workflow.md. Schedule 7, official file/payment output, FX, public npm publishing and signed extensions remain unavailable.
 - SDK and transitive dependencies are pinned in package-lock.json with integrity hashes, captured from successful GitHub CI. CI uses npm ci. Type checking and the foundation tests passed on Node 22 and 24; the expanded milestone adds source fixtures, deduction boundaries and a full stdio G5 workflow.
 - Scope and intake mutations use accurate mutation annotations, despite the research suggesting every tool be read-only. No tool alters external services.
 
@@ -214,3 +214,14 @@ Validation: all 108 tests, TypeScript, runtime capability lint, rules governance
 ## Manual first-time-user follow-up, preview.13 (2026-10-24)
 
 An adaptive walkthrough of the running MCP found incorrect category recovery returning the old category, ready intake ignoring pending document review, technical disabled-feature guidance and an unsafe restart suggestion for unsaved work. The fixes add single-document reclassification with fingerprint and replacement-chain checks, persisted managed-category history, combined document/intake readiness, readable review labels and warnings, safe session continuation and explicit manual fallback. Existing-session metadata is limited to booleans; consent and file-read gates remain intact. Tax arithmetic and rule JSON are unchanged. See [first-time-walkthrough.md](first-time-walkthrough.md).
+
+## Preview finalization, preview.15 (2026-10-26)
+
+- Maintainer selected MIT for original AppKade code; LICENSE and package metadata now record it and package checks require the license in the tarball.
+- Executable help, version and exact local MCP configuration exit without starting stdio. No-argument behavior retains the existing protocol. Unknown/extra arguments fail without reflecting potentially private input. Only the CLI may access argument/executable metadata and fixed terminal output; environment access stays confined to the opt-in adapter.
+- Actual installed-package checks now optionally drive the complete synthetic PDF/OCR/encrypted restart journey in both protocol modes. Linux CI uses this installed document gate. Plain package jobs retain their cross-platform no-native-tool coverage.
+- Standard and full verification commands stop at failures and write a fresh passing summary only after all selected checks pass. README, installation and threat documentation distinguish current features from historical milestones.
+- Tool schemas, prompts and instructions, tax rule payloads, tax arithmetic, consent and filing-ready policy are unchanged. The contract snapshot and hash include updated preview.15 identity metadata.
+- See release-readiness.md for the supported user routes and unresolved independent legal/source, official filing, installed desktop/model and distribution gates. A successful engineering run is not complete P0 or practitioner approval.
+
+Finalization review also upgrades pinned runtime Zod from 4.6.5 to 4.6.7 for GHSA-mrhx-c7xc-m3w5 (oversized collection validation resource exhaustion). The production lockfile and captured npm SBOM fixture are regenerated from the real resolved inventory. Production advisory checks now run in verification and Node 22/24 CI; they require registry access and are time-specific evidence, not a guarantee of no vulnerabilities. Mac package CI exposed a canonical-versus-symlink path assertion; configuration checks now use the resolved entry point, with a linked-directory regression test. No tax rule is changed by either correction.

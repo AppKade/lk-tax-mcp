@@ -6,8 +6,15 @@ import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { deflateSync } from 'node:zlib';
+import { fileURLToPath } from 'node:url';
+import { isAbsolute } from 'node:path';
 import { stdioHost } from '../test/stdio-host.ts';
 import { cleanScope, zeroDeductions } from '../test/fixtures.ts';
+const args = process.argv.slice(2);
+assert.ok(args.length === 0 || (args.length === 2 && isAbsolute(args[0]) && ['legacy', 'modern'].includes(args[1])),
+  'Use no arguments, or an absolute installed entry point followed by legacy or modern');
+const entry = args[0] ?? fileURLToPath(new URL('../dist/cli.js', import.meta.url));
+const modern = args[1] === 'modern';
 // Minimal synthetic text PDF. No personal documents or names are used.
 function pdf(lines: string[]) {
   const text = 'BT /F1 14 Tf 40 780 Td ' + lines.map((l,i)=>(i ? '0 -28 Td ' : '')+`(${l.replace(/[()\\]/g,'\\$&')}) Tj`).join('\n')+' ET';
@@ -45,8 +52,9 @@ try {
   copyFileSync(join(root,'bank.pdf'),join(root,'same-bytes.pdf'));
   const env={...process.env,LK_TAX_DOCUMENT_ROOT:root,LK_TAX_DRAFT_ROOT:join(root,'drafts'),LK_TAX_DRAFT_KEY_FILE:join(root,'key')};
   async function connect() {
-    host=stdioHost(false,{command:process.execPath,args:[join(import.meta.dirname,'../dist/cli.js')],env,requestTimeoutMs:35000});
-    await host.request('initialize',{protocolVersion:'2025-11-25',capabilities:{},clientInfo:{name:'document-user-gate',version:'1'}});host.notify('notifications/initialized');
+    host=stdioHost(modern,{command:process.execPath,args:[entry],env,requestTimeoutMs:35000});
+    if (modern) await host.request('server/discover');
+    else { await host.request('initialize',{protocolVersion:'2025-11-25',capabilities:{},clientInfo:{name:'document-user-gate',version:'1'}});host.notify('notifications/initialized'); }
   }
   async function call(name:string,args={}) {
     const r=await host!.request('tools/call',{name,arguments:args});assert.equal(r.error,undefined);

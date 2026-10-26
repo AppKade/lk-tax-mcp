@@ -29,7 +29,17 @@ An MCP host can launch the compiled checkout directly:
 }
 ```
 
-Starting the process does not accept consent. The host must obtain user agreement and call the consent tools before collecting facts. Each process has its own in-memory session; restarting loses facts and acknowledgements. No credentials, identifiers, network service or database are required.
+Before connecting a host, use the compiled executable to check the install and generate exact local configuration:
+
+```sh
+node dist/cli.js --help
+node dist/cli.js --version
+node dist/cli.js --print-config
+```
+
+`--print-config` writes the actual Node and entry-point paths as JSON. Merge its `lk-tax` entry into your host's existing local stdio MCP configuration. Preserve any other configured servers. The output contains local executable paths, so review it before sharing; it contains no tax facts, document grants, keys or environment values. For an installed tarball, run the same options against its `node_modules/@appkade/lk-tax-mcp/dist/cli.js` instead. No arguments starts stdio; unknown or extra arguments exit with a fixed error without echoing input.
+
+Starting the process does not accept consent. The host must obtain user agreement and call the consent tools before collecting facts. Each process has its own in-memory session; restarting loses facts and acknowledgements unless a draft was explicitly saved. Optional restore requires current consent and does not restore worksheet approval. No credentials, identifiers, network service or database are required.
 
 ## Build and check a local package
 
@@ -41,12 +51,12 @@ This builds fresh runtime JS, creates the actual tarball with lifecycle scripts 
 
 The validation consumer has no source symlinks, TypeScript compiler or Inspector dependency. It checks installed file bytes and npm's executable shim, full tool schemas and resource metadata against the reviewed contract, consent refusals, a source-example calculation, cage resource loading, a confirmed worksheet, an instalment calculation, edit invalidation and wipe. Temporary installation files are removed after the check.
 
-The local build products are `artifacts/package/appkade-lk-tax-mcp-2026.25.0-preview.13.tgz`, `artifacts/package/production.cdx.json` and `artifacts/package/validation.json`. The report records the archive/SBOM SHA-256, npm integrity, lockfile digest, file inventory, contract hash and tested platform/Node version. The CycloneDX production inventory is checked against the lockfile and isolated installation's recorded versions, hashes and dependency edges; it is not a vulnerability scan or independent file-by-file dependency audit. These are development artifacts, not signed release assets. CI repeats the check on Linux, Windows and macOS under Node 22 and 24 and retains passing artifacts for seven days.
+The local build products are `artifacts/package/appkade-lk-tax-mcp-2026.25.0-preview.15.tgz`, `artifacts/package/production.cdx.json` and `artifacts/package/validation.json`. The report records the archive/SBOM SHA-256, npm integrity, lockfile digest, file inventory, contract hash and tested platform/Node version. The CycloneDX production inventory is checked against the lockfile and isolated installation's recorded versions, hashes and dependency edges; it is not a vulnerability scan or independent file-by-file dependency audit. These are development artifacts, not signed release assets. The report also records whether the optional installed PDF/OCR/draft gate ran. On Linux with Poppler and Tesseract installed, `npm run package:check -- --documents` exercises that workflow from the isolated installed executable in both protocol modes. A normal package check does not claim that document coverage. CI repeats the check on Linux, Windows and macOS under Node 22 and 24 and retains passing artifacts for seven days.
 
 To test the tarball yourself, replace the paths below with absolute paths on your machine:
 
 ```sh
-npm install --prefix /absolute/path/tax-preview --ignore-scripts --omit=dev /absolute/path/appkade-lk-tax-mcp-2026.25.0-preview.13.tgz
+npm install --prefix /absolute/path/tax-preview --ignore-scripts --omit=dev /absolute/path/appkade-lk-tax-mcp-2026.25.0-preview.15.tgz
 npm exec --prefix /absolute/path/tax-preview --offline --no -- lk-tax-mcp
 ```
 
@@ -56,10 +66,10 @@ The [npm package configuration](https://docs.npmjs.com/cli/configuring-npm/packa
 
 ## Package boundary and release gates
 
-The tarball includes only compiled runtime JS, the three active rule JSON payloads, the existing Agent Skill, README, SECURITY policy, installation instructions and package metadata. It excludes TypeScript sources, tests and fixtures, Inspector, development scripts, archived rules, repository workflows and private configuration. The installed runtime still validates its active rules when loading them; immutable history and contract checks run in repository CI.
+The tarball includes only compiled runtime JS, the three active rule JSON payloads, the existing Agent Skill, MIT license, README, SECURITY policy, installation/local-workflow/release-readiness instructions and package metadata. It excludes TypeScript sources, tests and fixtures, Inspector, development scripts, archived rules, repository workflows and private configuration. The installed runtime still validates its active rules when loading them; immutable history and contract checks run in repository CI.
 
 The Agent Skill is included as an existing file. npm installation does not automatically register it with a host. Follow your host's Skill installation process; installed-host behaviour remains separately unverified.
 
-Public distribution still requires the documented source/review gates, installed-host evaluations, license selection, registry ownership and a reviewed provenance/release configuration. Signed desktop bundles additionally need manifest/platform testing and signing setup. This milestone neither publishes a package nor changes tax rules, consent, privacy policy or filing readiness. See [release blockers on GitHub](https://github.com/AppKade/lk-tax-mcp/blob/main/docs/implementation-status.md).
+Public distribution still requires the documented source/review gates, installed-host evaluations, registry ownership and a reviewed provenance/release configuration. Signed desktop bundles additionally need manifest/platform testing and signing setup. This milestone neither publishes a package nor changes tax rules, consent, privacy policy or filing readiness. See [release readiness and remaining acceptance gates](release-readiness.md). Original AppKade code is MIT licensed; third-party software and tax publications retain their own terms.
 
 Optional local document/OCR and encrypted drafts require configuration and native tools described in [local-workflow.md](local-workflow.md). Without configuration the normal memory-only protocol journey is unchanged.

@@ -4,7 +4,7 @@ Local Sri Lankan individual income tax assistance for MCP hosts. Tax arithmetic 
 
 **Development preview. Not IRD-approved. Not tax advice. Not ready for filing.**
 
-This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20requirements.md) and [backlog](Sri%20Lanka%20tax%20plugin%20backlog.csv) in stages. The current implementation is the foundation, local-reliefs, qualifying foreign-income and instalment milestones, not the complete P0 release.
+This repository is implementing the [requirements](Sri%20Lanka%20tax%20plugin%20requirements.md) and [backlog](Sri%20Lanka%20tax%20plugin%20backlog.csv) in stages. The current preview includes deterministic estimates, guarded intake, optional local evidence review and encrypted drafts. See [release readiness](docs/release-readiness.md) for reproducible checks and remaining acceptance gates; the complete filing release is not finished.
 
 ## Available now
 
@@ -33,6 +33,8 @@ npm run check
 npm test
 npm run contract:check
 npm run build
+node dist/cli.js --help
+node dist/cli.js --print-config
 npm start
 ```
 
@@ -75,7 +77,7 @@ Hosts with MCP prompt support can select `file_my_return`, `do_i_need_to_file`, 
 
 Read `lktax://checklist/documents` for the manual evidence checklist and `lktax://sources/2025-26` for rule-specific source evidence. Keep evidence locally and enter only confirmed aggregate facts. Raw document uploads, filing exports and RAMIS submission remain unavailable; optional local-file evidence review is separately configured.
 
-Read `lktax://cagemap/2025-26` for the supported cage map, source hashes and unresolved bindings. See [MCP contract verification](docs/mcp-contract.md) for the public interface hash, version-bump policy and protocol coverage. Interactive host testing, Inspector CLI and a separately installable Agent Skill remain pending.
+Read `lktax://cagemap/2025-26` for the supported cage map, source hashes and unresolved bindings. See [MCP contract verification](docs/mcp-contract.md) for the public interface hash, version-bump policy and protocol coverage. The pinned Inspector CLI is tested in both protocol modes; interactive installed-host/model evaluation and automatic host registration of the packaged Agent Skill remain separate work.
 
 ## Dependency-aware interview
 
@@ -156,7 +158,7 @@ Rule data and version-history checks: `npm run rules:check`. See [rules governan
 For the real MCP Inspector CLI gate, install the isolated development tools with `npm ci --ignore-scripts --prefix tools/inspector`, then run `npm run test:inspector` (Node 22.19+). See [validation and compatibility](docs/validation.md) and [remaining source verification](docs/source-verification-next.md). This supplements the raw stdio journeys; installed desktop hosts and model-driven behaviour still require their own evaluations.
 
 
-The private npm preview now has a compiled `lk-tax-mcp` executable and a restricted tarball inventory. Run `npm run package:check` to build, install and exercise that tarball outside the checkout. See [private preview installation](docs/installation.md). The package remains unpublished; registry provenance, licensing and signed desktop release preparation are separate release work.
+The private npm preview now has a compiled `lk-tax-mcp` executable and a restricted tarball inventory. Run `npm run package:check` to build, install and exercise that tarball outside the checkout. See [private preview installation](docs/installation.md). The package remains unpublished; registry provenance and signed desktop release preparation are separate release work. Original AppKade code is [MIT licensed](LICENSE); dependency licenses and referenced publications retain their own terms.
 
 Security review: `npm run security:check` checks application runtime capabilities. Private package artifacts include a production CycloneDX SBOM checked against the lockfile and isolated installation. See the [threat model](docs/threat-model.md) for host/dependency boundaries and limitations.
 
@@ -179,3 +181,7 @@ See the [manual first-time walkthrough](docs/first-time-walkthrough.md) for obse
 ## Employee, freelancer and business-owner journeys
 
 Start with the personal employee, freelancer or sole-trader route. Business income requires externally prepared taxable net profit; unfinished preparation stops the estimate. Company accounts, company tax and partnership returns are unsupported. Owners may separately estimate supported personal salary/dividends. Local extraction does not support business accounts, freelance invoices, foreign-service statements or business payment receipts; use externally reviewed manual aggregates for supported cases. See the [multi-level walkthrough](docs/persona-walkthrough.md) for the tested cases and remaining limits.
+
+## Verify a preview
+
+Run `npm run verify` for the standard engineering and isolated-package gates. With local Poppler/Tesseract and the pinned Inspector dependencies installed, run `npm run verify:full` for installed PDF/OCR/encrypted-draft journeys in both protocol modes plus Inspector checks. See [release readiness](docs/release-readiness.md) for prerequisites, report locations, supported user routes and external acceptance gates. Passing these checks never establishes filing readiness.

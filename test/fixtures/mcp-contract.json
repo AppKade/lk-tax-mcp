@@ -1,7 +1,7 @@
 {
   "format_version": 1,
-  "version": "2026.25.0-preview.14",
-  "sha256": "a8870f9a76296ebd459077fb47f265e4f98a1f10a4c11481ae976e15e717ff25",
+  "version": "2026.25.0-preview.15",
+  "sha256": "bbda7a9022bbb6b30c6e251d68b9f40bbe5c9680b3d15aa1f639d58add9c2812",
   "contract": {
     "server_name": "lk-tax-mcp",
     "supportedVersions": [
@@ -1946,7 +1946,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.14"
+              "version": "2026.25.0-preview.15"
             }
           }
         }
@@ -1970,7 +1970,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.14"
+              "version": "2026.25.0-preview.15"
             }
           }
         }
@@ -1994,7 +1994,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.14"
+              "version": "2026.25.0-preview.15"
             }
           }
         }
@@ -2018,7 +2018,7 @@
           "_meta": {
             "io.modelcontextprotocol/serverInfo": {
               "name": "lk-tax-mcp",
-              "version": "2026.25.0-preview.14"
+              "version": "2026.25.0-preview.15"
             }
           }
         }

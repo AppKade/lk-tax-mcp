@@ -45,7 +45,7 @@ The selected one-to-thirty-day period controls **restore expiry**, not guarantee
 
 ## Verification
 
-Run `npm run test:documents` after installing the local tools. This required gate generates synthetic text PDFs, a PNG and an image-only PDF, then drives the compiled MCP through original/revised salary certificates, duplicate bank letters, stale years, embedded instructions, reviewed OCR corrections, exact totals, worksheet, encrypted save, process restart, restore, stale-provenance refusal and deletion. It does not use real taxpayer documents. CI runs this on Linux in addition to the normal unit, protocol, package and security checks.
+Run `npm run test:documents` after installing the local tools for checkout verification, or `npm run package:check -- --documents` for the isolated installed package in both protocol modes. This required gate generates synthetic text PDFs, a PNG and an image-only PDF, then drives the compiled MCP through original/revised salary certificates, duplicate bank letters, stale years, embedded instructions, reviewed OCR corrections, exact totals, worksheet, encrypted save, process restart, restore, stale-provenance refusal and deletion. It does not use real taxpayer documents. CI runs this on Linux in addition to the normal unit, protocol, package and security checks.
 
 Primary implementation references: [Node crypto](https://nodejs.org/api/crypto.html), [Tesseract command-line usage](https://tesseract-ocr.github.io/tessdoc/Command-Line-Usage.html), [Poppler pdftotext manual](https://manpages.debian.org/bookworm/poppler-utils/pdftotext.1.en.html). No new tax rule is derived from these software references.
 

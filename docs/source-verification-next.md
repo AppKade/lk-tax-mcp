@@ -48,3 +48,7 @@ T8.4 now has primary-source evidence for IIT type 05, all five YA 2025/26 paymen
 3. The npm executable, package allowlist and installed-package check are now prepared in the private preview (see [installation](installation.md)). Complete license/registry decisions, provenance and signed desktop bundles after release gates pass. No registry publish or signing step is configured.
 
 Original requirements and backlog remain the planning baseline. Source downloads and versioned tests do not constitute professional sign-off.
+
+## Current-source recheck, 26 October 2026
+
+The current IRD Forms page https://www.ird.gov.lk/en/downloads/sitepages/forms.aspx was inspected again. Its "Guide to File Individual Return of Income Online" link within the 2025/2026 section still resolves to https://www.ird.gov.lk/en/Downloads/IT_Individuals_Doc/Guide_to_IIT_2425_E.pdf, whose cover and content state YA 2024/2025. This is evidence of the linked guide's year, not proof of supported-year RAMIS behavior. Do not promote its portal fields, simplified-return eligibility or rounding into 2025/26 rules merely because the link appears in the newer section. The current annual guide fetch timed out during this recheck; existing archived source evidence remains the reference, without a new byte-verification claim. No rounding, payment code or tax rule was changed from incomplete search evidence.
